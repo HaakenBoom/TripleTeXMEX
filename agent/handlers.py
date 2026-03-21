@@ -2721,21 +2721,38 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         if prepaid:
             amount = prepaid.get("amount", 0)
             acct = str(prepaid.get("accountNumber", 1700))
-            # Determine the expense account for the reversal
-            # Typically charges go to a general expense account (e.g. 6300)
-            # But the prompt may specify — use 6300 as default for prepaid reversals
-            expense_acct = "6300"
-            # Check if the prompt specifies a "charges" / "kostnad" account
-            p_lower = raw_prompt.lower()
-            charge_match = re.search(r'(?:charges?|kostnad|utgift).*?(?:konto|account|compte)\s*(\d{4})', p_lower)
-            if not charge_match:
-                charge_match = re.search(r'(?:konto|account|compte)\s*(\d{4}).*?(?:charges?|kostnad|utgift)', p_lower)
-            if charge_match:
-                expense_acct = charge_match.group(1)
+            # Determine the expense account for the reversal.
+            # Strategy: check parser entries for a prepaid-related entry that has
+            # two postings (one on the prepaid account, one on an expense account).
+            # Fall back to the depreciation expense account or 6300.
+            expense_acct = None
+            parsed_entries = entities.get("entries", [])
+            for entry in parsed_entries:
+                entry_postings = entry.get("postings", [])
+                if len(entry_postings) >= 2:
+                    acct_numbers = [str(p.get("accountNumber", "")) for p in entry_postings]
+                    if acct in acct_numbers:
+                        # This entry involves our prepaid account — find the other account
+                        for p in entry_postings:
+                            p_acct = str(p.get("accountNumber", ""))
+                            if p_acct != acct:
+                                expense_acct = p_acct
+                                break
+                        if expense_acct:
+                            break
+            if not expense_acct:
+                # Fall back: use depreciation expense account if available, else 6300
+                if dep_items:
+                    expense_acct = str(dep_items[0].get("depreciationExpenseAccountNumber", 6300))
+                else:
+                    expense_acct = "6300"
+            # Ensure expense_acct is different from the prepaid account
+            if expense_acct == acct:
+                expense_acct = "6300"
 
             prepaid_id = _get_or_create_account(client, acct, cache=account_cache)
             expense_id = _get_or_create_account(client, expense_acct,
-                                                 name="Forskuddsbetalt kostnad",
+                                                 name="Driftskostnad",
                                                  cache=account_cache)
 
             voucher_body = {
@@ -2757,10 +2774,41 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
             tax_exp_acct = str(tax_info.get("expenseAccountNumber", 8700))
             tax_liab_acct = str(tax_info.get("liabilityAccountNumber", 2920))
 
-            # Taxable income = total depreciation + prepaid reversal
-            prepaid_amount = (prepaid.get("amount", 0) if prepaid else 0)
-            taxable_income = total_depreciation_expense + prepaid_amount
-            tax_amount = round(taxable_income * tax_rate, 2)
+            # Calculate taxable income from the actual P&L in the ledger.
+            # Query balanceSheet for all P&L accounts (3000-8699) up to closure date.
+            # Revenue accounts (3xxx) have credit (negative) balances,
+            # expense accounts (4xxx-8xxx) have debit (positive) balances.
+            # Taxable income = -(sum of all P&L account balance changes)
+            taxable_income = 0.0
+            try:
+                # dateTo is exclusive in the API, so use day after closure_date
+                date_to_parts = closure_date.split("-")
+                dt_year, dt_month, dt_day = int(date_to_parts[0]), int(date_to_parts[1]), int(date_to_parts[2])
+                from datetime import timedelta
+                dt_obj = date(dt_year, dt_month, dt_day) + timedelta(days=1)
+                date_to_exclusive = dt_obj.isoformat()
+
+                bs_resp = client.get("/balanceSheet", {
+                    "dateFrom": f"{dt_year}-01-01",
+                    "dateTo": date_to_exclusive,
+                    "accountNumberFrom": 3000,
+                    "accountNumberTo": 8699,
+                    "count": 10000,
+                })
+                bs_values = bs_resp.get("values", [])
+                pl_sum = sum(v.get("balanceChange", 0) for v in bs_values)
+                # Revenue is negative (credit), expenses are positive (debit)
+                # Taxable income = -(sum) → positive if profitable
+                taxable_income = round(-pl_sum, 2)
+                logger.info("Taxable income from P&L (accounts 3000-8699): %.2f", taxable_income)
+            except Exception as e:
+                logger.warning("Failed to query P&L for tax calculation, "
+                               "falling back to estimated: %s", e)
+                # Fallback: use the expenses we just posted (less accurate)
+                prepaid_amount = (prepaid.get("amount", 0) if prepaid else 0)
+                taxable_income = total_depreciation_expense + prepaid_amount
+
+            tax_amount = round(max(taxable_income, 0) * tax_rate, 2)
 
             if tax_amount > 0:
                 tax_exp_id = _get_or_create_account(client, tax_exp_acct, cache=account_cache)

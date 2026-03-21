@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T17:39:42.884574",
+  "prompt": "Legen Sie einen Festpreis von 350650 NOK für das Projekt \"ERP-Implementierung\" für Sonnental GmbH (Org.-Nr. 877407047) fest. Projektleiter ist Finn Müller (finn.muller@example.org). Stellen Sie dem Kunden 25 % des Festpreises als Meilensteinzahlung in Rechnung.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147617353 for customer Sonnental GmbH",
+  "error": null,
+  "elapsed_seconds": 18.89
+}

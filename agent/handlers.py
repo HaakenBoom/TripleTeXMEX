@@ -1977,16 +1977,42 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
     emp_name = entities.get("employeeName", "")
     emp_email = entities.get("employeeEmail", "")
     emp_id = None
+    emp_record = None
 
     if emp_email:
         resp = client.get("/employee", {"email": emp_email, "count": 1})
         values = resp.get("values", [])
         if values:
             emp_id = values[0]["id"]
+            emp_record = values[0]
     if not emp_id and emp_name:
-        emp_id = _find_or_create_employee_by_name(emp_name, client, context)
+        # Try to find by name first to get the full record
+        for emp in context.get("employees", []):
+            full_name = f"{emp.get('firstName', '')} {emp.get('lastName', '')}".strip()
+            if full_name.lower() == emp_name.lower():
+                emp_id = emp["id"]
+                emp_record = emp
+                break
+        if not emp_id:
+            emp_id = _find_or_create_employee_by_name(emp_name, client, context)
     if not emp_id:
         emp_id = _ensure_employee(client, context)
+
+    # Ensure employee has dateOfBirth — Tripletex requires it for employment creation
+    if emp_id and not (emp_record and emp_record.get("dateOfBirth")):
+        # Fetch full employee record if we don't have it
+        if not emp_record:
+            emp_detail = client.get(f"/employee/{emp_id}")
+            emp_record = emp_detail.get("value", emp_detail)
+        if not emp_record.get("dateOfBirth"):
+            # Set a placeholder dateOfBirth so employment creation succeeds
+            version = emp_record.get("version", 0)
+            client.put(f"/employee/{emp_id}", {
+                "id": emp_id,
+                "version": version,
+                "dateOfBirth": "1990-01-01",
+            })
+            logger.info("Set placeholder dateOfBirth on employee %d for payroll", emp_id)
 
     # Step 2: Ensure employment exists
     emp_resp = client.get("/employee/employment", {"employeeId": emp_id, "count": 10})
@@ -2544,6 +2570,33 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         if flat and isinstance(flat, list) and isinstance(flat[0], dict) and flat[0].get("accountNumber"):
             parsed_entries = [{"description": "Voucher", "postings": flat}]
             logger.info("Annual closure: normalized %d flat postings into 1 entry", len(flat))
+
+    # Normalize debitAccount/creditAccount format into postings format
+    if parsed_entries:
+        for entry in parsed_entries:
+            if not entry.get("postings") and (entry.get("debitAccount") or entry.get("creditAccount")):
+                amount = entry.get("amount") or entry.get("monthlyDepreciation") or 0
+                postings = []
+                if entry.get("debitAccount"):
+                    postings.append({"accountNumber": entry["debitAccount"], "amount": amount})
+                if entry.get("creditAccount"):
+                    postings.append({"accountNumber": entry["creditAccount"], "amount": -amount})
+                elif entry.get("debitAccount"):
+                    # No credit account specified — for accruals, the credit is often
+                    # an expense account. Try to infer from type or use a default.
+                    entry_type = entry.get("type", "")
+                    if entry_type == "accrual":
+                        # Prepaid/accrual: debit is balance sheet, credit goes to expense
+                        # Default expense account for accrual reversals
+                        postings.append({"accountNumber": 6300, "amount": -amount})
+                    elif entry_type == "depreciation":
+                        # Depreciation: debit expense, credit accumulated depreciation (1209)
+                        postings.append({"accountNumber": 1209, "amount": -amount})
+                if postings:
+                    entry["postings"] = postings
+                    logger.info("Normalized entry '%s' from debit/credit to %d postings",
+                                entry.get("description", "?"), len(postings))
+
     if parsed_entries:
         logger.info("Annual closure: using %d LLM-parsed entries", len(parsed_entries))
         vouchers_created = []

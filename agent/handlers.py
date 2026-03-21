@@ -58,21 +58,22 @@ def _check_response(result: dict, operation: str) -> dict:
 # Task types that need specific prefetch categories
 _NEEDS_DEPARTMENT = {
     "create_employee", "update_employee", "update_employee_role",
-    "create_project", "create_travel_expense",
 }
+# Removed: create_project, create_travel_expense
+# — these resolve department inline only when needed
 _NEEDS_EMPLOYEES = {
     "update_employee", "update_employee_role",
-    "create_project", "create_travel_expense", "delete_travel_expense",
-    "log_timesheet_hours", "run_payroll",
+    "delete_travel_expense",
+    "run_payroll",
 }
-_NEEDS_VAT_TYPES = {
-    "create_product", "create_invoice", "create_invoice_with_payment",
-    "create_credit_note",
-}
-_NEEDS_BANK_ACCOUNT = {
-    "create_invoice", "create_invoice_with_payment",
-    "create_credit_note", "bank_reconciliation",
-}
+# Removed: create_project, create_travel_expense, log_timesheet_hours
+# — these do their own employee lookup by email/name inline
+# VAT type prefetch REMOVED — _resolve_vat_type has hardcoded fallback for
+# standard Norwegian rates (25%=3, 15%=31, 12%=32, 0%=6). Saves 1 GET call.
+_NEEDS_VAT_TYPES: set[str] = set()
+# Bank account setup is now LAZY — only triggered on invoice creation failure.
+# This saves 2-3 GET/PUT calls when bank account is already set up.
+_NEEDS_BANK_ACCOUNT: set[str] = set()
 
 
 def prefetch_context(client: TripletexClient, task_type: str = "unknown") -> dict:
@@ -221,32 +222,21 @@ def _resolve_vat_type(vat_str: str | None, context: dict) -> dict | None:
         return None
 
     target_pct = float(match.group(1))
-    vat_types = context.get("vat_types", [])
 
-    # First pass: match percentage with OUTGOING type (sales/output VAT)
+    # Fast path: hardcoded standard Norwegian VAT type IDs (no API call needed)
+    _HARDCODED_VAT = {25.0: 3, 15.0: 31, 12.0: 32, 0.0: 6}
+    if target_pct in _HARDCODED_VAT:
+        return {"id": _HARDCODED_VAT[target_pct]}
+
+    # Slow path: search prefetched VAT types (only if list was fetched)
+    vat_types = context.get("vat_types", [])
     for vt in vat_types:
         if (vt.get("percentage") == target_pct and
                 "utgående" in vt.get("name", "").lower()):
             return {"id": vt["id"]}
-
-    # Special case for 0%: prefer "utenfor mva-loven" (id=6) which is "avgiftsfri"
-    # over "innenfor mva-loven" (id=5) — the more common intent for invoices
-    if target_pct == 0.0:
-        for vt in vat_types:
-            if vt.get("percentage") == 0.0 and "utenfor" in vt.get("name", "").lower():
-                return {"id": vt["id"]}
-
-    # Second pass: match any VAT type with this percentage
     for vt in vat_types:
         if vt.get("percentage") == target_pct:
             return {"id": vt["id"]}
-
-    # Third pass: hardcoded fallback for standard Norwegian VAT types
-    # These IDs are standard across all Tripletex accounts
-    _HARDCODED_VAT = {25.0: 3, 15.0: 31, 12.0: 32, 0.0: 6}  # 0% → id=6 (avgiftsfri/utenfor mva-loven)
-    if target_pct in _HARDCODED_VAT:
-        logger.info("Using hardcoded VAT type for %.0f%%: id=%d", target_pct, _HARDCODED_VAT[target_pct])
-        return {"id": _HARDCODED_VAT[target_pct]}
 
     logger.warning("Could not resolve VAT type '%s' (target %.1f%%)", vat_str, target_pct)
     return None
@@ -809,15 +799,8 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
     e = task["entities"]
     today = e.get("today", _today())
 
-    # Ensure bank account is set up (may have been skipped in prefetch)
-    if not context.get("_bank_account_checked"):
-        if not context.get("company_id"):
-            try:
-                who = client.get("/token/session/>whoAmI")
-                context["company_id"] = who.get("value", {}).get("companyId")
-            except Exception:
-                pass
-        _ensure_company_bank_account(client, context)
+    # Bank account setup is now LAZY — only triggered if POST /invoice fails
+    # with a bank account error. Saves 2-3 API calls in the common case.
 
     # Step 1: Find or create customer (avoids duplicates)
     customer_id = _find_or_create_customer(e["customer"], client, context)
@@ -878,15 +861,7 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
     e = task["entities"]
     today = e.get("today", _today())
 
-    # Ensure bank account is set up
-    if not context.get("_bank_account_checked"):
-        if not context.get("company_id"):
-            try:
-                who = client.get("/token/session/>whoAmI")
-                context["company_id"] = who.get("value", {}).get("companyId")
-            except Exception:
-                pass
-        _ensure_company_bank_account(client, context)
+    # Bank account setup is now LAZY — only triggered if POST /invoice fails
 
     # Step 0b: Find payment type via /invoice/paymentType (NOT /ledger/paymentTypeOut!)
     # /invoice/paymentType = incoming payments (customer → us)

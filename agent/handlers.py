@@ -17,6 +17,32 @@ def _today() -> str:
     return date.today().isoformat()
 
 
+def _get_or_create_account(client: TripletexClient, number: str, name: str | None = None,
+                           cache: dict | None = None) -> int:
+    """Resolve an account number to its ID, creating the account if it doesn't exist."""
+    if cache and number in cache:
+        return cache[number]
+    resp = client.get("/ledger/account", {"number": number, "count": 1})
+    values = resp.get("values", [])
+    if values:
+        acct_id = values[0]["id"]
+    else:
+        # Auto-create missing account
+        acct_name = name or f"Account {number}"
+        logger.info("Account %s not found, auto-creating as '%s'", number, acct_name)
+        create_resp = client.post("/ledger/account", {
+            "number": int(number),
+            "name": acct_name,
+        })
+        if isinstance(create_resp, dict) and create_resp.get("value", {}).get("id"):
+            acct_id = create_resp["value"]["id"]
+        else:
+            raise RuntimeError(f"Failed to create account {number}: {create_resp}")
+    if cache is not None:
+        cache[number] = acct_id
+    return acct_id
+
+
 def _check_response(result: dict, operation: str) -> dict:
     """Check API response for errors. Raises RuntimeError on 4xx."""
     if isinstance(result, dict) and result.get("status") and result["status"] >= 400:
@@ -1346,7 +1372,11 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 account_id = acc_values[0]["id"]
                 account_data = acc_values[0]
             else:
-                raise RuntimeError(f"Account not found: {account_number}")
+                # Auto-create missing account
+                account_id = _get_or_create_account(
+                    client, str(account_number),
+                    name=posting.get("description") or f"Account {account_number}",
+                )
 
         amount = posting.get("amount") or posting.get("amountGross") or 0
         resolved.append({
@@ -2196,6 +2226,28 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
     if payment_type_id is None:
         raise RuntimeError("No payment types found for bank reconciliation")
 
+    # Also get outgoing payment type for supplier payments
+    pt_out_resp = client.get("/ledger/paymentTypeOut", {"count": 100})
+    payment_types_out = pt_out_resp.get("values", [])
+    payment_type_out_id = payment_types_out[0]["id"] if payment_types_out else payment_type_id
+
+    # Build supplier invoice lookup (for outgoing/negative transactions)
+    # Supplier invoices are vouchers, try to find them
+    supplier_inv_by_amount: dict[float, list[dict]] = {}
+    try:
+        supp_resp = client.get("/supplierInvoice", {
+            "invoiceDateFrom": "2020-01-01",
+            "invoiceDateTo": "2030-12-31",
+            "count": 1000,
+        })
+        for sinv in supp_resp.get("values", []):
+            outstanding = sinv.get("amountOutstanding", sinv.get("amount", 0))
+            if outstanding and outstanding > 0:
+                key = round(outstanding, 2)
+                supplier_inv_by_amount.setdefault(key, []).append(sinv)
+    except Exception:
+        logger.info("No supplier invoice endpoint or no supplier invoices found")
+
     # Step 4: Match transactions to invoices and register payments
     matched = 0
     unmatched = 0
@@ -2203,55 +2255,96 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
 
     for tx in transactions:
         amount = tx["amount"]
-        if amount <= 0:
-            continue  # Skip outgoing payments for now (negative amounts)
-
         tx_date = tx.get("date", today)
         tx_desc = tx.get("description", "")
 
-        # Try to match by amount (most reliable)
-        amt_key = round(amount, 2)
-        candidates = inv_by_amount.get(amt_key, [])
+        if amount > 0:
+            # Incoming payment — match against customer invoices
+            amt_key = round(amount, 2)
+            candidates = inv_by_amount.get(amt_key, [])
 
-        matched_inv = None
-        for inv in candidates:
-            if inv["id"] not in used_invoice_ids:
-                matched_inv = inv
-                break
+            matched_inv = None
+            for inv in candidates:
+                if inv["id"] not in used_invoice_ids:
+                    matched_inv = inv
+                    break
 
-        if not matched_inv:
-            # Try fuzzy amount matching (within 1 NOK tolerance)
-            for key, invs in inv_by_amount.items():
-                if abs(key - amount) < 1.0:
-                    for inv in invs:
-                        if inv["id"] not in used_invoice_ids:
-                            matched_inv = inv
+            if not matched_inv:
+                # Fuzzy amount matching (within 1 NOK tolerance)
+                for key, invs in inv_by_amount.items():
+                    if abs(key - amount) < 1.0:
+                        for inv in invs:
+                            if inv["id"] not in used_invoice_ids:
+                                matched_inv = inv
+                                break
+                        if matched_inv:
                             break
-                    if matched_inv:
-                        break
 
-        if matched_inv:
-            # Register payment
-            pay_params: dict[str, Any] = {
-                "paymentDate": tx_date,
-                "paymentTypeId": payment_type_id,
-                "paidAmount": amount,
-                "paidAmountCurrency": amount,
-            }
-            pay_result = client.put(f"/invoice/{matched_inv['id']}/:payment", params=pay_params)
+            if matched_inv:
+                pay_params: dict[str, Any] = {
+                    "paymentDate": tx_date,
+                    "paymentTypeId": payment_type_id,
+                    "paidAmount": amount,
+                    "paidAmountCurrency": amount,
+                }
+                pay_result = client.put(f"/invoice/{matched_inv['id']}/:payment", params=pay_params)
 
-            if isinstance(pay_result, dict) and pay_result.get("status", 0) < 400:
-                matched += 1
-                used_invoice_ids.add(matched_inv["id"])
-                logger.info("Matched tx %.2f → invoice %d (%s)",
-                           amount, matched_inv["id"], tx_desc[:50])
+                if isinstance(pay_result, dict) and pay_result.get("status", 0) < 400:
+                    matched += 1
+                    used_invoice_ids.add(matched_inv["id"])
+                    logger.info("Matched incoming tx %.2f → invoice %d (%s)",
+                               amount, matched_inv["id"], tx_desc[:50])
+                else:
+                    logger.warning("Payment failed for invoice %d: %s",
+                                 matched_inv["id"], pay_result.get("message", ""))
+                    unmatched += 1
             else:
-                logger.warning("Payment failed for invoice %d: %s",
-                             matched_inv["id"], pay_result.get("message", ""))
+                logger.warning("No matching invoice for incoming tx: %.2f %s", amount, tx_desc[:50])
                 unmatched += 1
-        else:
-            logger.warning("No matching invoice for tx: %.2f %s", amount, tx_desc[:50])
-            unmatched += 1
+
+        elif amount < 0:
+            # Outgoing payment — match against supplier invoices
+            abs_amount = abs(amount)
+            amt_key = round(abs_amount, 2)
+            candidates = supplier_inv_by_amount.get(amt_key, [])
+
+            matched_sinv = None
+            for sinv in candidates:
+                if sinv["id"] not in used_invoice_ids:
+                    matched_sinv = sinv
+                    break
+
+            if not matched_sinv:
+                for key, sinvs in supplier_inv_by_amount.items():
+                    if abs(key - abs_amount) < 1.0:
+                        for sinv in sinvs:
+                            if sinv["id"] not in used_invoice_ids:
+                                matched_sinv = sinv
+                                break
+                        if matched_sinv:
+                            break
+
+            if matched_sinv:
+                pay_params = {
+                    "paymentDate": tx_date,
+                    "paymentTypeId": payment_type_out_id,
+                    "paidAmount": abs_amount,
+                    "paidAmountCurrency": abs_amount,
+                }
+                pay_result = client.put(f"/supplierInvoice/{matched_sinv['id']}/:registerPayment", params=pay_params)
+
+                if isinstance(pay_result, dict) and pay_result.get("status", 0) < 400:
+                    matched += 1
+                    used_invoice_ids.add(matched_sinv["id"])
+                    logger.info("Matched outgoing tx %.2f → supplier invoice %d (%s)",
+                               abs_amount, matched_sinv["id"], tx_desc[:50])
+                else:
+                    logger.warning("Supplier payment failed for invoice %d: %s",
+                                 matched_sinv["id"], pay_result.get("message", ""))
+                    unmatched += 1
+            else:
+                logger.warning("No matching supplier invoice for outgoing tx: %.2f %s", abs_amount, tx_desc[:50])
+                unmatched += 1
 
     return (
         f"Bank reconciliation completed: {matched} payments matched and registered, "
@@ -2262,29 +2355,83 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
 def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -> str:
     """Handle annual closure / year-end closing tasks.
 
-    Parses the prompt for depreciation schedules, prepaid reversals, and tax provisions,
-    then creates the appropriate vouchers.
+    Strategy:
+    1. If the LLM parser extracted structured entries (with postings), use those directly
+    2. Otherwise, fall back to regex parsing of the raw prompt for depreciation/prepaid/tax
     """
     import re
 
     entities = task.get("entities", {})
     raw_prompt = task.get("raw_prompt", "")
     today = _today()
+    account_cache: dict[str, int] = {}
 
-    # Use LLM-parsed entities if available, otherwise parse from raw prompt
-    # The raw prompt contains all the details since this is a complex task
+    # ---------------------------------------------------------------
+    # PATH A: Use LLM-parsed entries if available (most reliable)
+    # ---------------------------------------------------------------
+    parsed_entries = entities.get("entries", [])
+    if parsed_entries:
+        logger.info("Annual closure: using %d LLM-parsed entries", len(parsed_entries))
+        vouchers_created = []
+        voucher_date = today
+        # Derive date from entities or default
+        if entities.get("closureYear") and entities.get("closureMonth"):
+            import calendar
+            y, m = entities["closureYear"], entities["closureMonth"]
+            last_day = calendar.monthrange(y, m)[1]
+            voucher_date = f"{y}-{m:02d}-{last_day:02d}"
+        elif entities.get("date"):
+            voucher_date = entities["date"]
 
-    # Step 1: Parse depreciation assets from prompt
-    # Pattern: asset name, cost, years, accounts
+        for entry in parsed_entries:
+            entry_postings = entry.get("postings", [])
+            if not entry_postings:
+                continue
+
+            # Resolve account numbers to IDs
+            api_postings = []
+            for p in entry_postings:
+                acct_num = p.get("accountNumber")
+                if not acct_num:
+                    continue
+                acct_id = _get_or_create_account(
+                    client, str(acct_num),
+                    name=p.get("description") or f"Account {acct_num}",
+                    cache=account_cache,
+                )
+                amount = p.get("amount") or p.get("amountGross") or 0
+                api_postings.append({
+                    "account": {"id": acct_id},
+                    "amountGross": amount,
+                    "amountGrossCurrency": amount,
+                    "date": voucher_date,
+                })
+
+            if not api_postings:
+                continue
+
+            description = entry.get("description", "Voucher")
+            voucher_body: dict[str, Any] = {
+                "date": voucher_date,
+                "description": description,
+                "postings": api_postings,
+            }
+            result = client.post("/ledger/voucher", voucher_body)
+            _check_response(result, f"POST /ledger/voucher ({description})")
+            vouchers_created.append(description)
+            logger.info("Created voucher: %s", description)
+
+        return (
+            f"Annual closure completed: {len(vouchers_created)} vouchers created. "
+            + "; ".join(vouchers_created)
+        )
+
+    # ---------------------------------------------------------------
+    # PATH B: Regex-based parsing of raw prompt (legacy fallback)
+    # ---------------------------------------------------------------
     depreciations = []
-
-    # Try to find depreciation entries in the prompt
-    # Common pattern: "Asset (AMOUNT NOK, N years, account XXXX)"
-    # Or structured as numbered items
     prompt_text = raw_prompt or str(entities)
 
-    # Extract depreciation entries using regex patterns
-    # Pattern 1: "Kontormaskiner (50350 NOK, 3 años lineales, cuenta 1200)"
     dep_pattern = re.compile(
         r'(\w[\w\s]*?)\s*\(\s*([\d\s.,]+)\s*(?:NOK|kr)?\s*,\s*(\d+)\s*'
         r'(?:år|años|ans|years|Jahre|anos)\s*(?:lineales?|linéaire|linear|lineær)?\s*,\s*'
@@ -2304,8 +2451,8 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
             "asset_account": asset_account,
         })
 
-    # Extract expense account for depreciation (e.g., "cuenta 6010 para gasto de depreciación")
-    expense_account = "6010"  # Default
+    # Extract expense account for depreciation
+    expense_account = "6010"
     exp_match = re.search(
         r'(?:cuenta|konto|account|compte|Konto)\s*(\d{4})\s*(?:para|for|pour|für|til)\s*'
         r'(?:gasto|expense|charge|Aufwand|kostnad|avskrivning|depreciación|amortissement|depreciation)',
@@ -2314,7 +2461,6 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
     if exp_match:
         expense_account = exp_match.group(1)
     else:
-        # Try alternative pattern
         exp_match2 = re.search(
             r'(?:avskrivning|depreci|amortiss|Abschreibung).*?(?:cuenta|konto|account|compte|Konto)\s*(\d{4})',
             prompt_text, re.IGNORECASE,
@@ -2322,8 +2468,8 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         if exp_match2:
             expense_account = exp_match2.group(1)
 
-    # Extract accumulated depreciation account (e.g., "1209 para depreciación acumulada")
-    accum_account = "1209"  # Default
+    # Extract accumulated depreciation account
+    accum_account = "1209"
     accum_match = re.search(
         r'(?:cuenta|konto|account|compte|Konto)?\s*(\d{4})\s*(?:para|for|pour|für|til)\s*'
         r'(?:depreciación acumulada|accumulated depreciation|amortissement cumulé|'
@@ -2335,38 +2481,37 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
 
     # Extract prepaid reversal info
     prepaid_amount = None
-    prepaid_account = "1700"  # Default
+    prepaid_account = "1700"
     prepaid_match = re.search(
-        r'(?:prepagados?|prepaid|prépayé|forskuddsbetalt|Vorauszahlung|pré-pago|forhåndsbetalt)'
+        r'(?:prepagados?|prepaid|prépayé|forskuddsbetalt|Vorauszahlung|pré-pago|forhåndsbetalt|régularisation)'
         r'.*?(?:total)?\s*([\d\s.,]+)\s*(?:NOK|kr)',
         prompt_text, re.IGNORECASE,
     )
     if prepaid_match:
         amt_str = prepaid_match.group(1).replace(" ", "").replace(",", ".")
         prepaid_amount = float(amt_str)
-    # Also check for pattern with account number
     prepaid_acct_match = re.search(
-        r'(?:cuenta|konto|account|compte|Konto)\s*(\d{4}).*?(?:prepagados?|prepaid|forskuddsbetalt)',
+        r'(?:cuenta|konto|account|compte|Konto)\s*(\d{4}).*?(?:prepagados?|prepaid|forskuddsbetalt|régularisation)',
         prompt_text, re.IGNORECASE,
     )
     if not prepaid_acct_match:
         prepaid_acct_match = re.search(
-            r'(?:prepagados?|prepaid|forskuddsbetalt).*?(?:cuenta|konto|account|compte|Konto)\s*(\d{4})',
+            r'(?:prepagados?|prepaid|forskuddsbetalt|régularisation).*?(?:cuenta|konto|account|compte|Konto)\s*(\d{4})',
             prompt_text, re.IGNORECASE,
         )
     if prepaid_acct_match:
         prepaid_account = prepaid_acct_match.group(1)
 
     # Extract tax provision info
-    tax_rate = 0.22  # Norwegian standard corporate tax rate
+    tax_rate = 0.22
     tax_rate_match = re.search(r'(\d+)\s*%', prompt_text)
     if tax_rate_match:
         rate = int(tax_rate_match.group(1))
-        if 15 <= rate <= 30:  # Reasonable corporate tax range
+        if 15 <= rate <= 30:
             tax_rate = rate / 100
 
-    tax_expense_account = "8700"  # Default
-    tax_liability_account = "2920"  # Default
+    tax_expense_account = "8700"
+    tax_liability_account = "2920"
     tax_exp_match = re.search(
         r'(?:cuenta|konto|account)\s*(\d{4})\s*/\s*(\d{4})',
         prompt_text, re.IGNORECASE,
@@ -2375,83 +2520,63 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         tax_expense_account = tax_exp_match.group(1)
         tax_liability_account = tax_exp_match.group(2)
 
-    logger.info("Annual closure: %d depreciations, prepaid=%s, tax_rate=%.0f%%",
+    logger.info("Annual closure (regex): %d depreciations, prepaid=%s, tax_rate=%.0f%%",
                 len(depreciations), prepaid_amount, tax_rate * 100)
-
-    # Step 2: Resolve account numbers to IDs
-    account_cache: dict[str, int] = {}
-
-    def _get_account_id(number: str) -> int:
-        if number in account_cache:
-            return account_cache[number]
-        resp = client.get("/ledger/account", {"number": number, "count": 1})
-        values = resp.get("values", [])
-        if not values:
-            # Try creating the account
-            raise RuntimeError(f"Account {number} not found")
-        account_cache[number] = values[0]["id"]
-        return values[0]["id"]
 
     vouchers_created = []
     total_depreciation_expense = 0.0
+    closure_date = entities.get("date", f"{date.today().year - 1}-12-31")
 
-    # Step 3: Create depreciation vouchers (one per asset as specified)
+    # Create depreciation vouchers
     for dep in depreciations:
         annual_dep = round(dep["cost"] / dep["years"], 2)
         total_depreciation_expense += annual_dep
 
-        asset_acct_id = _get_account_id(dep["asset_account"])
-        expense_acct_id = _get_account_id(expense_account)
-        accum_acct_id = _get_account_id(accum_account)
+        expense_acct_id = _get_or_create_account(client, expense_account, cache=account_cache)
+        accum_acct_id = _get_or_create_account(client, accum_account, cache=account_cache)
 
-        voucher_body: dict[str, Any] = {
-            "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+        voucher_body = {
+            "date": closure_date,
             "description": f"Avskrivning {dep['name']}",
             "postings": [
                 {
                     "account": {"id": expense_acct_id},
                     "amountGross": annual_dep,
                     "amountGrossCurrency": annual_dep,
-                    "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+                    "date": closure_date,
                 },
                 {
                     "account": {"id": accum_acct_id},
                     "amountGross": -annual_dep,
                     "amountGrossCurrency": -annual_dep,
-                    "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+                    "date": closure_date,
                 },
             ],
         }
         result = client.post("/ledger/voucher", voucher_body)
         _check_response(result, f"POST /ledger/voucher (depreciation {dep['name']})")
         vouchers_created.append(f"Depreciation {dep['name']}: {annual_dep} NOK")
-        logger.info("Created depreciation voucher for %s: %.2f NOK", dep["name"], annual_dep)
 
-    # Step 4: Prepaid expense reversal
+    # Prepaid expense reversal
     if prepaid_amount:
-        prepaid_acct_id = _get_account_id(prepaid_account)
-        # Find appropriate expense account for prepaid reversal (use a general one)
-        # Typically reversed to an operating expense account
-        try:
-            prepaid_expense_id = _get_account_id("6300")  # Other operating expenses
-        except RuntimeError:
-            prepaid_expense_id = _get_account_id(expense_account)
+        prepaid_acct_id = _get_or_create_account(client, prepaid_account, cache=account_cache)
+        prepaid_expense_id = _get_or_create_account(client, expense_account, cache=account_cache)
 
         voucher_body = {
-            "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+            "date": closure_date,
             "description": "Reversering forskuddsbetalt kostnad",
             "postings": [
                 {
                     "account": {"id": prepaid_expense_id},
                     "amountGross": prepaid_amount,
                     "amountGrossCurrency": prepaid_amount,
-                    "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+                    "date": closure_date,
                 },
                 {
                     "account": {"id": prepaid_acct_id},
                     "amountGross": -prepaid_amount,
                     "amountGrossCurrency": -prepaid_amount,
-                    "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+                    "date": closure_date,
                 },
             ],
         }
@@ -2459,31 +2584,29 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         _check_response(result, "POST /ledger/voucher (prepaid reversal)")
         vouchers_created.append(f"Prepaid reversal: {prepaid_amount} NOK")
 
-    # Step 5: Tax provision
-    # Calculate taxable income (simplified: total depreciation + prepaid = expenses that reduce income)
-    # In a real scenario we'd need the full P&L, but for the task we calculate from the given data
+    # Tax provision
     taxable_income = total_depreciation_expense + (prepaid_amount or 0)
     tax_amount = round(taxable_income * tax_rate, 2)
 
     if tax_amount > 0:
-        tax_exp_id = _get_account_id(tax_expense_account)
-        tax_liab_id = _get_account_id(tax_liability_account)
+        tax_exp_id = _get_or_create_account(client, tax_expense_account, cache=account_cache)
+        tax_liab_id = _get_or_create_account(client, tax_liability_account, cache=account_cache)
 
         voucher_body = {
-            "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+            "date": closure_date,
             "description": "Skatteavsetning",
             "postings": [
                 {
                     "account": {"id": tax_exp_id},
                     "amountGross": tax_amount,
                     "amountGrossCurrency": tax_amount,
-                    "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+                    "date": closure_date,
                 },
                 {
                     "account": {"id": tax_liab_id},
                     "amountGross": -tax_amount,
                     "amountGrossCurrency": -tax_amount,
-                    "date": entities.get("date", f"{date.today().year - 1}-12-31"),
+                    "date": closure_date,
                 },
             ],
         }

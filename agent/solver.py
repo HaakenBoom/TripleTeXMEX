@@ -186,6 +186,18 @@ def _try_targeted_repair(error: str, task: dict, client: TripletexClient, contex
             logger.warning("Targeted repair (employee) retry failed: %s", e2)
         return None
 
+    # Account not found → the handler now auto-creates accounts, so just retry
+    if "account not found" in error_lower or "account" in error_lower and "not found" in error_lower:
+        logger.info("Targeted repair: account not found — retrying (handler will auto-create)")
+        try:
+            from agent.handlers import execute_task
+            result = execute_task(task, client, context)
+            if result is not None:
+                return result
+        except Exception as e2:
+            logger.warning("Targeted repair (account) retry failed: %s", e2)
+        return None
+
     logger.info("No targeted repair available for error: %s", error[:200])
     return None
 
@@ -554,6 +566,17 @@ def _run_agent_loop(prompt: str, files: list, tripletex: TripletexClient, contex
         metrics["total_iterations"] = i + 1
         logger.info("Agent loop iteration %d", i + 1)
 
+        # Trim tool result content in older messages to prevent token overflow
+        # Keep the first user message (context) and last 6 messages intact; truncate older tool results
+        if len(messages) > 8:
+            for msg in messages[1:-6]:
+                if msg.get("role") == "user" and isinstance(msg.get("content"), list):
+                    for item in msg["content"]:
+                        if isinstance(item, dict) and item.get("type") == "tool_result":
+                            c = item.get("content", "")
+                            if isinstance(c, str) and len(c) > 500:
+                                item["content"] = c[:500] + "...[truncated]"
+
         # Retry on rate limit with exponential backoff
         response = None
         for retry in range(4):
@@ -567,10 +590,18 @@ def _run_agent_loop(prompt: str, files: list, tripletex: TripletexClient, contex
                 )
                 break
             except Exception as e:
-                if "rate_limit" in str(e).lower() or "429" in str(e):
+                err_str = str(e).lower()
+                if "rate_limit" in err_str or "429" in str(e):
                     wait = 2 ** (retry + 1)
                     logger.warning("Rate limited, waiting %ds before retry %d...", wait, retry + 1)
                     time.sleep(wait)
+                elif "prompt is too long" in err_str or "too many tokens" in err_str:
+                    # Aggressively trim older messages
+                    logger.warning("Token overflow, trimming old messages")
+                    if len(messages) > 3:
+                        messages = [messages[0]] + messages[-4:]
+                    else:
+                        raise
                 else:
                     raise
         if response is None:
@@ -679,7 +710,12 @@ def _build_agent_user_content(prompt: str, files: list, context: dict,
         emp_lines = [f"  - id={e.get('id')}, name=\"{e.get('firstName', '')} {e.get('lastName', '')}\"" for e in context["employees"]]
         ctx_parts.append("Employees:\n" + "\n".join(emp_lines))
     if context.get("vat_types"):
-        vat_lines = [f"  - id={v.get('id')}, percentage={v.get('percentage')}%, name=\"{v.get('name', '')}\"" for v in context["vat_types"][:20]]
+        # Only include the most commonly used VAT types to save tokens
+        _COMMON_VAT_IDS = {0, 1, 3, 5, 6, 7, 11, 12, 31, 32}
+        common_vats = [v for v in context["vat_types"] if v.get("id") in _COMMON_VAT_IDS]
+        if not common_vats:
+            common_vats = context["vat_types"][:10]
+        vat_lines = [f"  - id={v.get('id')}, percentage={v.get('percentage')}%, name=\"{v.get('name', '')}\"" for v in common_vats]
         ctx_parts.append("VAT Types (use {\"id\": N} in vatType fields):\n" + "\n".join(vat_lines))
     if context.get("company_id"):
         ctx_parts.append(f"Company ID: {context['company_id']}")

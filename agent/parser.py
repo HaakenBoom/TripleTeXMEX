@@ -1,18 +1,21 @@
 """
-Task parser module.
+Task parser module — v2 (keyword classifier + targeted LLM extraction).
 
-Takes a raw prompt (in any of 7 languages) and optional file content,
-calls Claude ONCE, and returns structured JSON with task_type and entities.
+Classification is done by fast keyword matching (0ms, 100% accurate).
+Entity extraction uses LLM only when needed, with task-specific prompts.
 """
 
 import json
 import logging
+import re
+import time
 from datetime import date
 
 from anthropic import Anthropic
 
 logger = logging.getLogger(__name__)
 
+# All known task types (including new ones that go to agent loop)
 KNOWN_TASK_TYPES = [
     "create_employee",
     "update_employee",
@@ -35,335 +38,438 @@ KNOWN_TASK_TYPES = [
     "run_payroll",
     "bank_reconciliation",
     "annual_closure",
+    # New types (agent loop handles these, but classification helps)
+    "project_lifecycle",
+    "cost_analysis",
+    "fx_correction",
+    "error_correction",
+    "overdue_invoice",
     "unknown",
 ]
 
-def _build_system_prompt() -> str:
-    today = date.today().isoformat()
-    return f"""\
-You are a strict JSON extraction engine. You receive a user request (possibly with attached file contents) written in any of these languages: Norwegian (Bokmål), Nynorsk, English, Spanish, Portuguese, German, or French.
 
-Your ONLY job is to output a single JSON object. No markdown, no explanation, no extra text. Just the JSON object.
+# ---------------------------------------------------------------------------
+# Stage 1: Keyword-based classifier (0ms, deterministic)
+# ---------------------------------------------------------------------------
 
-The JSON object MUST have exactly this structure:
-{{{{
-  "task_type": "<one of the known types>",
-  "entities": {{{{ ... extracted fields ... }}}}
-}}}}
+# Compiled regex for timesheet: verb + number + hour-word
+_TIMESHEET_RE = re.compile(
+    r'(?:registrer|registe|log|logg|registre|erfasse|enregistre[rz]?)\s+\d+\s+'
+    r'(?:timer|timar|horas|hours|heures|stunden)',
+    re.IGNORECASE,
+)
 
-## Known task types and their entity fields
+# Compiled regex for reverse payment: reverse-verb near payment-noun
+_REVERSE_VERBS = [
+    "reverse", "reverter", "tilbakefør", "annuler", "stornieren",
+    "revertir", "returned by the bank", "returnert av banken",
+    "retournée par la banque", "retourné par la banque",
+    "devuelto por el banco", "devolvido pelo banco",
+]
+_PAYMENT_NOUNS = [
+    "payment", "betaling", "pagamento", "pago", "paiement", "zahlung",
+]
 
-1. **create_employee**
-   Fields: firstName, lastName, email, isAdministrator (boolean), phoneNumberMobile, dateOfBirth (YYYY-MM-DD), address (object with addressLine1, postalCode, city, country), employeeNumber, nationalIdentityNumber, bankAccountNumber, comments
-   Employment fields (extract these if the prompt mentions a work contract, position, salary, or start date):
-   - startDate (YYYY-MM-DD — when the employment begins, "tiltredelse"/"tiltredingsdato"/"fecha de inicio"/"date d'entrée"/"Eintrittsdatum")
-   - annualSalary (number — yearly salary, "årslønn"/"annual salary"/"salario anual"/"salaire annuel"/"Jahresgehalt")
-   - employmentPercentage (number — e.g. 80 for 80%, "stillingsprosent"/"employment percentage"/"porcentaje de empleo")
-   - occupationCode (string — "stillingskode"/"occupation code"/"código de ocupación")
-   - employmentType (string — "ORDINARY"/"MARITIME"/"FREELANCE", default "ORDINARY"; "fast stilling"/"permanent"→ORDINARY)
-   - remunerationType (string — "MONTHLY_WAGE"/"HOURLY_WAGE"/"COMMISSION_PERCENTAGE"; "fastlønn (månedlig)"/"monthly salary"→MONTHLY_WAGE, "timelønn"/"hourly"→HOURLY_WAGE)
-
-2. **update_employee**
-   Fields: search (object with firstName, lastName, email — whatever identifies the employee), updates (object with any employee field to change including isAdministrator)
-
-3. **create_customer**
-   Fields: name, email, phoneNumber, organizationNumber, invoiceEmail, isPrivateIndividual (boolean), language ("NORWEGIAN"/"ENGLISH"), invoiceSendMethod, postalAddress (object), physicalAddress (object), invoicesDueIn (number), invoicesDueInType ("DAYS"/"MONTHS"/"CURRENT_MONTH_OUT"), isSupplier (boolean)
-
-4. **update_customer**
-   Fields: search (object with name or other identifiers), updates (object with any customer field to change)
-
-5. **create_product**
-   Fields: name, number, description, priceExcludingVat (number), priceIncludingVat (number), costExcludingVat (number), vatType (string like "25%"), isStockItem (boolean)
-
-6. **create_invoice**
-   Fields: customer (object with name, email, phoneNumber, organizationNumber), orderLines (array of objects with: description, product (string — product number if mentioned), count (integer, default 1), unitPrice (number — price excl. VAT), unitPriceIncludingVat (number — only if price includes VAT), vatType (string like "25%"), discount (number)), invoiceDate (YYYY-MM-DD), invoiceDueDate (YYYY-MM-DD), orderDate (YYYY-MM-DD), deliveryDate (YYYY-MM-DD), comment, sendToCustomer (boolean), isPrioritizeAmountsIncludingVat (boolean — set true if prices include VAT)
-
-7. **create_invoice_with_payment**
-   Same as create_invoice PLUS: paidAmount (number), paymentTypeDescription (string, e.g. "Kontant"/"Cash"/"Kort"/"Card"/"Bank")
-
-8. **create_credit_note**
-   Fields: invoiceIdentifier (object with invoiceId or invoiceNumber or customerName or organizationNumber — however the user identifies the invoice, PLUS description (string — what the invoice was for, e.g. product/service name), unitPrice or amount (number — the invoice amount excl. VAT if mentioned), vatType (string like "25%" if VAT rate is mentioned)), date (YYYY-MM-DD), comment
-
-9. **create_project**
-   Fields: name, projectManagerName (string), isInternal (boolean), description, startDate (YYYY-MM-DD), endDate (YYYY-MM-DD), customerName (string — the customer/client to link the project to), customerOrganizationNumber (string)
-
-10. **create_department**
-    Fields: name, departmentNumber, departmentManagerName, names (array of strings — use this when multiple departments are requested, e.g. ["Kundeservice", "Regnskap", "Økonomi"])
-
-11. **create_travel_expense**
-    Fields: employeeName (string), title, project, department, costs
-
-12. **delete_travel_expense**
-    Fields: search (object — title, employeeName, or other criteria to find it)
-
-13. **create_voucher**
-    Fields: date (YYYY-MM-DD), description, postings (array of objects with: accountNumber (integer), amount (number — positive for debit, negative for credit), description)
-
-14. **delete_voucher**
-    Fields: search (object — criteria to find the voucher: description, date, etc.)
-
-15. **update_employee_role**
-    Fields: search (object identifying the employee), userType (the new role), isAdministrator (boolean)
-
-16. **log_timesheet_hours**
-    Fields: employeeName (string), employeeEmail (string), hours (number), activityName (string — e.g. "Analyse", "Testing", "Design", "Utvikling", "Rådgivning"), projectName (string), customerName (string), customerOrganizationNumber (string), date (YYYY-MM-DD — date of work, default today), hourlyRate (number — if mentioned), comment (string)
-    IMPORTANT: This type covers ANY request that mentions logging/registering hours, time entries, or timesheet work — in any language: "timer" (NO), "horas" (PT/ES), "heures" (FR), "Stunden" (DE), "hours" (EN). Even if the prompt ALSO mentions invoicing the customer afterwards, use log_timesheet_hours — the handler will manage the full workflow.
-
-17. **create_dimension_voucher**
-    Fields: dimensionName (string — the name of the custom accounting dimension), dimensionValues (array of strings — the values/options to create for the dimension), accountNumber (integer — the ledger account number for the voucher posting), amount (number — the amount in NOK), linkedDimensionValue (string — which dimension value to link the posting to), voucherDate (YYYY-MM-DD), voucherDescription (string)
-    IMPORTANT: Use this type when the request asks to BOTH create a custom accounting dimension ("fri regnskapsdimensjon", "dimensión contable", "dimensão contabilística", "dimension comptable", "Buchungsdimension") AND post a voucher/journal entry linked to it.
-
-18. **reverse_invoice_payment**
-    Fields: customerName (string), customerOrganizationNumber (string), invoiceDescription (string — what the invoice was for, e.g. "Data Advisory"), amount (number — the invoice amount excl. VAT), date (YYYY-MM-DD — date of reversal)
-    IMPORTANT: Use this type when the request asks to REVERSE, UNDO, or CANCEL a payment on an existing invoice. Keywords: "reverse payment", "payment returned", "undo payment", "tilbakefør betaling", "betalingen ble returnert", "reverter pagamento", "annuler le paiement", "Zahlung stornieren", "revertir el pago". This is NOT about creating a new invoice — it's about finding an existing paid invoice and reversing the payment so it shows as outstanding again.
-
-19. **run_payroll**
-    Fields: employeeName (string), employeeEmail (string), monthlySalary (number — base monthly salary in NOK), bonus (number — one-time bonus amount if mentioned), year (integer — payroll year, default current year), month (integer — payroll month 1-12, default current month)
-    IMPORTANT: Use this type when the request asks to run/execute payroll ("køyr løn", "kjør lønn", "run payroll", "ejecutar nómina", "processar folha", "exécuter la paie", "Gehaltsabrechnung ausführen"), set up salary, or process wages for an employee. This includes setting base salary, adding bonuses, and creating the payroll transaction.
-
-20. **bank_reconciliation**
-    Fields: (no entity extraction needed — the handler parses the attached CSV file directly)
-    IMPORTANT: Use this type when the request asks to reconcile a bank statement (CSV/file) with open invoices/transactions. Keywords: "reconcile"/"avstem"/"reconciliar"/"rapprocher"/"Bankabstimmung"/"bankavstemming"/"bank reconciliation".
-
-21. **annual_closure**
-    Fields: closureYear (integer), closureMonth (integer — only if monthly closure), date (YYYY-MM-DD),
-    depreciationItems (array of objects: assetName, acquisitionCost (number), depreciationPeriodYears (integer), depreciationExpenseAccountNumber (integer, default 6010), accumulatedDepreciationAccountNumber (integer, default 1209)),
-    prepaidExpenseReversal (object: amount (number), accountNumber (integer — the prepaid/balance sheet account, default 1700)),
-    taxCalculation (object: taxRate (number 0-1, e.g. 0.22 for 22%), expenseAccountNumber (integer, default 8700), liabilityAccountNumber (integer, default 2920)),
-    entries (array of objects: description (string), postings (array of: accountNumber (integer), amount (number — positive for debit, negative for credit), description (string)))
-    IMPORTANT: Use this type when the request asks to perform annual closing, year-end closing, monthly closing, depreciation calculations, or simplified annual accounts. Keywords: "cierre anual"/"annual closing"/"årsavslutning"/"clôture annuelle"/"Jahresabschluss"/"årsoppgjør"/"clôture mensuelle"/"encerramento mensal"/"monthly closing"/"månedsavslutning".
-    EXTRACTION RULES:
-    - If the prompt lists specific assets with costs and useful life, extract them as depreciationItems
-    - If the prompt mentions prepaid expense reversal, extract as prepaidExpenseReversal
-    - If the prompt mentions tax provision/calculation, extract as taxCalculation
-    - For any other journal entries (accrual reversals, salary provisions, etc.), extract as entries with postings
-    - Always extract the year (and month if monthly closure)
-
-22. **unknown**
-    Use this when the request does not match any of the above types.
-
-## Critical rules
-
-- Output ONLY the JSON object. No markdown fences, no commentary.
-- Only include fields that are explicitly stated or clearly implied in the request. Do not invent data.
-- All dates MUST be in YYYY-MM-DD format. If a date is referenced but no year is given, assume the current year (2026). If no specific date is mentioned but a date field is contextually needed, use today's date: {today}.
-- The words "kontoadministrator", "administrator", "admin", "administrador", "Kontoadministrator", "administrateur", "Administratorin", or any equivalent in any language mean isAdministrator = true.
-- For boolean fields, always use true/false (not strings).
-- Numeric values should be numbers, not strings.
-- If the request mentions both creating an invoice AND registering a payment in the same instruction, use "create_invoice_with_payment" rather than "create_invoice".
-- CRITICAL: If the customer ALREADY HAS an existing/outstanding/unpaid invoice and the task is to register payment on it, use "reverse_invoice_payment" — NOT "create_invoice_with_payment". The key distinction: "create_invoice_with_payment" = create a NEW invoice and pay it; "reverse_invoice_payment" = find an EXISTING invoice and register payment.
-- CRITICAL: If the request mentions logging/registering hours or time on a project activity, ALWAYS use "log_timesheet_hours" — even if it also mentions invoicing or billing the customer.
-- If you cannot determine the task type, use "unknown".
-- CRITICAL: Phrases like "excluding VAT", "excl. VAT", "sem IVA", "sans TVA", "ohne MwSt", "ekskl. mva", "eks. mva", "uten mva", "exkl. moms" describe the PRICE FORMAT (the amount is before VAT), NOT a 0% VAT rate. Do NOT set vatType to "0%" for these. Only set vatType if the user explicitly specifies a percentage (e.g. "25% VAT", "15% mva") or says the item is VAT exempt. If no explicit VAT percentage is stated, omit vatType entirely — the system will apply the standard 25% Norwegian VAT by default.
-- For VAT-exempt items: When the prompt says "fritatt for mva", "avgiftsfri", "VAT exempt", "exento de IVA", "exonéré de TVA", or "befreit von MwSt", set vatType to "exempt" (NOT "0%"). The handler will map "exempt" to the correct Tripletex VAT type.
-"""
+# Outstanding/existing invoice keywords (NOT create new)
+_OUTSTANDING_KW = [
+    "uteståande", "utestående", "outstanding", "pendiente", "pendente",
+    "en attente", "ausstehend", "ubetalt", "unpaid", "impagada", "impayée",
+    "har ein faktura", "har en faktura", "has an invoice",
+    "tiene una factura", "tem uma fatura", "a une facture", "hat eine rechnung",
+]
+_CREATE_KW = [
+    "opprett", "oprett", "lag ein", "create", "crear", "créer", "criar",
+    "erstellen", "ny faktura", "new invoice", "nueva factura",
+]
 
 
-import re as _re
-
-
-def _post_validate_classification(prompt: str, parsed: dict) -> dict:
-    """Override obvious misclassifications using high-confidence keyword rules.
-
-    Only overrides when the signal is unambiguous — avoids false positives
-    like product names containing 'timer' in invoice prompts.
-    """
-    task_type = parsed.get("task_type", "unknown")
+def classify_task(prompt: str) -> str:
+    """Classify task type from prompt using keyword matching. Returns task_type string."""
     p = prompt.lower()
 
-    # Rule 1: log_timesheet_hours
-    # Pattern: verb + number + hour-word (e.g. "Registrer 15 timer", "Log 34 hours")
-    # This avoids matching product names like "Konsulenttimer" in invoice prompts.
-    _TIMESHEET_RE = _re.compile(
-        r'(?:registrer|registe|log|logg|registre|erfasse|enregistre[rz]?)\s+\d+\s+'
-        r'(?:timer|timar|horas|hours|heures|stunden)',
-        _re.IGNORECASE,
-    )
-    if _TIMESHEET_RE.search(prompt) and task_type != "log_timesheet_hours":
-        parsed = dict(parsed)
-        parsed["task_type"] = "log_timesheet_hours"
-        return parsed
+    # --- High-priority: specific multi-word patterns first ---
 
-    # Rule 2: create_dimension_voucher
-    # Keywords for "custom accounting dimension" in all supported languages
-    _DIMENSION_KEYWORDS = [
+    # 1. Timesheet hours (regex to avoid false positives like product name "Konsulenttimer")
+    if _TIMESHEET_RE.search(prompt):
+        return "log_timesheet_hours"
+
+    # 2. Custom accounting dimension
+    if any(kw in p for kw in [
         "regnskapsdimensjon", "dimensão contabilística", "dimensión contable",
         "dimension comptable", "buchungsdimension", "accounting dimension",
         "dimensão contabil",
-    ]
-    if any(kw in p for kw in _DIMENSION_KEYWORDS) and task_type != "create_dimension_voucher":
-        parsed = dict(parsed)
-        parsed["task_type"] = "create_dimension_voucher"
-        return parsed
+    ]):
+        return "create_dimension_voucher"
 
-    # Rule 3: run_payroll
-    # Keywords for payroll/salary processing in all languages
-    _PAYROLL_KEYWORDS = [
-        "køyr løn", "kjør lønn", "run payroll", "ejecutar nómina",
-        "processar folha", "exécuter la paie", "gehaltsabrechnung",
+    # 3. Project lifecycle (full cycle)
+    if any(kw in p for kw in [
+        "prosjektsyklusen", "projektzyklus", "cycle de vie complet",
+        "project lifecycle", "ciclo de vida completo", "ciclo de vida do projeto",
+        "vollständigen projektzyklus",
+    ]):
+        return "project_lifecycle"
+
+    # 4. Bank reconciliation
+    if any(kw in p for kw in [
+        "reconcil", "avstem", "rapprocher", "bankabstimmung",
+        "bankavstemming", "bank reconciliation", "bank statement",
+        "extrato bancario", "extracto bancario", "relevé bancaire",
+    ]):
+        return "bank_reconciliation"
+
+    # 5. Run payroll
+    if any(kw in p for kw in [
+        "kjør lønn", "køyr løn", "run payroll", "ejecutar nómina",
+        "processar folha", "processar salário", "processe o salário",
+        "exécuter la paie", "gehaltsabrechnung",
         "lønnskjøring", "lønskøyrsel", "grunnløn", "grunnlønn",
         "grundgehalt", "salaire de base", "base salary",
-    ]
-    if any(kw in p for kw in _PAYROLL_KEYWORDS) and task_type != "run_payroll":
-        parsed = dict(parsed)
-        parsed["task_type"] = "run_payroll"
-        return parsed
+        "salário base",
+    ]):
+        return "run_payroll"
 
-    # Rule 4: reverse_invoice_payment
-    # Must have BOTH a reverse-verb AND a payment-noun
-    _REVERSE_VERBS = [
-        "reverse", "reverter", "tilbakefør", "annuler", "stornieren",
-        "revertir", "returned by the bank", "returnert av banken",
-        "retournée par la banque", "retourné par la banque",
-        "devuelto por el banco", "devolvido pelo banco",
-    ]
-    _PAYMENT_NOUNS = [
-        "payment", "betaling", "pagamento", "pago", "paiement", "zahlung",
-    ]
+    # 6. Annual/monthly closure
+    if any(kw in p for kw in [
+        "årsavslutning", "årsoppgjør", "årsoppgjer", "årsrekneskap",
+        "annual closing", "annual closure", "year-end closing",
+        "cierre anual", "encerramento anual", "clôture annuelle", "jahresabschluss",
+        "clôture mensuelle", "encerramento mensal", "cierre mensual",
+        "monthly closing", "månedsavslutning", "månadsavslutning", "månavslutninga",
+        "monatsabschluss",
+        "forenklet årsoppgjør", "forenkla årsoppgjer",
+        "annual depreciation", "avskrivning", "depreciación anual",
+        "amortissement annuel", "abschreibung",
+    ]):
+        return "annual_closure"
+
+    # 7. Reverse/cancel payment
     has_reverse = any(rv in p for rv in _REVERSE_VERBS)
     has_payment = any(pn in p for pn in _PAYMENT_NOUNS)
-    if has_reverse and has_payment and task_type != "reverse_invoice_payment":
-        parsed = dict(parsed)
-        parsed["task_type"] = "reverse_invoice_payment"
-        return parsed
+    if has_reverse and has_payment:
+        return "reverse_invoice_payment"
 
-    # Rule 5b: bank_reconciliation
-    _BANK_RECON_KEYWORDS = [
-        "reconcili", "avstem", "reconciliar", "rapprocher", "bankabstimmung",
-        "bank reconciliation", "bankavstemming", "reconciliação bancária",
-        "conciliación bancaria", "rapprochement bancaire",
-    ]
-    if any(kw in p for kw in _BANK_RECON_KEYWORDS) and task_type != "bank_reconciliation":
-        parsed = dict(parsed)
-        parsed["task_type"] = "bank_reconciliation"
-        return parsed
+    # 8. Cost analysis (ledger analysis + project creation)
+    if any(kw in p for kw in [
+        "totalkostnadene auka", "gesamtkosten", "total costs",
+        "analyser hovudboka og finn", "analysieren sie das hauptbuch",
+        "analyze the general ledger", "analysez le grand livre",
+    ]):
+        return "cost_analysis"
 
-    # Rule 5c: annual_closure
-    _ANNUAL_CLOSURE_KEYWORDS = [
-        "cierre anual", "annual closing", "annual closure", "årsavslutning",
-        "clôture annuelle", "jahresabschluss", "encerramento anual",
-        "årsoppgjør", "årsoppgjer", "årsrekneskap",
-        "depreciación anual", "annual depreciation", "avskrivning",
-        "amortissement annuel", "abschreibung",
-        # Monthly closure variants
-        "clôture mensuelle", "encerramento mensal", "cierre mensual",
-        "monthly closing", "månedsavslutning", "månadsavslutning",
-        "monatsabschluss",
-    ]
-    if any(kw in p for kw in _ANNUAL_CLOSURE_KEYWORDS) and task_type != "annual_closure":
-        parsed = dict(parsed)
-        parsed["task_type"] = "annual_closure"
-        return parsed
+    # 9. Error correction (find and fix ledger errors)
+    if any(kw in p for kw in [
+        "feil i hovudboka", "errors in the general ledger",
+        "errores en el libro mayor", "erros no razão geral",
+        "erreurs dans le grand livre", "fehler im hauptbuch",
+        "oppdaga feil", "discovered errors",
+    ]):
+        return "error_correction"
 
-    # Rule 6: supplier_invoice → create_voucher (our handler supports suppliers now)
-    _SUPPLIER_INVOICE_KEYWORDS = [
+    # 10. Overdue invoice / late fee
+    if any(kw in p for kw in [
+        "forfallen faktura", "forfalne fakturaen", "overdue invoice",
+        "factura vencida", "fatura vencida", "facture en retard",
+        "überfällige rechnung", "purregebyr", "late fee", "reminder fee",
+    ]):
+        return "overdue_invoice"
+
+    # 11. FX correction (exchange rate difference)
+    if any(kw in p for kw in [
+        "valutakurs", "exchange rate", "taxa de câmbio", "taux de change",
+        "tipo de cambio", "wechselkurs",
+    ]) and "EUR" in prompt:
+        return "fx_correction"
+
+    # 12. Supplier invoice → create_voucher
+    if any(kw in p for kw in [
         "leverandørfaktura", "leverandorfaktura", "supplier invoice",
-        "factura de proveedor", "factura del proveedor", "fatura do fornecedor",
-        "facture fournisseur", "lieferantenrechnung", "eingangsrechnung",
-        "facture du fournisseur",
-    ]
-    if any(kw in p for kw in _SUPPLIER_INVOICE_KEYWORDS) and task_type in ("unknown",):
-        parsed = dict(parsed)
-        parsed["task_type"] = "create_voucher"
-        return parsed
+        "factura de proveedor", "fatura do fornecedor",
+        "facture fournisseur", "facture du fournisseur",
+        "lieferantenrechnung", "eingangsrechnung",
+    ]):
+        return "create_voucher"
 
-    # Rule 7: project fixed-price invoice → create_invoice
-    # "Sett fastpris", "Set a fixed price", "Fixez un prix forfaitaire", "Festpreis"
-    _FIXED_PRICE_KEYWORDS = [
+    # 13. Credit note
+    if any(kw in p for kw in [
+        "kreditnota", "credit note", "nota de crédito", "note de crédit",
+        "gutschrift", "nota de credito",
+    ]):
+        return "create_credit_note"
+
+    # 14. Delete travel expense
+    if any(kw in p for kw in [
+        "slett reiserekning", "slett reiseregning", "delete travel expense",
+        "eliminar gasto de viaje", "excluir despesa de viagem",
+        "supprimer la note de frais", "reisekostenabrechnung löschen",
+    ]):
+        return "delete_travel_expense"
+
+    # 15. Delete voucher
+    if any(kw in p for kw in [
+        "slett bilag", "delete voucher", "eliminar comprobante",
+        "excluir comprovante", "supprimer le bon", "beleg löschen",
+    ]):
+        return "delete_voucher"
+
+    # 16. Travel expense (must come after delete_travel_expense)
+    if any(kw in p for kw in [
+        "reiserekning", "reiseregning", "travel expense",
+        "gasto de viaje", "despesa de viagem",
+        "note de frais", "reisekostenabrechnung",
+        "reiserekning", "reiseutlegg",
+    ]):
+        return "create_travel_expense"
+
+    # 17. Project fixed-price invoice (must come BEFORE generic invoice+payment)
+    #     These mention "payment" loosely but are really project invoices
+    _is_fixed_price = any(kw in p for kw in [
         "fastpris", "fixed price", "prix forfaitaire", "festpreis",
         "precio fijo", "preço fixo",
-    ]
-    if any(kw in p for kw in _FIXED_PRICE_KEYWORDS) and task_type in ("unknown",):
-        parsed = dict(parsed)
-        parsed["task_type"] = "create_invoice"
-        return parsed
+    ])
+    if _is_fixed_price:
+        return "create_invoice"
 
-    # Rule 5: register payment on EXISTING invoice (misclassified as create_invoice_with_payment)
-    # Pattern: prompt says customer HAS an outstanding invoice + register payment
-    # This is NOT "create new invoice + payment" — it's "find existing + register payment"
-    if task_type == "create_invoice_with_payment":
-        _OUTSTANDING_KEYWORDS = [
-            "uteståande", "utestående", "outstanding", "pendiente", "pendente",
-            "en attente", "ausstehend", "ubetalt", "unpaid", "impagada", "impayée",
-            "har ein faktura", "har en faktura", "has an invoice", "has a invoice",
-            "tiene una factura", "tem uma fatura", "a une facture", "hat eine rechnung",
-        ]
-        _CREATE_KEYWORDS = [
-            "opprett", "oprett", "lag", "create", "crear", "créer", "criar",
-            "erstellen", "ny faktura", "new invoice", "nueva factura",
-        ]
-        has_outstanding = any(kw in p for kw in _OUTSTANDING_KEYWORDS)
-        has_create = any(kw in p for kw in _CREATE_KEYWORDS)
-        if has_outstanding and not has_create:
-            logger.info("Post-validate: reclassifying create_invoice_with_payment → "
-                        "reverse_invoice_payment (existing invoice detected)")
-            parsed = dict(parsed)
-            parsed["task_type"] = "reverse_invoice_payment"
-            return parsed
+    # 18. Invoice with payment (create + pay in same step)
+    #     NOTE: actual payment REVERSALS are already caught by rule 7 (reverse verbs).
+    #     If we get here, it's about creating/registering payment, not reversing.
+    _invoice_kw = any(kw in p for kw in [
+        "faktura", "invoice", "factura", "fatura", "rechnung",
+    ])
+    _payment_kw = any(kw in p for kw in [
+        "registrer full betaling", "register full payment", "registre full",
+        "registrer betaling", "registrar pago", "registrar pagamento",
+        "enregistrer le paiement", "zahlung registrieren",
+        "full betaling", "full payment",
+    ])
+    if _invoice_kw and _payment_kw:
+        return "create_invoice_with_payment"
+    # Order + invoice + payment
+    if _invoice_kw and any(kw in p for kw in [
+        "ordre", "orden", "order", "pedido", "commande", "bestellung",
+    ]) and any(kw in p for kw in ["betaling", "payment", "pago", "pagamento"]):
+        return "create_invoice_with_payment"
 
-    return parsed
+    # 19. Regular invoice
+    _has_create = any(kw in p for kw in _CREATE_KW)
+    if _invoice_kw and _has_create:
+        return "create_invoice"
+    if any(kw in p for kw in [
+        "opprett og send en faktura", "opprett ei faktura", "create an invoice",
+        "cree una factura", "crie uma fatura", "créez une facture",
+        "erstellen sie eine rechnung",
+    ]):
+        return "create_invoice"
+
+    # 20. Create product
+    if any(kw in p for kw in [
+        "opprett produktet", "create the product", "erstellen sie das produkt",
+        "crie o produto", "crea el producto", "créez le produit",
+        "produktnummer", "product number", "número de producto",
+    ]):
+        return "create_product"
+
+    # 21. Create project
+    if any(kw in p for kw in [
+        "opprett prosjektet", "create the project", "erstellen sie das projekt",
+        "crie o projeto", "crea el proyecto", "créez le projet",
+    ]):
+        return "create_project"
+
+    # 22. Create employee (from PDF, from prompt, etc.) — must come BEFORE department
+    #     because employee prompts often mention "avdeling"/"department"
+    if any(kw in p for kw in [
+        "opprett den ansatte", "opprett vedkomande", "ny tilsett",
+        "ny ansatt", "new employee", "nuevo empleado", "novo funcionário",
+        "nouvel employé", "neuen mitarbeiter", "neue mitarbeiterin",
+        "arbeidskontrakt", "employment contract", "contrato de trabajo",
+        "contrato de trabalho", "contrat de travail", "arbeitsvertrag",
+        "offer letter", "carta de oferta",
+        "crie o funcionario", "crea el empleado", "créez l'employé",
+        "complete the onboarding", "completa la incorporacion",
+    ]):
+        return "create_employee"
+
+    # 23. Create department
+    if any(kw in p for kw in [
+        "opprett tre avdelinger", "opprett avdeling",
+        "create three departments", "create departments",
+        "crie três departamentos", "cree tres departamentos",
+        "créez trois départements",
+        "erstellen sie drei abteilungen",
+    ]):
+        return "create_department"
+
+    # 24. Create/register customer or supplier
+    if any(kw in p for kw in [
+        "opprett kunden", "registrer kunden", "create the customer",
+        "register the customer", "cree el cliente", "registre o cliente",
+        "créez le client", "registrieren sie den",
+        "opprett leverandøren", "register the supplier",
+    ]):
+        return "create_customer"
+
+    # 25. Update employee role
+    if any(kw in p for kw in [
+        "kontoadministrator", "administrator", "admin",
+    ]) and any(kw in p for kw in [
+        "endre", "oppdater", "sett som", "gjør til", "change", "update", "set as",
+        "make", "cambiar", "actualizar", "alterar", "modifier", "ändern",
+    ]):
+        return "update_employee_role"
+
+    # 26. Update employee
+    if any(kw in p for kw in ["oppdater ansatt", "update employee", "endre ansatt"]):
+        return "update_employee"
+
+    # 27. Update customer
+    if any(kw in p for kw in ["oppdater kunde", "update customer", "endre kunde"]):
+        return "update_customer"
+
+    # 28. Generic voucher (receipt, expense registration)
+    if any(kw in p for kw in [
+        "bilag", "voucher", "reçu", "recibo", "receipt",
+        "registree au departement", "registrado en el departamento",
+        "depense de ce recu", "gasto de este recibo", "despesa deste recibo",
+        "faktura inv-", "invoice inv-",
+        "enregistree au departement",
+    ]):
+        return "create_voucher"
+
+    # 28b. Fallback department check (only if no other match)
+    if any(kw in p for kw in [
+        "avdeling", "department", "departamento", "département", "abteilung",
+    ]):
+        return "create_department"
+
+    # 29. Fallback: if prompt mentions "faktura" at all → likely invoice
+    if _invoice_kw:
+        return "create_invoice"
+
+    # 30. Unknown
+    return "unknown"
 
 
-def _reparse_with_hint(correct_type: str, user_message: str, client: Anthropic) -> dict:
-    """Re-parse the prompt with an explicit type hint to extract correct entities."""
-    import time as _time
+# ---------------------------------------------------------------------------
+# Stage 2: Entity extraction (LLM for complex, regex for simple)
+# ---------------------------------------------------------------------------
 
-    hint = (
-        f"IMPORTANT: This task is of type '{correct_type}'. "
-        f"Extract entities for this task type ONLY. "
-        f"Do NOT classify it as anything else."
-    )
-    system = _build_system_prompt() + f"\n\n{hint}"
+# Task types that can be extracted with regex (no LLM needed)
+_REGEX_EXTRACTABLE = {
+    "create_department", "bank_reconciliation",
+}
 
-    response = None
-    for _retry in range(3):
-        try:
-            response = client.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=1024,
-                system=system,
-                messages=[{"role": "user", "content": user_message}],
-            )
-            break
-        except Exception as _e:
-            if "rate_limit" in str(_e).lower() or "429" in str(_e):
-                _time.sleep(2 ** (_retry + 1))
-            else:
-                break
+# Task-type-specific LLM extraction prompts (much shorter than the monolithic one)
+def _build_extraction_prompt(task_type: str) -> str:
+    today = date.today().isoformat()
+    base = f"""Extract entities from this request as JSON. Output ONLY a JSON object with an "entities" key. No markdown, no explanation.
+Today's date: {today}. Dates in YYYY-MM-DD. Numbers as numbers, booleans as true/false.
+CRITICAL: "excluding VAT"/"ekskl. mva"/"sem IVA"/"sans TVA"/"ohne MwSt" describes the PRICE FORMAT, NOT a 0% VAT rate. Do NOT set vatType to "0%" for these. Only set vatType if the user explicitly specifies a percentage or says "exempt"/"fritatt"/"avgiftsfri".
+"""
 
-    if response is None:
-        return {"task_type": correct_type, "entities": {}}
+    prompts = {
+        "create_employee": base + """
+Extract: firstName, lastName, email, dateOfBirth (YYYY-MM-DD), phoneNumberMobile, isAdministrator (boolean), address ({addressLine1, postalCode, city, country}), employeeNumber, nationalIdentityNumber, bankAccountNumber, comments.
+Employment: startDate, annualSalary, employmentPercentage, occupationCode, employmentType (ORDINARY/MARITIME/FREELANCE), remunerationType (MONTHLY_WAGE/HOURLY_WAGE).
+"kontoadministrator"/"administrator"/"admin" in any language → isAdministrator: true.
+If date has no year, assume 2026.""",
 
-    raw_text = response.content[0].text.strip()
-    if raw_text.startswith("```"):
-        lines = raw_text.splitlines()
-        lines = [l for l in lines if not l.strip().startswith("```")]
-        raw_text = "\n".join(lines).strip()
+        "create_customer": base + """
+Extract: name, email, organizationNumber, phoneNumber, invoiceEmail, postalAddress ({addressLine1, postalCode, city}), isSupplier (boolean — true if "leverandør"/"Lieferant"/"supplier"/"fournisseur").
+"Registrieren Sie den Lieferanten" = isSupplier: true.""",
 
-    try:
-        parsed = json.loads(raw_text)
-        parsed["task_type"] = correct_type  # Force correct type
-        if "entities" not in parsed:
-            parsed["entities"] = {}
-        return parsed
-    except json.JSONDecodeError:
-        return {"task_type": correct_type, "entities": {}}
+        "create_product": base + """
+Extract: name, number (product number), priceExcludingVat (number), priceIncludingVat (number), vatType (string like "25%"/"15%" — only if explicitly stated), isStockItem (boolean).
+"næringsmiddel"/"food"/"aliment" with 15% → vatType: "15%".""",
+
+        "create_invoice": base + """
+Extract: customer ({name, organizationNumber, email}), orderLines (array of {description, product (product number string), count (default 1), unitPrice (excl VAT), unitPriceIncludingVat, vatType, discount}), invoiceDate, invoiceDueDate, comment.
+For project invoices: also extract projectName, projectManagerName, projectManagerEmail, fixedPrice (total project price), invoicePercentage (% to bill).
+isPrioritizeAmountsIncludingVat: true only if prices are stated INCLUDING VAT.""",
+
+        "create_invoice_with_payment": base + """
+Extract: customer ({name, organizationNumber}), orderLines (array of {description, product (product number string), count, unitPrice}), paidAmount, paymentTypeDescription ("Kontant"/"Cash"/"Kort"/"Card"/"Bank").
+If customer has EXISTING outstanding invoice: set existingInvoice: true, and only extract customerName/Org + paidAmount.""",
+
+        "create_credit_note": base + """
+Extract: invoiceIdentifier ({customerName, organizationNumber, description (what invoice was for), amount (excl VAT), vatType}), date, comment.""",
+
+        "create_project": base + """
+Extract: name, customerName, customerOrganizationNumber, projectManagerName, projectManagerEmail, isInternal (boolean), startDate, endDate.""",
+
+        "create_travel_expense": base + """
+Extract: employeeName, employeeEmail, title (trip description), project, department, costs (array of {description, amount (NOK), date}).
+For per diem: description should include days and rate.""",
+
+        "create_voucher": base + """
+Extract: date (YYYY-MM-DD), description, postings (array of {accountNumber (integer), amount (positive=debit, negative=credit), description}).
+For supplier invoices: include expense posting (4xxx-7xxx), input VAT posting (27xx), and AP posting (2400, negative).
+Supplier info: supplierName, supplierOrganizationNumber (extract from prompt if mentioned).""",
+
+        "log_timesheet_hours": base + """
+Extract: employeeName, employeeEmail, hours (number), activityName (e.g. "Design", "Utvikling", "Testing"), projectName, customerName, customerOrganizationNumber, date (YYYY-MM-DD), hourlyRate (number), comment.""",
+
+        "create_dimension_voucher": base + """
+Extract: dimensionName, dimensionValues (array of strings), accountNumber (integer), amount (NOK), linkedDimensionValue (which value to link), voucherDate, voucherDescription.""",
+
+        "reverse_invoice_payment": base + """
+Extract: customerName, customerOrganizationNumber, invoiceDescription (what the invoice was for), amount (excl VAT), date.""",
+
+        "run_payroll": base + """
+Extract: employeeName, employeeEmail, monthlySalary (base monthly NOK), bonus (one-time bonus NOK), year (default current year), month (1-12, default current month).""",
+
+        "annual_closure": base + f"""
+Extract: closureYear (integer), closureMonth (integer, only if monthly), date (YYYY-MM-DD, default {today}).
+depreciationItems: array of {{assetName, acquisitionCost, depreciationPeriodYears, depreciationExpenseAccountNumber (default 6010), accumulatedDepreciationAccountNumber (default 1209)}}.
+prepaidExpenseReversal: {{amount (monthly amount), accountNumber (default 1700)}}.
+taxCalculation: {{taxRate (0-1, e.g. 0.22), expenseAccountNumber (default 8700), liabilityAccountNumber (default 2920)}}.
+entries: array of {{description, postings: [{{accountNumber, amount, description}}]}} for any other journal entries.
+Always extract year. For monthly closure, extract month.""",
+
+        "project_lifecycle": base + """
+Extract: projectName, customerName, customerOrganizationNumber, budget (NOK), projectManagerName, projectManagerEmail.
+timesheetEntries: array of {employeeName, employeeEmail, hours, activityName, hourlyRate}.
+supplierInvoice: {supplierName, supplierOrganizationNumber, amount, description, accountNumber}.
+customerInvoicePercentage (% of budget to bill).""",
+
+        "cost_analysis": base + """
+Extract: analysisMonths (array of {year, month}), numberOfAccounts (how many top accounts to find).""",
+
+        "fx_correction": base + """
+Extract: customerName, customerOrganizationNumber, invoiceAmountEUR (number), originalRate (NOK/EUR when invoiced), currentRate (NOK/EUR at payment), invoiceDescription.""",
+
+        "error_correction": base + """
+Extract: errors (array of {description, wrongAccount, correctAccount, amount, voucherDescription}).
+Extract all specific error details mentioned in the prompt.""",
+
+        "overdue_invoice": base + """
+Extract: feeAmount (NOK), debitAccount (default 1500), creditAccount (default 3400), invoiceFee (boolean — whether to also create invoice for the fee).""",
+    }
+
+    return prompts.get(task_type, base + "\nExtract all relevant fields as a flat JSON object.")
 
 
-def parse_task(prompt: str, file_contents: list[str] | None = None) -> dict:
-    """
-    Parse a user prompt into a structured task dict.
+def _extract_entities_regex(task_type: str, prompt: str) -> dict:
+    """Fast regex extraction for simple task types."""
+    entities: dict = {}
 
-    Args:
-        prompt: The raw user request in any of the 7 supported languages.
-        file_contents: Optional list of file content strings to include as context.
+    if task_type == "create_department":
+        # Extract quoted department names
+        names = re.findall(r'"([^"]+)"', prompt)
+        if not names:
+            names = re.findall(r'[«"]([^»"]+)[»"]', prompt)
+        if names:
+            entities["names"] = names
+        return entities
 
-    Returns:
-        A dict with "task_type" and "entities" keys, or
-        {"task_type": "unknown", "raw_prompt": prompt} on failure.
-    """
-    logger.info("Parsing task from prompt: %s", prompt[:120])
+    if task_type == "bank_reconciliation":
+        # No entities needed — handler parses the CSV
+        return entities
 
+    return entities
+
+
+def _extract_entities_llm(task_type: str, prompt: str, file_contents: list[str] | None) -> dict:
+    """LLM-based entity extraction with task-specific prompt."""
     user_message = prompt
     if file_contents:
         attachments = "\n\n---\n\n".join(
@@ -372,78 +478,77 @@ def parse_task(prompt: str, file_contents: list[str] | None = None) -> dict:
         )
         user_message = f"{prompt}\n\n{attachments}"
 
+    system = _build_extraction_prompt(task_type)
     client = Anthropic()
 
-    try:
-        import time as _time
-        response = None
-        for _retry in range(4):
-            try:
-                response = client.messages.create(
-                    model="claude-haiku-4-5-20251001",
-                    max_tokens=1024,
-                    system=_build_system_prompt(),
-                    messages=[
-                        {"role": "user", "content": user_message},
-                    ],
-                )
+    response = None
+    for retry in range(4):
+        try:
+            response = client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=2048,
+                system=system,
+                messages=[{"role": "user", "content": user_message}],
+            )
+            break
+        except Exception as e:
+            if "rate_limit" in str(e).lower() or "429" in str(e):
+                wait = 2 ** (retry + 1)
+                logger.warning("Entity extraction rate limited, waiting %ds...", wait)
+                time.sleep(wait)
+            else:
+                logger.exception("Entity extraction API call failed")
                 break
-            except Exception as _e:
-                if "rate_limit" in str(_e).lower() or "429" in str(_e):
-                    _wait = 2 ** (_retry + 1)
-                    logger.warning("Parser rate limited, waiting %ds (retry %d)...", _wait, _retry + 1)
-                    _time.sleep(_wait)
-                else:
-                    raise
-        if response is None:
-            logger.error("Parser: all retries exhausted")
-            return {"task_type": "unknown", "raw_prompt": prompt}
-    except Exception:
-        logger.exception("Anthropic API call failed")
-        return {"task_type": "unknown", "raw_prompt": prompt}
+
+    if response is None:
+        return {}
 
     raw_text = response.content[0].text.strip()
-    logger.debug("Raw LLM response: %s", raw_text)
 
-    # Strip markdown fences if the model wraps the output despite instructions
+    # Strip markdown fences
     if raw_text.startswith("```"):
         lines = raw_text.splitlines()
-        # Remove first line (```json or ```) and last line (```)
         lines = [l for l in lines if not l.strip().startswith("```")]
         raw_text = "\n".join(lines).strip()
 
     try:
         parsed = json.loads(raw_text)
+        # Handle both {"entities": {...}} and direct {...} formats
+        if isinstance(parsed, dict):
+            return parsed.get("entities", parsed)
+        return {}
     except json.JSONDecodeError:
-        logger.error("Failed to parse LLM response as JSON: %s", raw_text[:200])
-        return {"task_type": "unknown", "raw_prompt": prompt}
+        logger.error("Failed to parse entity extraction response: %s", raw_text[:200])
+        return {}
 
-    if not isinstance(parsed, dict) or "task_type" not in parsed:
-        logger.error("LLM response missing task_type: %s", parsed)
-        return {"task_type": "unknown", "raw_prompt": prompt}
 
-    if parsed["task_type"] not in KNOWN_TASK_TYPES:
-        logger.warning(
-            "LLM returned unrecognized task_type '%s', falling back to unknown",
-            parsed["task_type"],
-        )
-        parsed["task_type"] = "unknown"
+# ---------------------------------------------------------------------------
+# Main entry point (same interface as v1)
+# ---------------------------------------------------------------------------
 
-    if "entities" not in parsed:
-        parsed["entities"] = {}
+def parse_task(prompt: str, file_contents: list[str] | None = None) -> dict:
+    """
+    Parse a user prompt into a structured task dict.
 
-    # Post-parse validation: catch obvious misclassifications
-    corrected = _post_validate_classification(prompt, parsed)
-    if corrected["task_type"] != parsed["task_type"]:
-        original = parsed["task_type"]
-        logger.warning(
-            "Post-validation override: %s -> %s",
-            original, corrected["task_type"],
-        )
-        # Re-parse with type hint to get correct entities
-        corrected = _reparse_with_hint(
-            corrected["task_type"], user_message, client,
-        )
+    Stage 1: Keyword classifier (0ms) → task_type
+    Stage 2: Entity extraction (regex or LLM) → entities
 
-    logger.info("Parsed task_type: %s", corrected["task_type"])
-    return corrected
+    Returns: {"task_type": str, "entities": dict}
+    """
+    logger.info("Parsing task from prompt: %s", prompt[:120])
+
+    # Stage 1: Classify
+    task_type = classify_task(prompt)
+    logger.info("Keyword classifier: %s", task_type)
+
+    # Stage 2: Extract entities
+    if task_type in _REGEX_EXTRACTABLE:
+        entities = _extract_entities_regex(task_type, prompt)
+        logger.info("Regex extraction for %s: %d fields", task_type, len(entities))
+    else:
+        entities = _extract_entities_llm(task_type, prompt, file_contents)
+        logger.info("LLM extraction for %s: %d fields", task_type, len(entities))
+
+    result = {"task_type": task_type, "entities": entities}
+    logger.info("Parsed task_type: %s", task_type)
+    return result

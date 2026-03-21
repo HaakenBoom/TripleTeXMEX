@@ -286,13 +286,18 @@ def analyze_run(data: dict) -> dict:
 
 
 def _extract_error_msg(call: dict) -> str:
-    rb = call.get("response_body", {})
+    rb = call.get("response_body")
+    if rb is None:
+        return "(no response body)"
     if not isinstance(rb, dict):
         return str(rb)[:100]
     vm = rb.get("validationMessages", [])
     if vm:
         return "; ".join(f"{v.get('field', '?')}: {v.get('message', '')}" for v in vm)[:150]
-    return rb.get("message", str(rb))[:100]
+    msg = rb.get("message")
+    if msg is None:
+        msg = str(rb)
+    return str(msg)[:100]
 
 
 def _extract_key_fields(endpoint: str, val: dict) -> dict:

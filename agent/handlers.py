@@ -1389,6 +1389,13 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
         except Exception as e:
             logger.warning("Failed to add cost to travel expense: %s", e)
 
+    # Deliver the travel expense (mark as completed)
+    try:
+        deliver_result = client.put(f"/travelExpense/{te_id}/:deliver")
+        logger.info("Delivered travel expense %d: %s", te_id, deliver_result)
+    except Exception as e:
+        logger.warning("Failed to deliver travel expense %d: %s", te_id, e)
+
     return (
         f"Created travel expense '{value.get('title', '')}' "
         f"(id={te_id})"
@@ -1750,6 +1757,9 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
         "date": entry_date,
         "hours": hours,
     }
+    # Set hourly rate on the entry if provided (some Tripletex setups support this)
+    if entities.get("hourlyRate"):
+        entry_body["hourlyCharge"] = entities["hourlyRate"]
     if entities.get("comment"):
         entry_body["comment"] = entities["comment"]
 

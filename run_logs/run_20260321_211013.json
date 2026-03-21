@@ -1,0 +1,4586 @@
+{
+  "timestamp": "2026-03-21T21:10:13.408314",
+  "prompt_fingerprint": "a6d6bc3d40a5",
+  "prompt": "Die Gesamtkosten sind von Januar bis Februar 2026 deutlich gestiegen. Analysieren Sie das Hauptbuch und identifizieren Sie die drei Aufwandskonten mit dem größten Anstieg. Erstellen Sie für jedes der drei Konten ein internes Projekt mit dem Kontonamen. Erstellen Sie außerdem eine Aktivität für jedes Projekt.",
+  "prompt_language": "de",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "cost_analysis",
+    "entities": {
+      "analysisMonths": [
+        {
+          "year": 2026,
+          "month": 1
+        },
+        {
+          "year": 2026,
+          "month": 2
+        }
+      ],
+      "numberOfAccounts": 3
+    },
+    "raw_prompt": "Die Gesamtkosten sind von Januar bis Februar 2026 deutlich gestiegen. Analysieren Sie das Hauptbuch und identifizieren Sie die drei Aufwandskonten mit dem größten Anstieg. Erstellen Sie für jedes der drei Konten ein internes Projekt mit dem Kontonamen. Erstellen Sie außerdem eine Aktivität für jedes Projekt.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": null,
+  "handler_returned_none": true,
+  "elapsed_seconds": 60.29,
+  "phase_times": {
+    "parse": 0.86,
+    "prefetch": 0.0,
+    "handler": 0.0,
+    "agent_loop": 58.67
+  },
+  "total_api_calls": 17,
+  "errors_4xx": 4,
+  "status_counts": {
+    "2xx": 13,
+    "4xx": 4
+  },
+  "call_phases": {
+    "prefetch": 5,
+    "action": 5,
+    "wasted": 4,
+    "lookup": 3
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402037052
+    },
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402037054
+    },
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402037055
+    },
+    {
+      "method": "POST",
+      "endpoint": "/project/projectActivity",
+      "status": 201,
+      "entity_id": 19805882
+    },
+    {
+      "method": "POST",
+      "endpoint": "/project/projectActivity",
+      "status": 201,
+      "entity_id": 19805883
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T21:09:14.306548",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/vatType",
+      "status": 200,
+      "request_params": {
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 56,
+        "from": 0,
+        "count": 56,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 1,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1",
+            "name": "Fradrag inngående avgift, høy sats",
+            "number": "1",
+            "displayName": "1: (25%) Fradrag inngående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 2,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/2",
+            "name": "Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-2",
+            "displayName": "UT-2: (100%) Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 3,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3",
+            "name": "Utgående avgift, høy sats",
+            "number": "3",
+            "displayName": "3: (25%) Utgående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 4,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/4",
+            "name": "Direktepostert utgående avgift, høy sats",
+            "number": "4",
+            "displayName": "4: (100%) Direktepostert utgående avgift, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 5,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5",
+            "name": "Ingen utgående avgift (innenfor mva-loven)",
+            "number": "5",
+            "displayName": "5: (0%) Ingen utgående avgift (innenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 6,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/6",
+            "name": "Ingen utgående avgift (utenfor mva-loven)",
+            "number": "6",
+            "displayName": "6: (0%) Ingen utgående avgift (utenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 7,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/7",
+            "name": "Ingen avgiftsbehandling (inntekter)",
+            "number": "7",
+            "displayName": "7: (0%) Ingen avgiftsbehandling (inntekter)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 11,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11",
+            "name": "Fradrag inngående avgift, middels sats",
+            "number": "11",
+            "displayName": "11: (15%) Fradrag inngående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 12,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12",
+            "name": "Fradrag inngående avgift, lav sats",
+            "number": "13",
+            "displayName": "13: (12%) Fradrag inngående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 13,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13",
+            "name": "Grunnlag inngående avgift ved innførsel, høy sats",
+            "number": "21",
+            "displayName": "21: (0%) Grunnlag inngående avgift ved innførsel, høy sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 14,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14",
+            "name": "Grunnlag inngående avgift ved innførsel, middels sats",
+            "number": "22",
+            "displayName": "22: (0%) Grunnlag inngående avgift ved innførsel, middels sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 21,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/21",
+            "name": "Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-21",
+            "displayName": "UT-21: (100%) Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 22,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/22",
+            "name": "Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-22",
+            "displayName": "UT-22: (100%) Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 23,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/23",
+            "name": "Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "number": "14",
+            "displayName": "14: (100%) Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 24,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/24",
+            "name": "Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "number": "15",
+            "displayName": "15: (100%) Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 31,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31",
+            "name": "Utgående avgift, middels sats",
+            "number": "31",
+            "displayName": "31: (15%) Utgående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 32,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32",
+            "name": "Utgående avgift, lav sats",
+            "number": "33",
+            "displayName": "33: (12%) Utgående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 34,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "number": "86",
+            "displayName": "86: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 35,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "number": "87",
+            "displayName": "87: (25%) Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 41,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/41",
+            "name": "Direktepostert utgående avgift, middels sats",
+            "number": "41",
+            "displayName": "41: (100%) Direktepostert utgående avgift, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 42,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/42",
+            "name": "Direktepostert utgående avgift, lav sats",
+            "number": "42",
+            "displayName": "42: (100%) Direktepostert utgående avgift, lav sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 51,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/51",
+            "name": "Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "number": "51",
+            "displayName": "51: (0%) Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 52,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/52",
+            "name": "Avgiftsfri utførsel av varer og tjenester",
+            "number": "52",
+            "displayName": "52: (0%) Avgiftsfri utførsel av varer og tjenester",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 81,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats",
+            "number": "81",
+            "displayName": "81: (25%) Fradrag inngående avgift ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 82,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/82",
+            "name": "Inngående avgift uten fradrag ved innførsel, høy sats",
+            "number": "82",
+            "displayName": "82: (25%) Inngående avgift uten fradrag ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 83,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/83",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats",
+            "number": "83",
+            "displayName": "83: (15%) Fradrag inngående avgift ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 84,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/84",
+            "name": "Inngående avgift uten fradrag ved innførsel, middels sats",
+            "number": "84",
+            "displayName": "84: (15%) Inngående avgift uten fradrag ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 85,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/85",
+            "name": "Grunnlag, avgiftsfri innførsel",
+            "number": "85",
+            "displayName": "85: (0%) Grunnlag, avgiftsfri innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 88,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/88",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "number": "88",
+            "displayName": "88: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 89,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/89",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "number": "89",
+            "displayName": "89: (12%) Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 91,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/91",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "number": "91",
+            "displayName": "91: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 92,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/92",
+            "name": "Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "number": "92",
+            "displayName": "92: (25%) Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 111,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111",
+            "name": "Fradrag inngående avgift, råfisk",
+            "number": "12",
+            "displayName": "12: (11,11%) Fradrag inngående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 230,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230",
+            "name": "Grunnlag, ingen inngående avgift ved innførsel",
+            "number": "20",
+            "displayName": "20: (0%) Grunnlag, ingen inngående avgift ved innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 311,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311",
+            "name": "Utgående avgift, råfisk",
+            "number": "32",
+            "displayName": "32: (11,11%) Utgående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/500",
+            "name": "Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "number": "URED-13",
+            "displayName": "URED-13: (12%) Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 501,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/501",
+            "name": "Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "number": "RED-13",
+            "displayName": "RED-13: (6%) Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "percentage": 6,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 550,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550",
+            "name": "Tap på krav - kode 1",
+            "number": "TAP-1",
+            "displayName": "TAP-1: (25%) Tap på krav - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 551,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551",
+            "name": "Tap på krav - kode 11",
+            "number": "TAP-11",
+            "displayName": "TAP-11: (15%) Tap på krav - kode 11",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            }
+          },
+          {
+            "id": 552,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/552",
+            "name": "Tap på krav - kode 12",
+            "number": "TAP-12",
+            "displayName": "TAP-12: (11,11%) Tap på krav - kode 12",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 111,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111"
+            }
+          },
+          {
+            "id": 553,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553",
+            "name": "Tap på krav - kode 13",
+            "number": "TAP-13",
+            "displayName": "TAP-13: (12%) Tap på krav - kode 13",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            }
+          },
+          {
+            "id": 554,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/554",
+            "name": "Uttak - kode 3",
+            "number": "UTTAK-3",
+            "displayName": "UTTAK-3: (25%) Uttak - kode 3",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            }
+          },
+          {
+            "id": 555,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/555",
+            "name": "Uttak - kode 5",
+            "number": "UTTAK-5",
+            "displayName": "UTTAK-5: (0%) Uttak - kode 5",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 5,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5"
+            }
+          },
+          {
+            "id": 556,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/556",
+            "name": "Uttak - kode 31",
+            "number": "UTTAK-31",
+            "displayName": "UTTAK-31: (15%) Uttak - kode 31",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 31,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31"
+            }
+          },
+          {
+            "id": 557,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/557",
+            "name": "Uttak - kode 32",
+            "number": "UTTAK-32",
+            "displayName": "UTTAK-32: (11,11%) Uttak - kode 32",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 311,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311"
+            }
+          },
+          {
+            "id": 558,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/558",
+            "name": "Uttak - kode 33",
+            "number": "UTTAK-33",
+            "displayName": "UTTAK-33: (12%) Uttak - kode 33",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 32,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32"
+            }
+          },
+          {
+            "id": 559,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559",
+            "name": "Mva-justering for kapitalvarer - kode 1",
+            "number": "JUST-1",
+            "displayName": "JUST-1: (25%) Mva-justering for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 560,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 1",
+            "number": "TILB-1",
+            "displayName": "TILB-1: (25%) Tilbakeføring av mva for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 561,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/561",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 81",
+            "number": "TILB-81",
+            "displayName": "TILB-81: (25%) Tilbakeføring av mva for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 562,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/562",
+            "name": "Mva-justering for kapitalvarer - kode 81",
+            "number": "JUST-81",
+            "displayName": "JUST-81: (25%) Mva-justering for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 600,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/600",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "number": "81-K",
+            "displayName": "81-K: (25%) Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 601,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/601",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "number": "83-K",
+            "displayName": "83-K: (15%) Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 602,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/602",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "number": "86-K",
+            "displayName": "86-K: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 603,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/603",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "number": "88-K",
+            "displayName": "88-K: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 604,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/604",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "number": "91-K",
+            "displayName": "91-K: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 0,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0",
+            "name": "Ingen avgiftsbehandling",
+            "number": "0",
+            "displayName": "0: (0%) Ingen avgiftsbehandling",
+            "percentage": 0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:14.742670",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/token/session/>whoAmI",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "employeeId": 18669683,
+          "actualEmployeeId": 18669684,
+          "employee": {
+            "id": 18669683,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669683"
+          },
+          "companyId": 108425661,
+          "company": {
+            "id": 108425661,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/company/108425661"
+          },
+          "language": "no",
+          "loggedInWithConnect": false,
+          "employeeIsProxy": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:18.524544",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/posting",
+      "status": 200,
+      "request_params": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-31",
+        "count": 10000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 21,
+        "from": 0,
+        "count": 21,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 3845810583,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810583",
+            "voucher": {
+              "id": 609153361,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153361"
+            },
+            "date": "2026-01-10",
+            "description": "Lønn januar",
+            "account": {
+              "id": 472755581,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755581"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 150000.0,
+            "amountCurrency": 150000.0,
+            "amountGross": 150000.0,
+            "amountGrossCurrency": 150000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810585,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810585",
+            "voucher": {
+              "id": 609153361,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153361"
+            },
+            "date": "2026-01-10",
+            "description": "Lønn januar",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -150000.0,
+            "amountCurrency": -150000.0,
+            "amountGross": -150000.0,
+            "amountGrossCurrency": -150000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810603,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810603",
+            "voucher": {
+              "id": 609153369,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153369"
+            },
+            "date": "2026-01-12",
+            "description": "Kontorrekvisita jan",
+            "account": {
+              "id": 472755650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755650"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 4000.0,
+            "amountCurrency": 4000.0,
+            "amountGross": 4000.0,
+            "amountGrossCurrency": 4000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810604,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810604",
+            "voucher": {
+              "id": 609153369,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153369"
+            },
+            "date": "2026-01-12",
+            "description": "Kontorrekvisita jan",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -4000.0,
+            "amountCurrency": -4000.0,
+            "amountGross": -4000.0,
+            "amountGrossCurrency": -4000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810636,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810636",
+            "voucher": {
+              "id": 609153382,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153382"
+            },
+            "date": "2026-01-14",
+            "description": "IT-utstyr jan",
+            "account": {
+              "id": 472755661,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755661"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "amount": 2400.0,
+            "amountCurrency": 2400.0,
+            "amountGross": 3000.0,
+            "amountGrossCurrency": 3000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810637,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810637",
+            "voucher": {
+              "id": 609153382,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153382"
+            },
+            "date": "2026-01-14",
+            "description": "IT-utstyr jan",
+            "account": {
+              "id": 472755454,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755454"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": {
+              "id": 108425675,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108425675"
+            },
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -3000.0,
+            "amountCurrency": -3000.0,
+            "amountGross": -3000.0,
+            "amountGrossCurrency": -3000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810641,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810641",
+            "voucher": {
+              "id": 609153382,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153382"
+            },
+            "date": "2026-01-14",
+            "description": "IT-utstyr jan",
+            "account": {
+              "id": 472755476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755476"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 600.0,
+            "amountCurrency": 600.0,
+            "amountGross": 600.0,
+            "amountGrossCurrency": 600.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810653,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810653",
+            "voucher": {
+              "id": 609153388,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153388"
+            },
+            "date": "2026-01-16",
+            "description": "Leiekostnader jan",
+            "account": {
+              "id": 472755650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755650"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 12000.0,
+            "amountCurrency": 12000.0,
+            "amountGross": 12000.0,
+            "amountGrossCurrency": 12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810654,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810654",
+            "voucher": {
+              "id": 609153388,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153388"
+            },
+            "date": "2026-01-16",
+            "description": "Leiekostnader jan",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -12000.0,
+            "amountCurrency": -12000.0,
+            "amountGross": -12000.0,
+            "amountGrossCurrency": -12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810672,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810672",
+            "voucher": {
+              "id": 609153395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153395"
+            },
+            "date": "2026-01-18",
+            "description": "Bilkostnader jan",
+            "account": {
+              "id": 472755696,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755696"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 5000.0,
+            "amountCurrency": 5000.0,
+            "amountGross": 5000.0,
+            "amountGrossCurrency": 5000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810675,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810675",
+            "voucher": {
+              "id": 609153395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153395"
+            },
+            "date": "2026-01-18",
+            "description": "Bilkostnader jan",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -5000.0,
+            "amountCurrency": -5000.0,
+            "amountGross": -5000.0,
+            "amountGrossCurrency": -5000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810702,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810702",
+            "voucher": {
+              "id": 609153403,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153403"
+            },
+            "date": "2026-01-20",
+            "description": "Reklame jan",
+            "account": {
+              "id": 472755704,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755704"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "amount": 6400.0,
+            "amountCurrency": 6400.0,
+            "amountGross": 8000.0,
+            "amountGrossCurrency": 8000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810704,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810704",
+            "voucher": {
+              "id": 609153403,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153403"
+            },
+            "date": "2026-01-20",
+            "description": "Reklame jan",
+            "account": {
+              "id": 472755454,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755454"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": {
+              "id": 108425675,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108425675"
+            },
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -8000.0,
+            "amountCurrency": -8000.0,
+            "amountGross": -8000.0,
+            "amountGrossCurrency": -8000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810706,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810706",
+            "voucher": {
+              "id": 609153403,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153403"
+            },
+            "date": "2026-01-20",
+            "description": "Reklame jan",
+            "account": {
+              "id": 472755476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755476"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 1600.0,
+            "amountCurrency": 1600.0,
+            "amountGross": 1600.0,
+            "amountGrossCurrency": 1600.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810722,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810722",
+            "voucher": {
+              "id": 609153410,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153410"
+            },
+            "date": "2026-01-22",
+            "description": "Forsikring jan",
+            "account": {
+              "id": 472755709,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755709"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "amount": 4800.0,
+            "amountCurrency": 4800.0,
+            "amountGross": 6000.0,
+            "amountGrossCurrency": 6000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810723,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810723",
+            "voucher": {
+              "id": 609153410,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153410"
+            },
+            "date": "2026-01-22",
+            "description": "Forsikring jan",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -6000.0,
+            "amountCurrency": -6000.0,
+            "amountGross": -6000.0,
+            "amountGrossCurrency": -6000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810725,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810725",
+            "voucher": {
+              "id": 609153410,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153410"
+            },
+            "date": "2026-01-22",
+            "description": "Forsikring jan",
+            "account": {
+              "id": 472755476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755476"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 1200.0,
+            "amountCurrency": 1200.0,
+            "amountGross": 1200.0,
+            "amountGrossCurrency": 1200.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810775,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810775",
+            "voucher": {
+              "id": 609153431,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153431"
+            },
+            "date": "2026-01-25",
+            "description": "Salgsinntekt jan",
+            "account": {
+              "id": 472755339,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755339"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": {
+              "id": 108425692,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108425692"
+            },
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 500000.0,
+            "amountCurrency": 500000.0,
+            "amountGross": 500000.0,
+            "amountGrossCurrency": 500000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810776,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810776",
+            "voucher": {
+              "id": 609153431,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153431"
+            },
+            "date": "2026-01-25",
+            "description": "Salgsinntekt jan",
+            "account": {
+              "id": 472755506,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755506"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "amount": -320000.0,
+            "amountCurrency": -320000.0,
+            "amountGross": -400000.0,
+            "amountGrossCurrency": -400000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810777,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810777",
+            "voucher": {
+              "id": 609153431,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153431"
+            },
+            "date": "2026-01-25",
+            "description": "Salgsinntekt jan",
+            "account": {
+              "id": 472755468,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755468"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -100000.0,
+            "amountCurrency": -100000.0,
+            "amountGross": -100000.0,
+            "amountGrossCurrency": -100000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 3,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810780,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810780",
+            "voucher": {
+              "id": 609153431,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153431"
+            },
+            "date": "2026-01-25",
+            "description": "Salgsinntekt jan",
+            "account": {
+              "id": 472755468,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755468"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -80000.0,
+            "amountCurrency": -80000.0,
+            "amountGross": -80000.0,
+            "amountGrossCurrency": -80000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:21.850322",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/posting",
+      "status": 200,
+      "request_params": {
+        "dateFrom": "2026-02-01",
+        "dateTo": "2026-02-28",
+        "count": 10000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 21,
+        "from": 0,
+        "count": 21,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 3845810788,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810788",
+            "voucher": {
+              "id": 609153435,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153435"
+            },
+            "date": "2026-02-10",
+            "description": "Lønn februar",
+            "account": {
+              "id": 472755581,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755581"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 155000.0,
+            "amountCurrency": 155000.0,
+            "amountGross": 155000.0,
+            "amountGrossCurrency": 155000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810789,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810789",
+            "voucher": {
+              "id": 609153435,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153435"
+            },
+            "date": "2026-02-10",
+            "description": "Lønn februar",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -155000.0,
+            "amountCurrency": -155000.0,
+            "amountGross": -155000.0,
+            "amountGrossCurrency": -155000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810806,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810806",
+            "voucher": {
+              "id": 609153442,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153442"
+            },
+            "date": "2026-02-12",
+            "description": "Kontorrekvisita feb",
+            "account": {
+              "id": 472755650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755650"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 4500.0,
+            "amountCurrency": 4500.0,
+            "amountGross": 4500.0,
+            "amountGrossCurrency": 4500.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810807,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810807",
+            "voucher": {
+              "id": 609153442,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153442"
+            },
+            "date": "2026-02-12",
+            "description": "Kontorrekvisita feb",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -4500.0,
+            "amountCurrency": -4500.0,
+            "amountGross": -4500.0,
+            "amountGrossCurrency": -4500.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810829,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810829",
+            "voucher": {
+              "id": 609153451,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153451"
+            },
+            "date": "2026-02-14",
+            "description": "IT-utstyr feb - nytt serverutstyr",
+            "account": {
+              "id": 472755661,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755661"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "amount": 8000.0,
+            "amountCurrency": 8000.0,
+            "amountGross": 10000.0,
+            "amountGrossCurrency": 10000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810831,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810831",
+            "voucher": {
+              "id": 609153451,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153451"
+            },
+            "date": "2026-02-14",
+            "description": "IT-utstyr feb - nytt serverutstyr",
+            "account": {
+              "id": 472755454,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755454"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": {
+              "id": 108425675,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108425675"
+            },
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -10000.0,
+            "amountCurrency": -10000.0,
+            "amountGross": -10000.0,
+            "amountGrossCurrency": -10000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810833,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810833",
+            "voucher": {
+              "id": 609153451,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153451"
+            },
+            "date": "2026-02-14",
+            "description": "IT-utstyr feb - nytt serverutstyr",
+            "account": {
+              "id": 472755476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755476"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 2000.0,
+            "amountCurrency": 2000.0,
+            "amountGross": 2000.0,
+            "amountGrossCurrency": 2000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810846,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810846",
+            "voucher": {
+              "id": 609153457,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153457"
+            },
+            "date": "2026-02-16",
+            "description": "Leiekostnader feb",
+            "account": {
+              "id": 472755650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755650"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 12000.0,
+            "amountCurrency": 12000.0,
+            "amountGross": 12000.0,
+            "amountGrossCurrency": 12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810847,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810847",
+            "voucher": {
+              "id": 609153457,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153457"
+            },
+            "date": "2026-02-16",
+            "description": "Leiekostnader feb",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -12000.0,
+            "amountCurrency": -12000.0,
+            "amountGross": -12000.0,
+            "amountGrossCurrency": -12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810870,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810870",
+            "voucher": {
+              "id": 609153463,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153463"
+            },
+            "date": "2026-02-18",
+            "description": "Bilkostnader feb - nye leasingbiler",
+            "account": {
+              "id": 472755696,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755696"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 12000.0,
+            "amountCurrency": 12000.0,
+            "amountGross": 12000.0,
+            "amountGrossCurrency": 12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810872,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810872",
+            "voucher": {
+              "id": 609153463,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153463"
+            },
+            "date": "2026-02-18",
+            "description": "Bilkostnader feb - nye leasingbiler",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -12000.0,
+            "amountCurrency": -12000.0,
+            "amountGross": -12000.0,
+            "amountGrossCurrency": -12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810892,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810892",
+            "voucher": {
+              "id": 609153470,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153470"
+            },
+            "date": "2026-02-20",
+            "description": "Reklame feb - kampanje",
+            "account": {
+              "id": 472755704,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755704"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "amount": 9600.0,
+            "amountCurrency": 9600.0,
+            "amountGross": 12000.0,
+            "amountGrossCurrency": 12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810893,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810893",
+            "voucher": {
+              "id": 609153470,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153470"
+            },
+            "date": "2026-02-20",
+            "description": "Reklame feb - kampanje",
+            "account": {
+              "id": 472755454,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755454"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": {
+              "id": 108425675,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108425675"
+            },
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -12000.0,
+            "amountCurrency": -12000.0,
+            "amountGross": -12000.0,
+            "amountGrossCurrency": -12000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810894,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810894",
+            "voucher": {
+              "id": 609153470,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153470"
+            },
+            "date": "2026-02-20",
+            "description": "Reklame feb - kampanje",
+            "account": {
+              "id": 472755476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755476"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 2400.0,
+            "amountCurrency": 2400.0,
+            "amountGross": 2400.0,
+            "amountGrossCurrency": 2400.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810910,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810910",
+            "voucher": {
+              "id": 609153476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153476"
+            },
+            "date": "2026-02-22",
+            "description": "Forsikring feb",
+            "account": {
+              "id": 472755709,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755709"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "amount": 5200.0,
+            "amountCurrency": 5200.0,
+            "amountGross": 6500.0,
+            "amountGrossCurrency": 6500.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": false,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810912,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810912",
+            "voucher": {
+              "id": 609153476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153476"
+            },
+            "date": "2026-02-22",
+            "description": "Forsikring feb",
+            "account": {
+              "id": 472755395,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755395"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -6500.0,
+            "amountCurrency": -6500.0,
+            "amountGross": -6500.0,
+            "amountGrossCurrency": -6500.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810914,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810914",
+            "voucher": {
+              "id": 609153476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153476"
+            },
+            "date": "2026-02-22",
+            "description": "Forsikring feb",
+            "account": {
+              "id": 472755476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755476"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 1300.0,
+            "amountCurrency": 1300.0,
+            "amountGross": 1300.0,
+            "amountGrossCurrency": 1300.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810926,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810926",
+            "voucher": {
+              "id": 609153482,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153482"
+            },
+            "date": "2026-02-25",
+            "description": "Salgsinntekt feb",
+            "account": {
+              "id": 472755339,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755339"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": {
+              "id": 108425692,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108425692"
+            },
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": 500000.0,
+            "amountCurrency": 500000.0,
+            "amountGross": 500000.0,
+            "amountGrossCurrency": 500000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 1,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810927,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810927",
+            "voucher": {
+              "id": 609153482,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153482"
+            },
+            "date": "2026-02-25",
+            "description": "Salgsinntekt feb",
+            "account": {
+              "id": 472755506,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755506"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "amount": -320000.0,
+            "amountCurrency": -320000.0,
+            "amountGross": -400000.0,
+            "amountGrossCurrency": -400000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 2,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810928,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810928",
+            "voucher": {
+              "id": 609153482,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153482"
+            },
+            "date": "2026-02-25",
+            "description": "Salgsinntekt feb",
+            "account": {
+              "id": 472755468,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755468"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -100000.0,
+            "amountCurrency": -100000.0,
+            "amountGross": -100000.0,
+            "amountGrossCurrency": -100000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 3,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": false,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          },
+          {
+            "id": 3845810935,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845810935",
+            "voucher": {
+              "id": 609153482,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609153482"
+            },
+            "date": "2026-02-25",
+            "description": "Salgsinntekt feb",
+            "account": {
+              "id": 472755468,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755468"
+            },
+            "amortizationAccount": null,
+            "amortizationStartDate": null,
+            "amortizationEndDate": null,
+            "customer": null,
+            "supplier": null,
+            "employee": null,
+            "project": null,
+            "product": null,
+            "department": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "amount": -80000.0,
+            "amountCurrency": -80000.0,
+            "amountGross": -80000.0,
+            "amountGrossCurrency": -80000.0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "closeGroup": null,
+            "invoiceNumber": "",
+            "termOfPayment": null,
+            "row": 0,
+            "type": null,
+            "externalRef": "",
+            "systemGenerated": true,
+            "taxTransactionType": "(Ikke valgt)",
+            "taxTransactionTypeId": 0,
+            "matched": false,
+            "quantityAmount1": 0,
+            "quantityType1": null,
+            "quantityAmount2": 0,
+            "quantityType2": null,
+            "isVatReadonly": true,
+            "isAmountVatClosed": false,
+            "postingRuleId": 0,
+            "freeAccountingDimension1": null,
+            "freeAccountingDimension2": null,
+            "freeAccountingDimension3": null,
+            "asset": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:27.722156",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "id": "472755581,472755650,472755661,472755696,472755704,472755709",
+        "count": 10
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 6,
+        "from": 0,
+        "count": 6,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 472755581,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755581",
+            "number": 5000,
+            "numberPretty": "5000",
+            "name": "Lønn til ansatte",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "50",
+            "groupingCode": "5000",
+            "displayName": "5000 Lønn til ansatte",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          },
+          {
+            "id": 472755650,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755650",
+            "number": 6300,
+            "numberPretty": "6300",
+            "name": "Leie lokale",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "63",
+            "groupingCode": "6300",
+            "displayName": "6300 Leie lokale",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          },
+          {
+            "id": 472755661,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755661",
+            "number": 6500,
+            "numberPretty": "6500",
+            "name": "Motordrevet verktøy",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "65",
+            "groupingCode": "6500",
+            "displayName": "6500 Motordrevet verktøy",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          },
+          {
+            "id": 472755696,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755696",
+            "number": 7100,
+            "numberPretty": "7100",
+            "name": "Bilgodtgjørelse oppgavepliktig",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "71",
+            "groupingCode": "7155",
+            "displayName": "7100 Bilgodtgjørelse oppgavepliktig",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          },
+          {
+            "id": 472755704,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755704",
+            "number": 7300,
+            "numberPretty": "7300",
+            "name": "Salgskostnad",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "73",
+            "groupingCode": "7330",
+            "displayName": "7300 Salgskostnad",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          },
+          {
+            "id": 472755709,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/472755709",
+            "number": 7400,
+            "numberPretty": "7400",
+            "name": "Kontingent, fradragsberettiget",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "74",
+            "groupingCode": "7400",
+            "displayName": "7400 Kontingent, fradragsberettiget",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:38.947070",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "name": "Bilgodtgjørelse oppgavepliktig",
+        "number": "7100-PROJ",
+        "isInternal": true,
+        "description": "Internt prosjekt for analyse av bilgodtgjørelse kostnadene"
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": null,
+            "message": "Feltet \"Prosjektleder\" må fylles ut.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "c6d76369-c140-4837-89ce-c08c5a5323e4"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:42.055863",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18669683,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669683",
+            "firstName": "Admin",
+            "lastName": "NM",
+            "displayName": "Admin NM",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "nmiai-validator@test.no",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 959100,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/959100"
+            },
+            "employments": [
+              {
+                "id": 2837431,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2837431"
+              }
+            ],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108425661,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:45.193424",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "name": "Bilgodtgjørelse oppgavepliktig",
+        "number": "7100-PROJ",
+        "isInternal": true,
+        "description": "Internt prosjekt for analyse av bilgodtgjørelse kostnadene",
+        "projectManager": {
+          "id": 18669683
+        }
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": "startDate",
+            "message": "Feltet må fylles ut.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "d58a952c-52a4-4ad6-8a2c-2982df42b3c0"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:48.562373",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Bilgodtgjørelse oppgavepliktig",
+        "number": "7100-PROJ",
+        "isInternal": true,
+        "description": "Internt prosjekt for analyse av bilgodtgjørelse kostnadene",
+        "projectManager": {
+          "id": 18669683
+        },
+        "startDate": "2026-03-01"
+      },
+      "response_body": {
+        "value": {
+          "id": 402037052,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402037052",
+          "name": "Bilgodtgjørelse oppgavepliktig",
+          "number": "7100-PROJ",
+          "displayName": "7100-PROJ Bilgodtgjørelse oppgavepliktig",
+          "description": "Internt prosjekt for analyse av bilgodtgjørelse kostnadene",
+          "projectManager": {
+            "id": 18669683,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669683"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2026-03-01",
+          "endDate": null,
+          "customer": null,
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": true,
+          "isOffer": false,
+          "isFixedPrice": false,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 0,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11089827,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11089827"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15644631,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15644631"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "7100-PROJ Bilgodtgjørelse oppgavepliktig",
+          "invoiceDueDate": 0,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Admin NM",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 0,
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:51.374241",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Motordrevet verktøy",
+        "number": "6500-PROJ",
+        "isInternal": true,
+        "description": "Internt prosjekt for analyse av motordrevet verktøy kostnadene",
+        "projectManager": {
+          "id": 18669683
+        },
+        "startDate": "2026-03-01"
+      },
+      "response_body": {
+        "value": {
+          "id": 402037054,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402037054",
+          "name": "Motordrevet verktøy",
+          "number": "6500-PROJ",
+          "displayName": "6500-PROJ Motordrevet verktøy",
+          "description": "Internt prosjekt for analyse av motordrevet verktøy kostnadene",
+          "projectManager": {
+            "id": 18669683,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669683"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2026-03-01",
+          "endDate": null,
+          "customer": null,
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": true,
+          "isOffer": false,
+          "isFixedPrice": false,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 0,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11089829,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11089829"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15644633,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15644633"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "6500-PROJ Motordrevet verktøy",
+          "invoiceDueDate": 0,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Admin NM",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 0,
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:54.038238",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Lønn til ansatte",
+        "number": "5000-PROJ",
+        "isInternal": true,
+        "description": "Internt prosjekt for analyse av lønnskostnadene",
+        "projectManager": {
+          "id": 18669683
+        },
+        "startDate": "2026-03-01"
+      },
+      "response_body": {
+        "value": {
+          "id": 402037055,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402037055",
+          "name": "Lønn til ansatte",
+          "number": "5000-PROJ",
+          "displayName": "5000-PROJ Lønn til ansatte",
+          "description": "Internt prosjekt for analyse av lønnskostnadene",
+          "projectManager": {
+            "id": 18669683,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669683"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2026-03-01",
+          "endDate": null,
+          "customer": null,
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": true,
+          "isOffer": false,
+          "isFixedPrice": false,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 0,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11089830,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11089830"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15644634,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15644634"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "5000-PROJ Lønn til ansatte",
+          "invoiceDueDate": 0,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Admin NM",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 0,
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:09:56.996561",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity/>forTimeSheet",
+      "status": 200,
+      "request_params": {
+        "projectId": 402037052
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 2,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 5963897,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5963897",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 5963896,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5963896",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:10:00.700485",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project/projectActivity",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402037052
+        },
+        "name": "Analyse av bilgodtgjørelse kostnader",
+        "description": "Aktivitet for å analysere økningen i bilgodtgjørelse kostnader"
+      },
+      "response_body": {
+        "status": 422,
+        "code": 16000,
+        "message": "Request mapping failed",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "name",
+            "message": "Feltet eksisterer ikke i objektet.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "722c5843-c747-462b-9991-587670a929d5"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:10:03.288933",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity",
+      "status": 200,
+      "request_params": {
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 4,
+        "from": 0,
+        "count": 4,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 5963894,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5963894",
+            "name": "Administrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "GENERAL_ACTIVITY",
+            "isProjectActivity": false,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Administrasjon",
+            "deletable": true
+          },
+          {
+            "id": 5963895,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5963895",
+            "name": "Ferie",
+            "number": "",
+            "description": "",
+            "activityType": "GENERAL_ACTIVITY",
+            "isProjectActivity": false,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Ferie",
+            "deletable": false
+          },
+          {
+            "id": 5963896,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5963896",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          },
+          {
+            "id": 5963897,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5963897",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:10:06.616873",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "name": "Analyse av bilgodtgjørelse kostnader",
+        "description": "Aktivitet for å analysere økningen i bilgodtgjørelse kostnader",
+        "activityType": "PROJECT_SPECIFIC_ACTIVITY",
+        "isProjectActivity": true,
+        "isGeneral": false,
+        "isChargeable": false
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": null,
+            "message": "Prosjektspesifikke aktiviteter må lages via endepuntket \"project/projectActivity\".",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "1bd96fa5-ce00-4b68-ab6e-d54d8d0b779e"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:10:10.175686",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project/projectActivity",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402037052
+        },
+        "activity": {
+          "name": "Analyse av bilgodtgjørelse kostnader",
+          "description": "Aktivitet for å analysere økningen i bilgodtgjørelse kostnader",
+          "activityType": "PROJECT_SPECIFIC_ACTIVITY",
+          "isProjectActivity": true,
+          "isGeneral": false,
+          "isChargeable": false
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 19805882,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/projectActivity/19805882",
+          "activity": {
+            "id": 5964196,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5964196"
+          },
+          "project": {
+            "id": 402037052,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402037052"
+          },
+          "startDate": null,
+          "endDate": null,
+          "isClosed": false,
+          "budgetHours": 0,
+          "budgetHourlyRateCurrency": 0,
+          "budgetFeeCurrency": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:10:13.407263",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project/projectActivity",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402037054
+        },
+        "activity": {
+          "name": "Analyse av verktøy kostnader",
+          "description": "Aktivitet for å analysere økningen i motordrevet verktøy kostnader",
+          "activityType": "PROJECT_SPECIFIC_ACTIVITY",
+          "isProjectActivity": true,
+          "isGeneral": false,
+          "isChargeable": false
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 19805883,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/projectActivity/19805883",
+          "activity": {
+            "id": 5964205,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5964205"
+          },
+          "project": {
+            "id": 402037054,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402037054"
+          },
+          "startDate": null,
+          "endDate": null,
+          "isClosed": false,
+          "budgetHours": 0,
+          "budgetHourlyRateCurrency": 0,
+          "budgetFeeCurrency": 0
+        }
+      }
+    }
+  ]
+}

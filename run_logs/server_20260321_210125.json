@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:01:25.998047",
+  "prompt": "Nous avons besoin de la depense Skrivebordlampe de ce recu enregistree au departement Kvalitetskontroll. Utilisez le bon compte de charges et assurez le traitement correct de la TVA.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609150334)",
+  "error": null,
+  "elapsed_seconds": 4.28
+}

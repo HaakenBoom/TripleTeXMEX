@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:37:37.200865",
+  "prompt": "Le paiement de Étoile SARL (nº org. 835510131) pour la facture \"Session de formation\" (19650 NOK HT) a été retourné par la banque. Annulez le paiement afin que la facture affiche à nouveau le montant impayé.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Registered payment of 24562.5 on invoice 2147570405. Invoice is now paid.",
+  "error": null,
+  "elapsed_seconds": 8.92
+}

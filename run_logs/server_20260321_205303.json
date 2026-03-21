@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:53:03.953322",
+  "prompt": "Enregistrez 5 heures pour Raphaël Thomas (raphael.thomas@example.org) sur l'activité \"Utvikling\" du projet \"Refonte du site\" pour Colline SARL (nº org. 997549929). Taux horaire : 1800 NOK/h. Générez une facture de projet au client basée sur les heures enregistrées.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Logged 5 hours for employee Raphaël Thomas on project 'Refonte du site' activity 'Utvikling' (entry id=175911240)",
+  "error": null,
+  "elapsed_seconds": 9.79
+}

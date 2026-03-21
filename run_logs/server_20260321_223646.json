@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:36:46.056589",
+  "prompt": "Le paiement de Rivière SARL (nº org. 937044488) pour la facture \"Design web\" (33050 NOK HT) a été retourné par la banque. Annulez le paiement afin que la facture affiche à nouveau le montant impayé.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Reversed payment of 41312.5 on invoice 2147573341. Outstanding amount restored to 41312.5.",
+  "error": null,
+  "elapsed_seconds": 13.05
+}

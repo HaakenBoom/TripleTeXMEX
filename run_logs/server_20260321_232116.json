@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:21:16.186101",
+  "prompt": "Créez une dimension comptable personnalisée \"Kostsenter\" avec les valeurs \"Kundeservice\" et \"Økonomi\". Puis comptabilisez une pièce sur le compte 7300 pour 10550 NOK, liée à la valeur de dimension \"Kundeservice\".",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created dimension 'Kostsenter' (index=1) with values [Kundeservice=19423, Økonomi=19424]. Posted voucher 609210374 for 10550 on account 7300 linked to dimension value 'Kundeservice' (id=19423).",
+  "error": null,
+  "elapsed_seconds": 3.09
+}

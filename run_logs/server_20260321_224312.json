@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:43:12.396506",
+  "prompt": "Créez le client Montagne SARL avec le numéro d'organisation 931564153. L'adresse est Kirkegata 19, 4611 Kristiansand. E-mail : post@montagne.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created customer Montagne SARL (id=108445804)",
+  "error": null,
+  "elapsed_seconds": 3.0
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:16:01.715921",
+  "prompt": "Log 27 hours for Emily Smith (emily.smith@example.org) on the activity \"Rådgivning\" in the project \"System Upgrade\" for Greenfield Ltd (org no. 811374563). Hourly rate: 1050 NOK/h. Generate a project invoice to the customer based on the logged hours.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Max iterations reached",
+  "error": null,
+  "elapsed_seconds": 49.4
+}

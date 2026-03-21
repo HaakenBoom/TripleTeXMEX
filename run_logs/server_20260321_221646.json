@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:16:46.318862",
+  "prompt": "El pago de Costa Brava SL (org. nº 866888426) por la factura \"Mantenimiento\" (39250 NOK sin IVA) fue devuelto por el banco. Revierta el pago para que la factura vuelva a mostrar el importe pendiente.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Reversed payment of 49062.5 on invoice 2147572577. Outstanding amount restored to 49062.5.",
+  "error": null,
+  "elapsed_seconds": 18.8
+}

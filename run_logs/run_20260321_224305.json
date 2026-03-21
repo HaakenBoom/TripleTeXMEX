@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-03-21T22:43:05.866609",
+  "prompt_fingerprint": "96bdb472f2be",
+  "prompt": "Créez le client Étoile SARL avec le numéro d'organisation 864083323. L'adresse est Kirkegata 121, 7010 Trondheim. E-mail : post@etoile.no.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Étoile SARL",
+      "organizationNumber": "864083323",
+      "email": "post@etoile.no",
+      "postalAddress": {
+        "addressLine1": "Kirkegata 121",
+        "postalCode": "7010",
+        "city": "Trondheim"
+      },
+      "isSupplier": false
+    },
+    "raw_prompt": "Créez le client Étoile SARL avec le numéro d'organisation 864083323. L'adresse est Kirkegata 121, 7010 Trondheim. E-mail : post@etoile.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Étoile SARL (id=108445766)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 2.8,
+  "phase_times": {
+    "parse": 1.07,
+    "prefetch": 0.0,
+    "handler": 1.73
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108445766
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:43:05.866013",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Étoile SARL",
+        "isCustomer": true,
+        "email": "post@etoile.no",
+        "organizationNumber": "864083323",
+        "isSupplier": false,
+        "postalAddress": {
+          "addressLine1": "Kirkegata 121",
+          "postalCode": "7010",
+          "city": "Trondheim"
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108445766,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108445766",
+          "name": "Étoile SARL",
+          "organizationNumber": "864083323",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@etoile.no",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Étoile SARL (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405739093,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405739093",
+            "addressLine1": "Kirkegata 121",
+            "addressLine2": "",
+            "postalCode": "7010",
+            "city": "Trondheim",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Étoile SARL, Kirkegata 121, 7010 Trondheim, Norge",
+            "addressAsString": "Kirkegata 121, 7010 Trondheim, Norge",
+            "displayNameInklMatrikkel": "Étoile SARL, Kirkegata 121, 7010 Trondheim, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405739092,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405739092"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 377461945,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/377461945"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

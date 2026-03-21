@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-03-21T23:25:26.233285",
+  "prompt_fingerprint": "f5c007f6d2df",
+  "prompt": "Créez le client Montagne SARL avec le numéro d'organisation 936464815. L'adresse est Havnegata 139, 4611 Kristiansand. E-mail : post@montagne.no.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Montagne SARL",
+      "organizationNumber": "936464815",
+      "postalAddress": {
+        "addressLine1": "Havnegata 139",
+        "postalCode": "4611",
+        "city": "Kristiansand"
+      },
+      "email": "post@montagne.no",
+      "isSupplier": false
+    },
+    "raw_prompt": "Créez le client Montagne SARL avec le numéro d'organisation 936464815. L'adresse est Havnegata 139, 4611 Kristiansand. E-mail : post@montagne.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Montagne SARL (id=108458553)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 1.31,
+  "phase_times": {
+    "parse": 0.93,
+    "prefetch": 0.0,
+    "handler": 0.38
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108458553
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T23:25:26.232645",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Montagne SARL",
+        "isCustomer": true,
+        "email": "post@montagne.no",
+        "organizationNumber": "936464815",
+        "isSupplier": false,
+        "postalAddress": {
+          "addressLine1": "Havnegata 139",
+          "postalCode": "4611",
+          "city": "Kristiansand"
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108458553,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108458553",
+          "name": "Montagne SARL",
+          "organizationNumber": "936464815",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@montagne.no",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Montagne SARL (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405764368,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405764368",
+            "addressLine1": "Havnegata 139",
+            "addressLine2": "",
+            "postalCode": "4611",
+            "city": "Kristiansand",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Montagne SARL, Havnegata 139, 4611 Kristiansand, Norge",
+            "addressAsString": "Havnegata 139, 4611 Kristiansand, Norge",
+            "displayNameInklMatrikkel": "Montagne SARL, Havnegata 139, 4611 Kristiansand, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405764367,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405764367"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 477987853,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477987853"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

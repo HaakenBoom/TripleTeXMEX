@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:46:41.250501",
+  "prompt": "Recebemos a fatura INV-2026-5787 do fornecedor Luz do Sol Lda (org. nº 945810149) no valor de 35950 NOK com IVA incluído. O montante refere-se a serviços de escritório (conta 6590). Registe a fatura do fornecedor com o IVA dedutível correto (25 %).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609194364)",
+  "error": null,
+  "elapsed_seconds": 4.34
+}

@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-03-21T23:25:24.449011",
+  "prompt_fingerprint": "f558fc805442",
+  "prompt": "Crie o cliente Rio Azul Lda com número de organização 865253443. O endereço é Havnegata 16, 4006 Stavanger. E-mail: post@rio.no.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Rio Azul Lda",
+      "organizationNumber": "865253443",
+      "email": "post@rio.no",
+      "postalAddress": {
+        "addressLine1": "Havnegata 16",
+        "postalCode": "4006",
+        "city": "Stavanger"
+      },
+      "isSupplier": false
+    },
+    "raw_prompt": "Crie o cliente Rio Azul Lda com número de organização 865253443. O endereço é Havnegata 16, 4006 Stavanger. E-mail: post@rio.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Rio Azul Lda (id=108458541)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 1.26,
+  "phase_times": {
+    "parse": 0.83,
+    "prefetch": 0.0,
+    "handler": 0.43
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108458541
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T23:25:24.448369",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Rio Azul Lda",
+        "isCustomer": true,
+        "email": "post@rio.no",
+        "organizationNumber": "865253443",
+        "isSupplier": false,
+        "postalAddress": {
+          "addressLine1": "Havnegata 16",
+          "postalCode": "4006",
+          "city": "Stavanger"
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108458541,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108458541",
+          "name": "Rio Azul Lda",
+          "organizationNumber": "865253443",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@rio.no",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Rio Azul Lda (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405764346,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405764346",
+            "addressLine1": "Havnegata 16",
+            "addressLine2": "",
+            "postalCode": "4006",
+            "city": "Stavanger",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Rio Azul Lda, Havnegata 16, 4006 Stavanger, Norge",
+            "addressAsString": "Havnegata 16, 4006 Stavanger, Norge",
+            "displayNameInklMatrikkel": "Rio Azul Lda, Havnegata 16, 4006 Stavanger, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405764345,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405764345"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 477985737,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477985737"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

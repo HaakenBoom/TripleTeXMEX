@@ -1,0 +1,199 @@
+{
+  "timestamp": "2026-03-21T22:52:43.157809",
+  "prompt_fingerprint": "8fa439cd8733",
+  "prompt": "We have a new employee named Lucy Wilson, born 28. December 1986. Please create them as an employee with email lucy.wilson@example.org and start date 25. April 2026.",
+  "prompt_language": "en",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Lucy",
+      "lastName": "Wilson",
+      "email": "lucy.wilson@example.org",
+      "dateOfBirth": "1986-12-28",
+      "isAdministrator": false,
+      "employment": {
+        "startDate": "2026-04-25"
+      },
+      "startDate": "2026-04-25"
+    },
+    "raw_prompt": "We have a new employee named Lucy Wilson, born 28. December 1986. Please create them as an employee with email lucy.wilson@example.org and start date 25. April 2026.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Lucy Wilson (id=18684697)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 10.01,
+  "phase_times": {
+    "parse": 1.04,
+    "prefetch": 2.52,
+    "handler": 6.45
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 3
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 2,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18684697
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2844943
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:52:36.708248",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 745390,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/745390",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:52:39.373738",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Lucy",
+        "lastName": "Wilson",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 745390
+        },
+        "allowInformationRegistration": true,
+        "email": "lucy.wilson@example.org",
+        "dateOfBirth": "1986-12-28"
+      },
+      "response_body": {
+        "value": {
+          "id": 18684697,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18684697",
+          "firstName": "Lucy",
+          "lastName": "Wilson",
+          "displayName": "Lucy Wilson",
+          "employeeNumber": "",
+          "dateOfBirth": "1986-12-28",
+          "email": "lucy.wilson@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 745390,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/745390"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107928649,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:52:43.157076",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18684697
+        },
+        "startDate": "2026-04-25",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2844943,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2844943",
+          "employee": {
+            "id": 18684697,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18684697"
+          },
+          "employmentId": "",
+          "startDate": "2026-04-25",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    }
+  ]
+}

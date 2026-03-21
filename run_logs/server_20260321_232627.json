@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:26:27.975844",
+  "prompt": "Tenemos un nuevo empleado llamado Lucía Rodríguez, nacido el 30. April 1996. Créelo como empleado con el correo lucia.rodriguez@example.org y fecha de inicio 22. April 2026.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Lucía Rodríguez (id=18692703)",
+  "error": null,
+  "elapsed_seconds": 2.61
+}

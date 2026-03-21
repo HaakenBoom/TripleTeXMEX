@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:46:47.903937",
+  "prompt": "Erstellen Sie einen Auftrag für den Kunden Nordlicht GmbH (Org.-Nr. 985301476) mit den Produkten Netzwerkdienst (8953) zu 17750 NOK und Wartung (4503) zu 12300 NOK. Wandeln Sie den Auftrag in eine Rechnung um und registrieren Sie die vollständige Zahlung.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147647240 with payment for customer Nordlicht GmbH (paymentTypeId=37609187, paidAmount=37562.5)",
+  "error": null,
+  "elapsed_seconds": 6.65
+}

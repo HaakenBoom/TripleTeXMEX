@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:46:36.910512",
+  "prompt": "Ejecute la nómina de Marta López (marta.lopez@example.org) para este mes. El salario base es de 31300 NOK. Añada una bonificación única de 13300 NOK además del salario base.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Ran payroll for employee Marta López (2026-03). salary transaction id=6958319. monthly salary=31300.0. bonus=13300",
+  "error": null,
+  "elapsed_seconds": 27.57
+}

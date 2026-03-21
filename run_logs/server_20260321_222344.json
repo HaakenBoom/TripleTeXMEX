@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:23:44.271099",
+  "prompt": "Registrer leverandøren Sjøbris AS med organisasjonsnummer 811212717. E-post: faktura@sjbris.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Leverandøren Sjøbris AS har blitt registrert i systemet med følgende detaljer:\n- Leverandør-ID: 108441205\n- Leverandørnummer: 20001  \n- Organisasjonsnummer: 811212717\n- E-post: faktura@sjbris.no\n- Status: Aktiv leverandør\n\nLeverandøren er nå klar for bruk i systemet for innkjøp og leverandørfakturaer.",
+  "error": null,
+  "elapsed_seconds": 17.24
+}

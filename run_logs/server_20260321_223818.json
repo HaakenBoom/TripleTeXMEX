@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:38:18.345829",
+  "prompt": "Enviamos una factura por 11110 EUR a Olivares SL (org. nº 996598357) cuando el tipo de cambio era 11.96 NOK/EUR. El cliente ha pagado ahora, pero el tipo es 12.16 NOK/EUR. Registre el pago y contabilice la diferencia de tipo de cambio (agio) en la cuenta correcta.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "FX correction posted: Agiotap 2222.00 kr (11110 EUR × (12.16-11.96) NOK/EUR). Voucher 609190996.",
+  "error": null,
+  "elapsed_seconds": 3.51
+}

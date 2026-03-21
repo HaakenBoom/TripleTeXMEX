@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:39:01.259503",
+  "prompt": "Opprett ein ordre for kunden Bølgekraft AS (org.nr 908252764) med produkta Nettverksteneste (6065) til 25500 kr og Systemutvikling (2511) til 23550 kr. Konverter ordren til faktura og registrer full betaling.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147646559 with payment for customer Bølgekraft AS (paymentTypeId=37583560, paidAmount=61312.5)",
+  "error": null,
+  "elapsed_seconds": 6.69
+}

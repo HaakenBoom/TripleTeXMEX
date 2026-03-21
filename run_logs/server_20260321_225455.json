@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:54:55.555920",
+  "prompt": "Kjør lønn for Tor Bakken (tor.bakken@example.org) for denne måneden. Grunnlønn er 34100 kr. Legg til en engangsbonus på 6550 kr i tillegg til grunnlønnen. Dersom lønns-API-et ikke fungerer, kan du bruke manuelle bilag på lønnskontoer (5000-serien) for å registrere lønnskostnaden.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Ran payroll for employee Tor Bakken (2026-03). salary transaction id=6958332. monthly salary=34100.0. bonus=6550",
+  "error": null,
+  "elapsed_seconds": 24.41
+}

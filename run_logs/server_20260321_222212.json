@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:22:12.717251",
+  "prompt": "Enviamos una factura por 13917 EUR a Montaña SL (org. nº 960849922) cuando el tipo de cambio era 10.70 NOK/EUR. El cliente ha pagado ahora, pero el tipo es 11.13 NOK/EUR. Registre el pago y contabilice la diferencia de tipo de cambio (agio) en la cuenta correcta.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "FX correction posted: Agiotap 5984.31 kr (13917 EUR × (11.13-10.7) NOK/EUR). Voucher 609184343.",
+  "error": null,
+  "elapsed_seconds": 4.14
+}

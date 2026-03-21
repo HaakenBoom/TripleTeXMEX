@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:18:55.454466",
+  "prompt": "Wir benotigen die USB-hub-Ausgabe aus dieser Quittung in der Abteilung Lager. Verwenden Sie das richtige Aufwandskonto und stellen Sie die korrekte MwSt.-Behandlung sicher.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Perfect! I've successfully created the voucher for the USB hub expense. Here's what was accomplished:\n\n**Voucher Created (ID: 609182687)**\n- Date: 2026-02-17\n- Description: \"USB-hub og kontorrekvisita - Kvittering Komplett\"\n\n**Postings:**\n1. **USB-hub (14,550 kr)** - Posted to account 6800 (Kontorrekvisita) with department \"Lager\", using incoming VAT type (25% deductible VAT)\n2. **Office supplies (250 kr)** - Posted to account 6800 (Kontorrekvisita) with department \"Lager\", using incoming VAT ty",
+  "error": null,
+  "elapsed_seconds": 65.86
+}

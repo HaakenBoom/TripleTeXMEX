@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-03-21T22:27:27.620687",
+  "prompt_fingerprint": "751b281f123f",
+  "prompt": "Créez le client Lumière SARL avec le numéro d'organisation 917096112. L'adresse est Havnegata 112, 5003 Bergen. E-mail : post@lumiere.no.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Lumière SARL",
+      "organizationNumber": "917096112",
+      "postalAddress": {
+        "addressLine1": "Havnegata 112",
+        "postalCode": "5003",
+        "city": "Bergen"
+      },
+      "email": "post@lumiere.no",
+      "isSupplier": false
+    },
+    "raw_prompt": "Créez le client Lumière SARL avec le numéro d'organisation 917096112. L'adresse est Havnegata 112, 5003 Bergen. E-mail : post@lumiere.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Lumière SARL (id=108442094)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.14,
+  "phase_times": {
+    "parse": 0.86,
+    "prefetch": 0.0,
+    "handler": 2.28
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108442094
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:27:27.620006",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Lumière SARL",
+        "isCustomer": true,
+        "email": "post@lumiere.no",
+        "organizationNumber": "917096112",
+        "isSupplier": false,
+        "postalAddress": {
+          "addressLine1": "Havnegata 112",
+          "postalCode": "5003",
+          "city": "Bergen"
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108442094,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108442094",
+          "name": "Lumière SARL",
+          "organizationNumber": "917096112",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@lumiere.no",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Lumière SARL (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405731830,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405731830",
+            "addressLine1": "Havnegata 112",
+            "addressLine2": "",
+            "postalCode": "5003",
+            "city": "Bergen",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Lumière SARL, Havnegata 112, 5003 Bergen, Norge",
+            "addressAsString": "Havnegata 112, 5003 Bergen, Norge",
+            "displayNameInklMatrikkel": "Lumière SARL, Havnegata 112, 5003 Bergen, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405731829,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405731829"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 376917604,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/376917604"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

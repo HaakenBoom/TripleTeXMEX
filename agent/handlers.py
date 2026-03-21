@@ -1413,15 +1413,25 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         total_vat = sum(r["amount"] for r in vat_entries)
         logger.info("Detected %d manual VAT postings (total=%s), collapsing into expense postings",
                      len(vat_entries), total_vat)
-        # Add VAT back to expense postings to get gross amounts
+        # Add VAT back to expense postings to get gross amounts.
+        # Identify expense postings by account metadata or by account number range (4xxx-7xxx).
+        adjusted = False
         for r in non_vat_entries:
             acct_type = (r.get("account_data") or {}).get("type", "")
-            if acct_type == "OPERATING_EXPENSES" and r["amount"] > 0:
+            is_expense = (acct_type == "OPERATING_EXPENSES"
+                          or 4000 <= r["account_number"] <= 7999)
+            if is_expense and r["amount"] > 0:
                 r["amount"] += total_vat  # Net + VAT = Gross
-                # Set vatType from account's default (usually id=1 for 25% input VAT)
-                r["vat_type_id"] = (r.get("account_data") or {}).get("vatType", {}).get("id")
+                # Set vatType from account's default, or 25% input VAT (id=1) as fallback
+                vat_id = (r.get("account_data") or {}).get("vatType", {}).get("id")
+                r["vat_type_id"] = vat_id if vat_id is not None else 1
                 logger.info("Adjusted expense posting to gross=%s with vatType=%s",
                             r["amount"], r.get("vat_type_id"))
+                adjusted = True
+        if not adjusted:
+            # Fallback: no expense posting identified, keep VAT postings as-is
+            logger.warning("Could not identify expense posting for VAT collapse, keeping VAT postings")
+            non_vat_entries = [r for r in resolved]  # Restore all entries
 
     # Phase 3: Build final postings
     # IMPORTANT: row must be >= 1 (Tripletex reserves row 0 for system-generated).
@@ -2525,8 +2535,15 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
 
     # ---------------------------------------------------------------
     # PATH B: Use LLM-parsed entries if available (generic postings format)
+    # Also handles flat postings (entities["postings"] without entries wrapper)
     # ---------------------------------------------------------------
     parsed_entries = entities.get("entries", [])
+    # Normalize flat postings into entries format
+    if not parsed_entries and entities.get("postings"):
+        flat = entities["postings"]
+        if flat and isinstance(flat, list) and isinstance(flat[0], dict) and flat[0].get("accountNumber"):
+            parsed_entries = [{"description": "Voucher", "postings": flat}]
+            logger.info("Annual closure: normalized %d flat postings into 1 entry", len(flat))
     if parsed_entries:
         logger.info("Annual closure: using %d LLM-parsed entries", len(parsed_entries))
         vouchers_created = []

@@ -1,0 +1,251 @@
+{
+  "timestamp": "2026-03-21T17:18:34.176672",
+  "prompt_fingerprint": "9a5281712258",
+  "prompt": "You received an offer letter (see attached PDF) for a new employee. Complete the onboarding: create the employee, assign the correct department, set up employment details with percentage and annual salary, and configure standard working hours.",
+  "prompt_language": "en",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Daniel",
+      "lastName": "Smith",
+      "dateOfBirth": "1994-12-20",
+      "startDate": "2026-04-25",
+      "annualSalary": 740000,
+      "employmentPercentage": 100,
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "You received an offer letter (see attached PDF) for a new employee. Complete the onboarding: create the employee, assign the correct department, set up employment details with percentage and annual salary, and configure standard working hours.",
+    "_file_contents": [
+      "[File: files/tilbudsbrev_en_07.pdf]\nTILBUD OM STILLING\nKjaere Daniel Smith,\nVi har gleden av a tilby deg stillingen som Prosjektleder i avdeling Kundeservice.\nDetaljer\nFodselsdato: 20.12.1994\nTiltredelse: 25.04.2026\nAnsettelsesform: Fast stilling\nStillingsprosent: 100.0%\nArslonn: 740000 kr\nArbeidstid: 7.5 timer per dag\nVilkar: Ansettelsesforholdet reguleres av arbeidsmiljoloven og bedriftens personalhandbok. Det gjelder en provetid pa 6\nmaneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden er oppsigelsesfristen 3 maneder. Ferie og\nferiepenger folger ferieloven.\nMed vennlig hilsen,\n___________________________\nHR-avdelingen"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/tilbudsbrev_en_07.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDYwNwo+PgpzdHJlYW0KeJyNVMtu2zAQvOcr9lKgBVqGkqhXbg0ct2mSvuL2WtDlWqZNkS6pOMjfdyXZURynhQQYlKnZnVlyZ2P4dMJZmsP9yfkMTqcRRAXjHGYLuJi1WzEXLBKQl1G7zBS8nl1en/+YwJcbuKXX68vPH97AbLWDn05jiKKDDAlFFpAnOSuzLsHVSqJHmEir0cBtrZvl2ycpdniesbzo8D81LKWHyqBCC3ILEhpt5g+gsIJAr0bbir4EV8NX78IK102L9aAJrbD9DFd3VmFAv9W/kR0IppKTFwRnWcp4L2CCjTQr9M/DXqozSwRLeRc2dSqgCUo27uz/RxTlMSujp7ExZ1HMorIUo0hpt4j729Gm8VS8CTiSdIiNqWLBYh5nY0jToty3xHsbsGlazrBwvh5H/CR+KkPzeJOjuLOMib6bbndhYUNXj7YZST4kiDhn/NUoVpGwvOwr9sE4a0eSDXG54PTAelQvpTEt0Y5vjlrREamRlENozlLyS0122NBPyep5Aj4k+AOP5CIvWNGJ5kzEBLhvnWjW0p/B4X0vnVHYgMfqzpCxQ2fRXm+tzcoZtyV3ugrmqLxeNGhDKyU4K81SWjV3awbkMahWaFrbEpouc4tULWwk7LsRvh3oy6hvO38mLC1Ep6+WtvN9jQqotahWomnT2qCVrsBtNkFXvW6vQ8Pggsrwj2xETP+eo2g3gV1qBlP0GqmaQdQgSQhW5N2hL1rUBmkueVg40y3tVncW7GjaJTReeW/CG9JOGGtI71KTCHs8HJM0YknSwX/9+zkOo0X0ffjx+7v9aES7B/4Fm4WgywplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EtQm9sZAovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZSAvVHlwZTEKL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjYgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago3IDAgb2JqCjw8Ci9Gb250IDw8L0YxIDUgMCBSCi9GMiA2IDAgUj4+Ci9Qcm9jU2V0IFsvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJXQo+PgplbmRvYmoKOCAwIG9iago8PAovQ3JlYXRpb25EYXRlIChEOjIwMjYwMzA0MTkxODA1WikKPj4KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMTAyIDAwMDAwIG4gCjAwMDAwMDAyMDUgMDAwMDAgbiAKMDAwMDAwMDI4NSAwMDAwMCBuIAowMDAwMDAwOTY0IDAwMDAwIG4gCjAwMDAwMDEwNjYgMDAwMDAgbiAKMDAwMDAwMTE2MyAwMDAwMCBuIAowMDAwMDAxMjYwIDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgOQovUm9vdCAyIDAgUgovSW5mbyA4IDAgUgovSUQgWzw0REM0RDVEQTI3NDdBRTk5MDY2QkI4REQ0QUM1RkNGOT48NERDNEQ1REEyNzQ3QUU5OTA2NkJCOERENEFDNUZDRjk+XQo+PgpzdGFydHhyZWYKMTMxNQolJUVPRgo=",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Daniel Smith (id=18641380)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 9.37,
+  "phase_times": {
+    "parse": 1.4,
+    "prefetch": 1.88,
+    "handler": 6.09
+  },
+  "total_api_calls": 4,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 4
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 3,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18641380
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2823690
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3722804
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T17:18:28.082212",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 709827,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/709827",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:18:30.028042",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Daniel",
+        "lastName": "Smith",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 709827
+        },
+        "allowInformationRegistration": true,
+        "dateOfBirth": "1994-12-20"
+      },
+      "response_body": {
+        "value": {
+          "id": 18641380,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18641380",
+          "firstName": "Daniel",
+          "lastName": "Smith",
+          "displayName": "Daniel Smith",
+          "employeeNumber": "",
+          "dateOfBirth": "1994-12-20",
+          "email": "",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 709827,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/709827"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107859475,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:18:32.070524",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18641380
+        },
+        "startDate": "2026-04-25",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2823690,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2823690",
+          "employee": {
+            "id": 18641380,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18641380"
+          },
+          "employmentId": "",
+          "startDate": "2026-04-25",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:18:34.176046",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2823690
+        },
+        "date": "2026-04-25",
+        "annualSalary": 740000,
+        "percentageOfFullTimeEquivalent": 100,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "response_body": {
+        "value": {
+          "id": 3722804,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3722804",
+          "employment": {
+            "id": 2823690,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2823690"
+          },
+          "date": "2026-04-25",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 100,
+          "annualSalary": 740000,
+          "hourlyWage": 379,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 61666.67
+        }
+      }
+    }
+  ]
+}

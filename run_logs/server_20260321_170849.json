@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T17:08:49.923760",
+  "prompt": "Crie três departamentos no Tripletex: \"Logistikk\", \"Administrasjon\" e \"Regnskap\".",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created 3 department(s): Logistikk (id=942344), Administrasjon (id=942350), Regnskap (id=942354)",
+  "error": null,
+  "elapsed_seconds": 6.63
+}

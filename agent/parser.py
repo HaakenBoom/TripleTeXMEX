@@ -126,8 +126,18 @@ The JSON object MUST have exactly this structure:
     IMPORTANT: Use this type when the request asks to reconcile a bank statement (CSV/file) with open invoices/transactions. Keywords: "reconcile"/"avstem"/"reconciliar"/"rapprocher"/"Bankabstimmung"/"bankavstemming"/"bank reconciliation".
 
 21. **annual_closure**
-    Fields: (no entity extraction needed — the handler parses depreciation/closure details from the prompt directly)
-    IMPORTANT: Use this type when the request asks to perform annual closing, year-end closing, depreciation calculations, or simplified annual accounts. Keywords: "cierre anual"/"annual closing"/"årsavslutning"/"clôture annuelle"/"Jahresabschluss"/"årsoppgjør".
+    Fields: closureYear (integer), closureMonth (integer — only if monthly closure), date (YYYY-MM-DD),
+    depreciationItems (array of objects: assetName, acquisitionCost (number), depreciationPeriodYears (integer), depreciationExpenseAccountNumber (integer, default 6010), accumulatedDepreciationAccountNumber (integer, default 1209)),
+    prepaidExpenseReversal (object: amount (number), accountNumber (integer — the prepaid/balance sheet account, default 1700)),
+    taxCalculation (object: taxRate (number 0-1, e.g. 0.22 for 22%), expenseAccountNumber (integer, default 8700), liabilityAccountNumber (integer, default 2920)),
+    entries (array of objects: description (string), postings (array of: accountNumber (integer), amount (number — positive for debit, negative for credit), description (string)))
+    IMPORTANT: Use this type when the request asks to perform annual closing, year-end closing, monthly closing, depreciation calculations, or simplified annual accounts. Keywords: "cierre anual"/"annual closing"/"årsavslutning"/"clôture annuelle"/"Jahresabschluss"/"årsoppgjør"/"clôture mensuelle"/"encerramento mensal"/"monthly closing"/"månedsavslutning".
+    EXTRACTION RULES:
+    - If the prompt lists specific assets with costs and useful life, extract them as depreciationItems
+    - If the prompt mentions prepaid expense reversal, extract as prepaidExpenseReversal
+    - If the prompt mentions tax provision/calculation, extract as taxCalculation
+    - For any other journal entries (accrual reversals, salary provisions, etc.), extract as entries with postings
+    - Always extract the year (and month if monthly closure)
 
 22. **unknown**
     Use this when the request does not match any of the above types.
@@ -235,6 +245,10 @@ def _post_validate_classification(prompt: str, parsed: dict) -> dict:
         "årsoppgjør", "årsoppgjer", "årsrekneskap",
         "depreciación anual", "annual depreciation", "avskrivning",
         "amortissement annuel", "abschreibung",
+        # Monthly closure variants
+        "clôture mensuelle", "encerramento mensal", "cierre mensual",
+        "monthly closing", "månedsavslutning", "månadsavslutning",
+        "monatsabschluss",
     ]
     if any(kw in p for kw in _ANNUAL_CLOSURE_KEYWORDS) and task_type != "annual_closure":
         parsed = dict(parsed)

@@ -1,0 +1,201 @@
+{
+  "timestamp": "2026-03-21T17:12:37.897610",
+  "prompt_fingerprint": "1ebe09ff6feb",
+  "prompt": "Has recibido un contrato de trabajo (ver PDF adjunto). Crea el empleado en Tripletex con todos los datos del contrato: numero de identidad, fecha de nacimiento, departamento, codigo de ocupacion, salario, porcentaje de empleo y fecha de inicio.",
+  "prompt_language": "es",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Carmen",
+      "lastName": "Pérez",
+      "email": "carmen.perez@example.org",
+      "dateOfBirth": "1980-02-12",
+      "nationalIdentityNumber": "12028008412",
+      "bankAccountNumber": "49515880223",
+      "startDate": "2026-11-15",
+      "employmentType": "ORDINARY",
+      "occupationCode": "2411",
+      "employmentPercentage": 100,
+      "annualSalary": 1000000,
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Has recibido un contrato de trabajo (ver PDF adjunto). Crea el empleado en Tripletex con todos los datos del contrato: numero de identidad, fecha de nacimiento, departamento, codigo de ocupacion, salario, porcentaje de empleo y fecha de inicio.",
+    "_file_contents": [
+      "[File: files/arbeidskontrakt_es_04.pdf]\nARBEIDSKONTRAKT\nArbeidsgiver: Río Verde SL\nArbeidstaker: Carmen Pérez\nFodselsdato: 12.02.1980\nPersonnummer: 12028008412\nE-post: carmen.perez@example.org\nBankkonto: 49515880223\nAnsettelsesdetaljer\nAvdeling: Regnskap\nStillingskode (STYRK): 2411\nAnsettelsesform: Fast stilling\nLonnstype: Fastlonn (manedlig)\nStillingsprosent: 100.0%\nArslonn: 1000000 kr\nTiltredelse: 15.11.2026\nArbeidsforholdet reguleres av gjeldende lover og regler, herunder arbeidsmiljoloven. Arbeidstaker er underlagt\nbedriftens personalhandbok og interne retningslinjer. Arbeidsstedet er ved bedriftens kontorer med mindre annet er\navtalt skriftlig.\nDet gjelder en gjensidig provetid pa 6 maneder. I provetiden er den gjensidige oppsigelsesfristen 14 dager. Etter\nprovetiden er oppsigelsesfristen 3 maneder regnet fra forste dag i maneden etter at oppsigelsen fant sted.\nFerie og feriepenger folger ferieloven. Arbeidstaker har rett til 25 virkedagers ferie per kalender ar. Feriepenger\nutbetales i henhold til gjeldende regelverk.\n___________________________ ___________________________\nArbeidsgiver Arbeidstaker"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/arbeidskontrakt_es_04.pdf",
+        "content_base64": "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",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Carmen Pérez (id=18640997)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 6.63,
+  "phase_times": {
+    "parse": 1.73,
+    "prefetch": 1.41,
+    "handler": 3.49
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 1,
+  "status_counts": {
+    "2xx": 2,
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 1,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18640997
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T17:12:34.405743",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 707691,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/707691",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:12:36.182490",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Carmen",
+        "lastName": "Pérez",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 707691
+        },
+        "allowInformationRegistration": true,
+        "email": "carmen.perez@example.org",
+        "dateOfBirth": "1980-02-12",
+        "nationalIdentityNumber": "12028008412",
+        "bankAccountNumber": "49515880223"
+      },
+      "response_body": {
+        "value": {
+          "id": 18640997,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18640997",
+          "firstName": "Carmen",
+          "lastName": "Pérez",
+          "displayName": "Carmen Pérez",
+          "employeeNumber": "",
+          "dateOfBirth": "1980-02-12",
+          "email": "carmen.perez@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "12028008412",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "49515880223",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 707691,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/707691"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107854830,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:12:37.896854",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18640997
+        },
+        "startDate": "2026-11-15",
+        "isMainEmployer": true,
+        "occupationCode": "2411"
+      },
+      "response_body": {
+        "status": 422,
+        "code": 16000,
+        "message": "Request mapping failed",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "occupationCode",
+            "message": "Feltet eksisterer ikke i objektet.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "c52d9005-f367-41d4-a604-ad3b301b5bad"
+      }
+    }
+  ]
+}

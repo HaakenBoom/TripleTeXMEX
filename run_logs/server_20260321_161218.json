@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T16:12:18.446005",
+  "prompt": "Me har ein ny tilsett som heiter Geir Stølsvik, fødd 6. March 1990. Opprett vedkomande som tilsett med e-post geir.stlsvik@example.org og startdato 14. November 2026.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Geir Stølsvik (id=18637091)",
+  "error": null,
+  "elapsed_seconds": 5.81
+}

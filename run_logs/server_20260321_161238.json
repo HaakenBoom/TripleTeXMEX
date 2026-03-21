@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T16:12:38.535541",
+  "prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Miguel Silva (id=18637101)",
+  "error": null,
+  "elapsed_seconds": 6.34
+}

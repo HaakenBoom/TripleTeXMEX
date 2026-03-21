@@ -1848,10 +1848,15 @@ def _handle_reverse_invoice_payment(task: dict, client: TripletexClient, context
     is_reversal = entities.get("isReversal", False)
     if not is_reversal and prompt_lower:
         _REVERSE_KEYWORDS = [
-            "reverse", "reverter", "tilbakefør", "annuler", "stornieren",
-            "revertir", "returned by the bank", "returnert av banken",
-            "retournée par la banque", "devuelto por el banco",
-            "devolvido pelo banco", "angre",
+            "reverse", "cancel the payment", "cancel payment",
+            "reverter", "cancelar o pagamento",
+            "tilbakefør", "angre",
+            "annuler", "annulez",
+            "stornieren", "storniere",
+            "revertir", "revierta", "cancelar el pago",
+            "returned by the bank", "returnert av banken",
+            "retournée par la banque", "retourné par la banque",
+            "devuelto por el banco", "devolvido pelo banco",
         ]
         is_reversal = any(kw in prompt_lower for kw in _REVERSE_KEYWORDS)
 

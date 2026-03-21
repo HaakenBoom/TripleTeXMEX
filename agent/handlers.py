@@ -803,12 +803,15 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
     # with a bank account error. Saves 2-3 API calls in the common case.
 
     # Step 1: Find or create customer (avoids duplicates)
-    customer_id = _find_or_create_customer(e["customer"], client, context)
+    customer_data = e.get("customer")
+    if not customer_data:
+        raise RuntimeError("create_invoice: no customer data in entities")
+    customer_id = _find_or_create_customer(customer_data, client, context)
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
     # Step 2: Create order with lines (resolving products and VAT types)
     order_lines = []
-    for line in e.get("orderLines", []):
+    for line in e.get("orderLines", e.get("lines", [])):
         ol = _resolve_product_in_order_line(line, client, context)
         order_lines.append(ol)
 
@@ -880,12 +883,15 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
         payment_type_id = payment_types[0]["id"]
 
     # Step 1: Find or create customer (avoids duplicates)
-    customer_id = _find_or_create_customer(e["customer"], client, context)
+    customer_data = e.get("customer")
+    if not customer_data:
+        raise RuntimeError("create_invoice_with_payment: no customer data in entities")
+    customer_id = _find_or_create_customer(customer_data, client, context)
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
     # Step 2: Create order with lines (resolving products and VAT types)
     order_lines = []
-    for line in e.get("orderLines", []):
+    for line in e.get("orderLines", e.get("lines", [])):
         ol = _resolve_product_in_order_line(line, client, context)
         order_lines.append(ol)
 
@@ -1545,9 +1551,12 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 logger.info("Created supplier '%s' org=%s (id=%d)",
                             supp_body["name"], supplier_org, supplier_id)
 
-    # Phase 4: Build final postings
+    # Phase 4: Build final postings (skip entries with unresolved account_id)
     postings = []
     for idx, r in enumerate(non_vat_entries):
+        if r["account_id"] is None:
+            logger.warning("Skipping posting with unresolved account_id for account %s", r["account_number"])
+            continue
         p: dict[str, Any] = {
             "row": idx + 1,
             "account": {"id": r["account_id"]},
@@ -1725,7 +1734,26 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
                     activity_id, activities[0].get("name"))
 
     if not activity_id:
-        raise RuntimeError(f"No activities found for project {project_id}")
+        # Create a project activity as fallback
+        act_name = activity_name or "Generell"
+        act_body: dict[str, Any] = {
+            "name": act_name,
+            "project": {"id": project_id},
+        }
+        act_result = client.post("/project/projectActivity", act_body)
+        if isinstance(act_result, dict) and act_result.get("value"):
+            # Re-fetch activities after creation
+            act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+            activities2 = act_resp2.get("values", [])
+            if activity_name:
+                for a in activities2:
+                    if a.get("name", "").strip().lower() == act_name.strip().lower():
+                        activity_id = a["id"]
+                        break
+            if not activity_id and activities2:
+                activity_id = activities2[0]["id"]
+        if not activity_id:
+            raise RuntimeError(f"No activities found for project {project_id}")
 
     # Step 5: Create timesheet entry
     hours = entities.get("hours", 0)
@@ -1775,11 +1803,13 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
     # Step 2: Create dimension values
     dim_values = e.get("dimensionValues", [])
     value_id_map: dict[str, int] = {}
+    seen_codes: set[str] = set()
     for i, val_name in enumerate(dim_values):
         # Generate a short code from the value name
         code = val_name[:4].upper().replace(" ", "")
-        if code in value_id_map:
+        if code in seen_codes:
             code = f"{code}{i}"
+        seen_codes.add(code)
         val_body: dict[str, Any] = {
             "displayName": val_name,
             "dimensionIndex": dim_index,
@@ -1809,15 +1839,18 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
     # Step 4: Determine which dimension value to link
     linked_value_name = e.get("linkedDimensionValue", "")
     linked_value_id = value_id_map.get(linked_value_name)
-    if not linked_value_id and value_id_map:
-        # Try case-insensitive match
-        for name, vid in value_id_map.items():
-            if name.lower() == linked_value_name.lower():
-                linked_value_id = vid
-                break
-        if not linked_value_id:
-            # Default to the last created value
-            linked_value_id = list(value_id_map.values())[-1]
+    if not linked_value_id:
+        if value_id_map:
+            # Try case-insensitive match
+            for name, vid in value_id_map.items():
+                if name.lower() == linked_value_name.lower():
+                    linked_value_id = vid
+                    break
+            if not linked_value_id:
+                # Default to the last created value
+                linked_value_id = list(value_id_map.values())[-1]
+        else:
+            raise RuntimeError("No dimension values created — cannot link voucher posting")
 
     # Step 5: Build voucher with balanced postings
     amount = e.get("amount", 0)
@@ -2161,8 +2194,8 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
             logger.info("Set placeholder dateOfBirth on employee %d for payroll", emp_id)
 
     # Extract payroll period early — needed for employment startDate
-    payroll_month = entities.get("month", current_date.month)
-    payroll_year = entities.get("year", current_date.year)
+    payroll_month = int(entities.get("month", current_date.month))
+    payroll_year = int(entities.get("year", current_date.year))
 
     # Step 2: Ensure employment exists
     emp_resp = client.get("/employee/employment", {"employeeId": emp_id, "count": 10})
@@ -2187,7 +2220,7 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         logger.info("Created employment %d for employee %d", employment_id, emp_id)
 
     # Step 3: Set salary via employment details
-    monthly_salary = entities.get("monthlySalary", 0)
+    monthly_salary = float(entities.get("monthlySalary", 0) or 0)
     if monthly_salary:
         annual_salary = monthly_salary * 12
         details_body: dict[str, Any] = {

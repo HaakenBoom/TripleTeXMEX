@@ -1,8 +1,0 @@
-{
-  "timestamp": "2026-03-21T11:38:51.834441",
-  "prompt": "Opprett og send en faktura til kunden Nordhav AS (org.nr 876520427) på 7850 kr eksklusiv MVA. Fakturaen gjelder Analyserapport.",
-  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
-  "result": "Created invoice 2147584322 for customer Nordhav AS",
-  "error": null,
-  "elapsed_seconds": 42.8
-}

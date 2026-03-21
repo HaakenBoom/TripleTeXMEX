@@ -1,8 +1,0 @@
-{
-  "timestamp": "2026-03-21T12:03:14.950097",
-  "prompt": "Du har mottatt en arbeidskontrakt (se vedlagt PDF). Opprett den ansatte i Tripletex med alle detaljer fra kontrakten: personnummer, fodselsdato, avdeling, stillingskode, lonn, stillingsprosent og startdato.",
-  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
-  "result": "Created employee Hilde Bakken (id=18620649)",
-  "error": null,
-  "elapsed_seconds": 10.87
-}

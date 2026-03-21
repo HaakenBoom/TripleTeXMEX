@@ -33,6 +33,8 @@ KNOWN_TASK_TYPES = [
     "create_dimension_voucher",
     "reverse_invoice_payment",
     "run_payroll",
+    "bank_reconciliation",
+    "annual_closure",
     "unknown",
 ]
 
@@ -119,7 +121,15 @@ The JSON object MUST have exactly this structure:
     Fields: employeeName (string), employeeEmail (string), monthlySalary (number — base monthly salary in NOK), bonus (number — one-time bonus amount if mentioned), year (integer — payroll year, default current year), month (integer — payroll month 1-12, default current month)
     IMPORTANT: Use this type when the request asks to run/execute payroll ("køyr løn", "kjør lønn", "run payroll", "ejecutar nómina", "processar folha", "exécuter la paie", "Gehaltsabrechnung ausführen"), set up salary, or process wages for an employee. This includes setting base salary, adding bonuses, and creating the payroll transaction.
 
-20. **unknown**
+20. **bank_reconciliation**
+    Fields: (no entity extraction needed — the handler parses the attached CSV file directly)
+    IMPORTANT: Use this type when the request asks to reconcile a bank statement (CSV/file) with open invoices/transactions. Keywords: "reconcile"/"avstem"/"reconciliar"/"rapprocher"/"Bankabstimmung"/"bankavstemming"/"bank reconciliation".
+
+21. **annual_closure**
+    Fields: (no entity extraction needed — the handler parses depreciation/closure details from the prompt directly)
+    IMPORTANT: Use this type when the request asks to perform annual closing, year-end closing, depreciation calculations, or simplified annual accounts. Keywords: "cierre anual"/"annual closing"/"årsavslutning"/"clôture annuelle"/"Jahresabschluss"/"årsoppgjør".
+
+22. **unknown**
     Use this when the request does not match any of the above types.
 
 ## Critical rules
@@ -205,6 +215,30 @@ def _post_validate_classification(prompt: str, parsed: dict) -> dict:
     if has_reverse and has_payment and task_type != "reverse_invoice_payment":
         parsed = dict(parsed)
         parsed["task_type"] = "reverse_invoice_payment"
+        return parsed
+
+    # Rule 5b: bank_reconciliation
+    _BANK_RECON_KEYWORDS = [
+        "reconcili", "avstem", "reconciliar", "rapprocher", "bankabstimmung",
+        "bank reconciliation", "bankavstemming", "reconciliação bancária",
+        "conciliación bancaria", "rapprochement bancaire",
+    ]
+    if any(kw in p for kw in _BANK_RECON_KEYWORDS) and task_type != "bank_reconciliation":
+        parsed = dict(parsed)
+        parsed["task_type"] = "bank_reconciliation"
+        return parsed
+
+    # Rule 5c: annual_closure
+    _ANNUAL_CLOSURE_KEYWORDS = [
+        "cierre anual", "annual closing", "annual closure", "årsavslutning",
+        "clôture annuelle", "jahresabschluss", "encerramento anual",
+        "årsoppgjør", "årsoppgjer", "årsrekneskap",
+        "depreciación anual", "annual depreciation", "avskrivning",
+        "amortissement annuel", "abschreibung",
+    ]
+    if any(kw in p for kw in _ANNUAL_CLOSURE_KEYWORDS) and task_type != "annual_closure":
+        parsed = dict(parsed)
+        parsed["task_type"] = "annual_closure"
         return parsed
 
     # Rule 5: register payment on EXISTING invoice (misclassified as create_invoice_with_payment)

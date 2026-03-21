@@ -39,6 +39,11 @@ def solve_task(prompt: str, files: list, base_url: str, session_token: str) -> s
     task = parse_task(prompt, file_contents if file_contents else None)
     phase_times["parse"] = round(time.time() - t0, 2)
     task_type = task.get("task_type", "unknown")
+    # Always include raw prompt so handlers can detect intent (e.g., reversal vs payment)
+    task["raw_prompt"] = prompt
+    # Include file contents for handlers that need them (e.g., bank reconciliation)
+    task["_file_contents"] = file_contents
+    task["_files_raw"] = files
     logger.info("Parsed task_type: %s (%.1fs)", task_type, phase_times["parse"])
     logger.info("Parsed entities: %s", json.dumps(task.get("entities", {}), ensure_ascii=False)[:500])
 
@@ -179,6 +184,18 @@ def _try_targeted_repair(error: str, task: dict, client: TripletexClient, contex
                 return result
         except Exception as e2:
             logger.warning("Targeted repair (employee) retry failed: %s", e2)
+        return None
+
+    # Account not found → the handler now auto-creates accounts, so just retry
+    if "account not found" in error_lower or "account" in error_lower and "not found" in error_lower:
+        logger.info("Targeted repair: account not found — retrying (handler will auto-create)")
+        try:
+            from agent.handlers import execute_task
+            result = execute_task(task, client, context)
+            if result is not None:
+                return result
+        except Exception as e2:
+            logger.warning("Targeted repair (account) retry failed: %s", e2)
         return None
 
     logger.info("No targeted repair available for error: %s", error[:200])
@@ -403,7 +420,7 @@ FALLBACK_SYSTEM_PROMPT = """You are an accounting agent for Tripletex (Norwegian
 
 CRITICAL: NEVER give up. NEVER say "I can't do this". Always attempt every part of the task. Even if one part fails, complete the other parts for partial credit. Partial credit is better than zero.
 
-CRITICAL: When the task describes EXISTING entities (invoices, payments, customers, orders), you MUST FIND them first — NEVER create new ones. If GET /invoice returns 0 results, try different date ranges (2024-01-01 to 2025-12-31) or broader search params. The task environment uses dates in 2024-2025.
+CRITICAL: When the task describes EXISTING entities (invoices, payments, customers, orders), you MUST FIND them first — NEVER create new ones. If GET /invoice returns 0 results, try different date ranges (2020-01-01 to 2030-12-31) or broader search params. The task environment may use dates across multiple years.
 
 KEY RULES:
 1. vatType MUST be {"id": N}, NEVER a string. OUTGOING (sales/invoices): 25%→id=3, 15%→id=31, 12%→id=32, 0%→id=5. INCOMING (expenses/purchases): 25%→id=1, 15%→id=11, 12%→id=12, 0%/none→id=0. For voucher postings on expense accounts (4xxx-7xxx), use INCOMING IDs. For balance accounts (1xxx-2xxx), use id=0.
@@ -451,7 +468,7 @@ POST /invoice accepts query params: sendToCustomer, paymentTypeId, paidAmount (r
 PUT /invoice/{id}/:payment to register payment after creation (params: paymentDate, paymentTypeId, paidAmount) — use NEGATIVE paidAmount to reverse!
 PUT /invoice/{id}/:createCreditNote to create a credit note (params: date, comment)
 PUT /ledger/voucher/{id}/:reverse to reverse a voucher
-GET /invoice REQUIRES invoiceDateFrom and invoiceDateTo params — use broad range like 2024-01-01 to 2025-12-31
+GET /invoice REQUIRES invoiceDateFrom and invoiceDateTo params — use broad range like 2020-01-01 to 2030-12-31
 
 BANK RECONCILIATION:
 /bank/statement — GET bank statements
@@ -549,6 +566,17 @@ def _run_agent_loop(prompt: str, files: list, tripletex: TripletexClient, contex
         metrics["total_iterations"] = i + 1
         logger.info("Agent loop iteration %d", i + 1)
 
+        # Trim tool result content in older messages to prevent token overflow
+        # Keep the first user message (context) and last 6 messages intact; truncate older tool results
+        if len(messages) > 8:
+            for msg in messages[1:-6]:
+                if msg.get("role") == "user" and isinstance(msg.get("content"), list):
+                    for item in msg["content"]:
+                        if isinstance(item, dict) and item.get("type") == "tool_result":
+                            c = item.get("content", "")
+                            if isinstance(c, str) and len(c) > 500:
+                                item["content"] = c[:500] + "...[truncated]"
+
         # Retry on rate limit with exponential backoff
         response = None
         for retry in range(4):
@@ -562,10 +590,18 @@ def _run_agent_loop(prompt: str, files: list, tripletex: TripletexClient, contex
                 )
                 break
             except Exception as e:
-                if "rate_limit" in str(e).lower() or "429" in str(e):
+                err_str = str(e).lower()
+                if "rate_limit" in err_str or "429" in str(e):
                     wait = 2 ** (retry + 1)
                     logger.warning("Rate limited, waiting %ds before retry %d...", wait, retry + 1)
                     time.sleep(wait)
+                elif "prompt is too long" in err_str or "too many tokens" in err_str:
+                    # Aggressively trim older messages
+                    logger.warning("Token overflow, trimming old messages")
+                    if len(messages) > 3:
+                        messages = [messages[0]] + messages[-4:]
+                    else:
+                        raise
                 else:
                     raise
         if response is None:
@@ -674,7 +710,12 @@ def _build_agent_user_content(prompt: str, files: list, context: dict,
         emp_lines = [f"  - id={e.get('id')}, name=\"{e.get('firstName', '')} {e.get('lastName', '')}\"" for e in context["employees"]]
         ctx_parts.append("Employees:\n" + "\n".join(emp_lines))
     if context.get("vat_types"):
-        vat_lines = [f"  - id={v.get('id')}, percentage={v.get('percentage')}%, name=\"{v.get('name', '')}\"" for v in context["vat_types"][:20]]
+        # Only include the most commonly used VAT types to save tokens
+        _COMMON_VAT_IDS = {0, 1, 3, 5, 6, 7, 11, 12, 31, 32}
+        common_vats = [v for v in context["vat_types"] if v.get("id") in _COMMON_VAT_IDS]
+        if not common_vats:
+            common_vats = context["vat_types"][:10]
+        vat_lines = [f"  - id={v.get('id')}, percentage={v.get('percentage')}%, name=\"{v.get('name', '')}\"" for v in common_vats]
         ctx_parts.append("VAT Types (use {\"id\": N} in vatType fields):\n" + "\n".join(vat_lines))
     if context.get("company_id"):
         ctx_parts.append(f"Company ID: {context['company_id']}")

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T15:39:09.591407",
+  "prompt": "Temos um novo funcionário chamado Inês Almeida, nascido em 13. February 1990. Crie-o como funcionário com o e-mail ines.almeida@example.org e data de início 2. June 2026.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Inês Almeida (id=18634668)",
+  "error": null,
+  "elapsed_seconds": 6.66
+}

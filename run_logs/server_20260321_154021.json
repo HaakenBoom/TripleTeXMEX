@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T15:40:21.768609",
+  "prompt": "Opprett kunden Skogheim AS med organisasjonsnummer 953656744. Adressa er Kirkegata 7, 7010 Trondheim. E-post: post@skogheim.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created customer Skogheim AS (id=108368190)",
+  "error": null,
+  "elapsed_seconds": 3.13
+}

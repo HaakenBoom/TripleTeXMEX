@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T15:40:08.677864",
+  "prompt": "Registrer 19 timer for Thea Ødegård (thea.degard@example.org) på aktiviteten \"Design\" i prosjektet \"Datamigrering\" for Tindra AS (org.nr 812877895). Timesats: 1600 kr/t. Generer en prosjektfaktura til kunden basert på de registrerte timene.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Logged 19 hours for employee Thea Ødegård on project 'Datamigrering' activity 'Design' (entry id=175908509)",
+  "error": null,
+  "elapsed_seconds": 9.82
+}

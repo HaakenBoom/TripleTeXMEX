@@ -17,6 +17,32 @@ def _today() -> str:
     return date.today().isoformat()
 
 
+def _get_or_create_account(client: TripletexClient, number: str, name: str | None = None,
+                           cache: dict | None = None) -> int:
+    """Resolve an account number to its ID, creating the account if it doesn't exist."""
+    if cache and number in cache:
+        return cache[number]
+    resp = client.get("/ledger/account", {"number": number, "count": 1})
+    values = resp.get("values", [])
+    if values:
+        acct_id = values[0]["id"]
+    else:
+        # Auto-create missing account
+        acct_name = name or f"Account {number}"
+        logger.info("Account %s not found, auto-creating as '%s'", number, acct_name)
+        create_resp = client.post("/ledger/account", {
+            "number": int(number),
+            "name": acct_name,
+        })
+        if isinstance(create_resp, dict) and create_resp.get("value", {}).get("id"):
+            acct_id = create_resp["value"]["id"]
+        else:
+            raise RuntimeError(f"Failed to create account {number}: {create_resp}")
+    if cache is not None:
+        cache[number] = acct_id
+    return acct_id
+
+
 def _check_response(result: dict, operation: str) -> dict:
     """Check API response for errors. Raises RuntimeError on 4xx."""
     if isinstance(result, dict) and result.get("status") and result["status"] >= 400:
@@ -45,7 +71,7 @@ _NEEDS_VAT_TYPES = {
 }
 _NEEDS_BANK_ACCOUNT = {
     "create_invoice", "create_invoice_with_payment",
-    "create_credit_note",
+    "create_credit_note", "bank_reconciliation",
 }
 
 
@@ -400,7 +426,9 @@ def _handle_create_employee(task: dict, client: TripletexClient, context: dict) 
         if emp.get(field):
             body[field] = emp[field]
     if emp.get("address"):
-        body["address"] = emp["address"]
+        sanitized_addr = _sanitize_address(emp["address"])
+        if sanitized_addr:
+            body["address"] = sanitized_addr
 
     result = client.post("/employee", body)
     _check_response(result, "POST /employee")
@@ -555,7 +583,7 @@ def _sanitize_address(addr: Any) -> dict | None:
 def _handle_create_customer(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
 
-    body: dict[str, Any] = {"name": entities["name"]}
+    body: dict[str, Any] = {"name": entities["name"], "isCustomer": True}
     optional_fields = [
         "email", "phoneNumber", "organizationNumber",
         "invoiceEmail", "description", "isCustomer", "isSupplier",
@@ -691,7 +719,7 @@ def _find_or_create_customer(customer_data: dict, client: TripletexClient, conte
             )
 
     # Not found — create
-    cust_body: dict[str, Any] = {"name": name}
+    cust_body: dict[str, Any] = {"name": name, "isCustomer": True}
     for field in ["email", "phoneNumber", "organizationNumber", "invoiceEmail"]:
         if customer_data.get(field):
             cust_body[field] = customer_data[field]
@@ -847,11 +875,15 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
         estimated_gross += count * price * (1 + vat_pct / 100)
 
     # Primary approach: register payment at invoice creation time
+    # Use explicitly parsed paidAmount if available; otherwise use estimated gross
+    explicit_paid = e.get("paidAmount")
+    paid_amount_to_use = explicit_paid if explicit_paid else estimated_gross
+
     params: dict[str, Any] = {"sendToCustomer": False}
     if payment_type_id is not None:
         params["paymentTypeId"] = payment_type_id
-        params["paidAmount"] = estimated_gross
-        params["paidAmountCurrency"] = estimated_gross
+        params["paidAmount"] = paid_amount_to_use
+        params["paidAmountCurrency"] = paid_amount_to_use
 
     inv = client.post("/invoice", inv_body, params)
 
@@ -1227,12 +1259,64 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
         if entities.get(field) is not None:
             body[field] = entities[field]
 
+    # Handle department reference (may be a name, not an ID)
+    if isinstance(body.get("department"), str):
+        # It's a department name — find or create
+        dept_name = body.pop("department")
+        for d in context.get("departments", []):
+            if d.get("name", "").lower() == dept_name.lower():
+                body["department"] = {"id": d["id"]}
+                break
+        if "department" not in body:
+            dept_result = client.post("/department", {"name": dept_name})
+            if isinstance(dept_result, dict) and dept_result.get("value"):
+                body["department"] = {"id": dept_result["value"]["id"]}
+
+    # Handle project reference (may be a name, not an ID)
+    if isinstance(body.get("project"), str):
+        proj_name = body.pop("project")
+        resp = client.get("/project", {"name": proj_name, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            body["project"] = {"id": values[0]["id"]}
+
     result = client.post("/travelExpense", body)
     _check_response(result, "POST /travelExpense")
     value = result.get("value", {})
+    te_id = value.get("id")
+
+    # Add cost items if specified
+    costs = entities.get("costs", [])
+    for cost in costs:
+        cost_body: dict[str, Any] = {
+            "travelExpense": {"id": te_id},
+        }
+        if cost.get("date"):
+            cost_body["date"] = cost["date"]
+        if cost.get("amount") is not None:
+            cost_body["amount"] = cost["amount"]
+            cost_body["amountNOK"] = cost.get("amountNOK", cost["amount"])
+        if cost.get("description"):
+            cost_body["description"] = cost["description"]
+        if cost.get("category"):
+            cost_body["category"] = cost["category"]
+        if cost.get("paymentType"):
+            cost_body["paymentType"] = cost["paymentType"]
+        if cost.get("rate") is not None:
+            cost_body["rate"] = cost["rate"]
+        if cost.get("count") is not None:
+            cost_body["count"] = cost["count"]
+
+        try:
+            cost_result = client.post("/travelExpense/cost", cost_body)
+            _check_response(cost_result, "POST /travelExpense/cost")
+            logger.info("Added cost to travel expense %d: %s", te_id, cost.get("description", ""))
+        except Exception as e:
+            logger.warning("Failed to add cost to travel expense: %s", e)
+
     return (
         f"Created travel expense '{value.get('title', '')}' "
-        f"(id={value.get('id', '?')})"
+        f"(id={te_id})"
     )
 
 
@@ -1288,7 +1372,11 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 account_id = acc_values[0]["id"]
                 account_data = acc_values[0]
             else:
-                raise RuntimeError(f"Account not found: {account_number}")
+                # Auto-create missing account
+                account_id = _get_or_create_account(
+                    client, str(account_number),
+                    name=posting.get("description") or f"Account {account_number}",
+                )
 
         amount = posting.get("amount") or posting.get("amountGross") or 0
         resolved.append({
@@ -1618,9 +1706,28 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
 
 
 def _handle_reverse_invoice_payment(task: dict, client: TripletexClient, context: dict) -> str:
-    """Find an existing invoice and reverse its payment so amountOutstanding = amount again."""
+    """Handle both: (A) register payment on existing unpaid invoice, (B) reverse existing payment.
+
+    The parser routes here for BOTH cases:
+    - "Register payment on existing outstanding invoice" → register positive payment
+    - "Reverse/undo/cancel a payment" → register negative payment
+    """
     entities = task["entities"]
     today = _today()
+
+    # Detect intent: is this a REVERSAL or a REGISTER PAYMENT?
+    raw_prompt = task.get("raw_prompt", "")
+    prompt_lower = raw_prompt.lower() if raw_prompt else ""
+    # Also check entities for hints
+    is_reversal = entities.get("isReversal", False)
+    if not is_reversal and prompt_lower:
+        _REVERSE_KEYWORDS = [
+            "reverse", "reverter", "tilbakefør", "annuler", "stornieren",
+            "revertir", "returned by the bank", "returnert av banken",
+            "retournée par la banque", "devuelto por el banco",
+            "devolvido pelo banco", "angre",
+        ]
+        is_reversal = any(kw in prompt_lower for kw in _REVERSE_KEYWORDS)
 
     # Step 1: Find the customer
     org_number = entities.get("customerOrganizationNumber", "")
@@ -1659,98 +1766,174 @@ def _handle_reverse_invoice_payment(task: dict, client: TripletexClient, context
     # Match by amount (excl. VAT) or description
     target_amount = entities.get("amount")
     target_desc = (entities.get("invoiceDescription") or "").lower()
-    matched_invoice = None
 
+    if is_reversal:
+        # REVERSAL: find invoice with existing payment (outstanding < total)
+        matched_invoice = _match_invoice_for_reversal(invoices, target_amount, target_desc)
+    else:
+        # REGISTER PAYMENT: find unpaid invoice (outstanding > 0)
+        matched_invoice = _match_invoice_for_payment(invoices, target_amount, target_desc)
+
+    if not matched_invoice:
+        # Fallback: try the other approach
+        if is_reversal:
+            matched_invoice = _match_invoice_for_payment(invoices, target_amount, target_desc)
+        else:
+            matched_invoice = _match_invoice_for_reversal(invoices, target_amount, target_desc)
+
+    if not matched_invoice:
+        # Last resort: use first invoice
+        matched_invoice = invoices[0]
+        logger.warning("No matching invoice found, using first invoice %d", matched_invoice["id"])
+
+    inv_id = matched_invoice["id"]
+    inv_amount = matched_invoice.get("amount", 0)
+    outstanding = matched_invoice.get("amountOutstanding", 0)
+    paid_already = inv_amount - outstanding
+    inv_voucher_id = matched_invoice.get("voucher", {}).get("id")
+
+    # Step 3: Find payment type
+    pt_resp = client.get("/invoice/paymentType", {"count": 100})
+    payment_types = pt_resp.get("values", [])
+    payment_type_id = None
+    desired_type = entities.get("paymentTypeDescription") or entities.get("paymentType") or ""
+    for pt in payment_types:
+        desc = pt.get("description", "")
+        if desired_type and desired_type.lower() in desc.lower():
+            payment_type_id = pt["id"]
+            break
+    if payment_type_id is None and payment_types:
+        payment_type_id = payment_types[0]["id"]
+
+    if payment_type_id is None:
+        raise RuntimeError("No payment types found")
+
+    # Step 4: Register payment (positive for register, negative for reversal)
+    if is_reversal:
+        payment_amount = -paid_already if paid_already > 0 else -inv_amount
+        logger.info("REVERSAL: invoice %d, amount=%s, outstanding=%s, reversing=%s",
+                    inv_id, inv_amount, outstanding, payment_amount)
+    else:
+        # Register payment: pay the outstanding amount (full or partial)
+        parsed_paid = entities.get("paidAmount")
+        if parsed_paid and parsed_paid > 0:
+            payment_amount = parsed_paid
+        else:
+            payment_amount = outstanding if outstanding > 0 else inv_amount
+        logger.info("REGISTER PAYMENT: invoice %d, amount=%s, outstanding=%s, paying=%s",
+                    inv_id, inv_amount, outstanding, payment_amount)
+
+    pay_params: dict[str, Any] = {
+        "paymentDate": entities.get("date", today),
+        "paymentTypeId": payment_type_id,
+        "paidAmount": payment_amount,
+        "paidAmountCurrency": payment_amount,
+    }
+    pay_result = client.put(f"/invoice/{inv_id}/:payment", params=pay_params)
+    logger.info("Payment result: %s", pay_result)
+
+    if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+        if is_reversal:
+            # Negative payment didn't work — try reversing the payment voucher instead
+            logger.warning("Negative payment failed, trying voucher reversal...")
+            postings_refs = matched_invoice.get("postings", [])
+            payment_voucher_id = None
+
+            for p_ref in postings_refs:
+                p_id = p_ref.get("id") if isinstance(p_ref, dict) else p_ref
+                try:
+                    p_detail = client.get(f"/ledger/posting/{p_id}")
+                    p_data = p_detail.get("value", p_detail)
+                    p_voucher = p_data.get("voucher", {}).get("id")
+                    if p_voucher and p_voucher != inv_voucher_id:
+                        payment_voucher_id = p_voucher
+                        break
+                except Exception:
+                    continue
+
+            if payment_voucher_id:
+                rev_result = client.put(
+                    f"/ledger/voucher/{payment_voucher_id}/:reverse",
+                    params={"date": entities.get("date", today)},
+                )
+                _check_response(rev_result, "PUT /ledger/voucher/:reverse")
+                return (
+                    f"Reversed payment voucher {payment_voucher_id} for invoice {inv_id}. "
+                    f"Outstanding amount restored to {inv_amount}."
+                )
+            else:
+                raise RuntimeError(f"Payment reversal failed: {pay_result}")
+        else:
+            # Try JSON body approach for registering payment
+            logger.warning("PUT /:payment with params failed, trying JSON body...")
+            pay_result = client.put(
+                f"/invoice/{inv_id}/:payment",
+                json_body={
+                    "paymentDate": entities.get("date", today),
+                    "paymentTypeId": payment_type_id,
+                    "paidAmount": payment_amount,
+                    "paidAmountCurrency": payment_amount,
+                },
+            )
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                raise RuntimeError(f"Payment registration failed: {pay_result}")
+
+    if is_reversal:
+        return (
+            f"Reversed payment of {abs(payment_amount)} on invoice {inv_id}. "
+            f"Outstanding amount restored to {inv_amount}."
+        )
+    else:
+        return (
+            f"Registered payment of {payment_amount} on invoice {inv_id}. "
+            f"Invoice is now paid."
+        )
+
+
+def _match_invoice_for_reversal(invoices: list[dict], target_amount: float | None,
+                                 target_desc: str) -> dict | None:
+    """Find an invoice that has an existing payment (outstanding < total) for reversal."""
     for inv in invoices:
-        # Only consider invoices with outstanding < total (i.e., has payment)
         outstanding = inv.get("amountOutstanding", 0)
         total = inv.get("amount", 0)
         if outstanding >= total:
             continue  # No payment to reverse
 
-        # Match by excl. VAT amount
         excl = inv.get("amountExcludingVat") or inv.get("amountExcludingVatCurrency")
         if target_amount and excl and abs(excl - target_amount) < 1:
-            matched_invoice = inv
-            break
+            return inv
+        if target_amount and total and abs(total - target_amount) < 1:
+            return inv
 
-        # Match by gross amount
-        if target_amount and total and abs(total - target_amount * 1.25) < 1:
-            matched_invoice = inv
-            break
+    # Fallback: first invoice with payment
+    for inv in invoices:
+        if inv.get("amountOutstanding", 0) < inv.get("amount", 0):
+            return inv
+    return None
 
-    if not matched_invoice:
-        # Fall back to first invoice that has a payment
-        for inv in invoices:
-            if inv.get("amountOutstanding", 0) < inv.get("amount", 0):
-                matched_invoice = inv
-                break
 
-    if not matched_invoice:
-        raise RuntimeError("No paid invoice found to reverse")
+def _match_invoice_for_payment(invoices: list[dict], target_amount: float | None,
+                                target_desc: str) -> dict | None:
+    """Find an unpaid invoice (outstanding > 0) for payment registration."""
+    for inv in invoices:
+        outstanding = inv.get("amountOutstanding", 0)
+        if outstanding <= 0:
+            continue  # Already fully paid
 
-    inv_id = matched_invoice["id"]
-    inv_amount = matched_invoice.get("amount", 0)
-    paid_amount = inv_amount - matched_invoice.get("amountOutstanding", 0)
-    inv_voucher_id = matched_invoice.get("voucher", {}).get("id")
+        excl = inv.get("amountExcludingVat") or inv.get("amountExcludingVatCurrency")
+        if target_amount and excl and abs(excl - target_amount) < 1:
+            return inv
+        if target_amount and outstanding and abs(outstanding - target_amount) < 1:
+            return inv
+        gross = inv.get("amount", 0)
+        if target_amount and gross and abs(gross - target_amount) < 1:
+            return inv
 
-    logger.info("Found invoice %d (amount=%s, outstanding=%s, paid=%s) — reversing payment",
-                inv_id, inv_amount, matched_invoice.get("amountOutstanding"), paid_amount)
-
-    # Step 3: Find payment type (for the reversal)
-    pt_resp = client.get("/invoice/paymentType", {"count": 100})
-    payment_types = pt_resp.get("values", [])
-    payment_type_id = payment_types[0]["id"] if payment_types else None
-
-    if payment_type_id is None:
-        raise RuntimeError("No payment types found")
-
-    # Step 4: Reverse the payment by registering a negative payment
-    pay_params: dict[str, Any] = {
-        "paymentDate": entities.get("date", today),
-        "paymentTypeId": payment_type_id,
-        "paidAmount": -paid_amount,
-        "paidAmountCurrency": -paid_amount,
-    }
-    pay_result = client.put(f"/invoice/{inv_id}/:payment", params=pay_params)
-    logger.info("Payment reversal result: %s", pay_result)
-
-    if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
-        # Negative payment didn't work — try reversing the payment voucher instead
-        logger.warning("Negative payment failed, trying voucher reversal...")
-        # Find payment voucher by looking at postings
-        postings_refs = matched_invoice.get("postings", [])
-        payment_voucher_id = None
-
-        for p_ref in postings_refs:
-            p_id = p_ref.get("id") if isinstance(p_ref, dict) else p_ref
-            try:
-                p_detail = client.get(f"/ledger/posting/{p_id}")
-                p_data = p_detail.get("value", p_detail)
-                p_voucher = p_data.get("voucher", {}).get("id")
-                if p_voucher and p_voucher != inv_voucher_id:
-                    payment_voucher_id = p_voucher
-                    break
-            except Exception:
-                continue
-
-        if payment_voucher_id:
-            rev_result = client.put(
-                f"/ledger/voucher/{payment_voucher_id}/:reverse",
-                params={"date": entities.get("date", today)},
-            )
-            _check_response(rev_result, "PUT /ledger/voucher/:reverse")
-            return (
-                f"Reversed payment voucher {payment_voucher_id} for invoice {inv_id}. "
-                f"Outstanding amount restored to {inv_amount}."
-            )
-        else:
-            raise RuntimeError(f"Payment reversal failed and no separate payment voucher found: {pay_result}")
-
-    return (
-        f"Reversed payment of {paid_amount} on invoice {inv_id}. "
-        f"Outstanding amount restored to {inv_amount}."
-    )
+    # Fallback: first unpaid invoice
+    for inv in invoices:
+        if inv.get("amountOutstanding", 0) > 0:
+            return inv
+    return None
 
 
 def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> str:
@@ -1926,6 +2109,517 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
     return ". ".join(result_parts)
 
 
+def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: dict) -> str:
+    """Reconcile bank statement (CSV) with open invoices in Tripletex.
+
+    1. Parse CSV bank statement from attached files
+    2. GET all open invoices
+    3. Match bank transactions to invoices by amount/reference
+    4. PUT /invoice/{id}/:payment for each match
+    """
+    import csv
+    import io
+
+    today = _today()
+
+    # Step 1: Parse CSV from file attachments
+    file_contents = task.get("_file_contents", [])
+    files_raw = task.get("_files_raw", [])
+    csv_data = ""
+
+    # Try text file contents first
+    for content in file_contents:
+        if content and (";" in content or "," in content) and any(
+            kw in content.lower() for kw in ["dato", "date", "beløp", "amount", "beskrivelse", "description"]
+        ):
+            csv_data = content
+            break
+
+    # If not found in text, try decoding raw files
+    if not csv_data:
+        import base64 as _b64
+        for f in files_raw:
+            mime = f.get("mime_type", "")
+            if "csv" in mime or "text" in mime or f.get("filename", "").endswith(".csv"):
+                try:
+                    csv_data = _b64.b64decode(f.get("content_base64", "")).decode("utf-8")
+                    break
+                except Exception:
+                    continue
+
+    if not csv_data:
+        raise RuntimeError("No CSV bank statement found in attachments")
+
+    # Remove file header markers if present
+    for prefix in ["[File:", "---"]:
+        if csv_data.startswith(prefix):
+            csv_data = csv_data.split("\n", 1)[-1] if "\n" in csv_data else csv_data
+
+    # Detect CSV delimiter (semicolon or comma)
+    first_lines = csv_data.strip().split("\n")[:3]
+    delimiter = ";" if any(";" in line for line in first_lines) else ","
+
+    # Parse CSV rows
+    reader = csv.DictReader(io.StringIO(csv_data.strip()), delimiter=delimiter)
+    transactions = []
+    for row in reader:
+        # Normalize field names (handle various languages)
+        tx: dict[str, Any] = {}
+        for key, val in row.items():
+            if not key:
+                continue
+            k = key.strip().lower()
+            if k in ("dato", "date", "fecha", "data", "datum"):
+                tx["date"] = val.strip()
+            elif k in ("beløp", "amount", "monto", "montante", "betrag", "sum", "belopp"):
+                # Parse amount: handle both "1234.56" and "1 234,56" formats
+                amt_str = val.strip().replace(" ", "").replace("\xa0", "")
+                # European format: 1.234,56 → 1234.56
+                if "," in amt_str and "." in amt_str:
+                    amt_str = amt_str.replace(".", "").replace(",", ".")
+                elif "," in amt_str:
+                    amt_str = amt_str.replace(",", ".")
+                try:
+                    tx["amount"] = float(amt_str)
+                except ValueError:
+                    continue
+            elif k in ("beskrivelse", "description", "descripción", "descrição", "beschreibung",
+                        "tekst", "text", "referanse", "reference", "ref"):
+                tx["description"] = val.strip()
+            elif k in ("kunde", "customer", "client", "cliente", "kundenr", "customer_ref"):
+                tx["customer_ref"] = val.strip()
+        if "amount" in tx:
+            transactions.append(tx)
+
+    logger.info("Parsed %d bank transactions from CSV", len(transactions))
+
+    if not transactions:
+        raise RuntimeError("No valid transactions found in CSV")
+
+    # Step 2: Get all invoices (unpaid ones for matching)
+    inv_resp = client.get("/invoice", {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": "2030-12-31",
+        "count": 1000,
+    })
+    invoices = inv_resp.get("values", [])
+    logger.info("Found %d invoices for matching", len(invoices))
+
+    # Build lookup maps for matching
+    inv_by_amount: dict[float, list[dict]] = {}
+    for inv in invoices:
+        outstanding = inv.get("amountOutstanding", 0)
+        if outstanding > 0:
+            # Round to 2 decimals for matching
+            key = round(outstanding, 2)
+            inv_by_amount.setdefault(key, []).append(inv)
+            # Also index by gross amount
+            gross = round(inv.get("amount", 0), 2)
+            if gross != key:
+                inv_by_amount.setdefault(gross, []).append(inv)
+
+    # Step 3: Find payment type
+    pt_resp = client.get("/invoice/paymentType", {"count": 100})
+    payment_types = pt_resp.get("values", [])
+    payment_type_id = payment_types[0]["id"] if payment_types else None
+
+    if payment_type_id is None:
+        raise RuntimeError("No payment types found for bank reconciliation")
+
+    # Also get outgoing payment type for supplier payments
+    pt_out_resp = client.get("/ledger/paymentTypeOut", {"count": 100})
+    payment_types_out = pt_out_resp.get("values", [])
+    payment_type_out_id = payment_types_out[0]["id"] if payment_types_out else payment_type_id
+
+    # Build supplier invoice lookup (for outgoing/negative transactions)
+    # Supplier invoices are vouchers, try to find them
+    supplier_inv_by_amount: dict[float, list[dict]] = {}
+    try:
+        supp_resp = client.get("/supplierInvoice", {
+            "invoiceDateFrom": "2020-01-01",
+            "invoiceDateTo": "2030-12-31",
+            "count": 1000,
+        })
+        for sinv in supp_resp.get("values", []):
+            outstanding = sinv.get("amountOutstanding", sinv.get("amount", 0))
+            if outstanding and outstanding > 0:
+                key = round(outstanding, 2)
+                supplier_inv_by_amount.setdefault(key, []).append(sinv)
+    except Exception:
+        logger.info("No supplier invoice endpoint or no supplier invoices found")
+
+    # Step 4: Match transactions to invoices and register payments
+    matched = 0
+    unmatched = 0
+    used_invoice_ids: set[int] = set()
+
+    for tx in transactions:
+        amount = tx["amount"]
+        tx_date = tx.get("date", today)
+        tx_desc = tx.get("description", "")
+
+        if amount > 0:
+            # Incoming payment — match against customer invoices
+            amt_key = round(amount, 2)
+            candidates = inv_by_amount.get(amt_key, [])
+
+            matched_inv = None
+            for inv in candidates:
+                if inv["id"] not in used_invoice_ids:
+                    matched_inv = inv
+                    break
+
+            if not matched_inv:
+                # Fuzzy amount matching (within 1 NOK tolerance)
+                for key, invs in inv_by_amount.items():
+                    if abs(key - amount) < 1.0:
+                        for inv in invs:
+                            if inv["id"] not in used_invoice_ids:
+                                matched_inv = inv
+                                break
+                        if matched_inv:
+                            break
+
+            if matched_inv:
+                pay_params: dict[str, Any] = {
+                    "paymentDate": tx_date,
+                    "paymentTypeId": payment_type_id,
+                    "paidAmount": amount,
+                    "paidAmountCurrency": amount,
+                }
+                pay_result = client.put(f"/invoice/{matched_inv['id']}/:payment", params=pay_params)
+
+                if isinstance(pay_result, dict) and pay_result.get("status", 0) < 400:
+                    matched += 1
+                    used_invoice_ids.add(matched_inv["id"])
+                    logger.info("Matched incoming tx %.2f → invoice %d (%s)",
+                               amount, matched_inv["id"], tx_desc[:50])
+                else:
+                    logger.warning("Payment failed for invoice %d: %s",
+                                 matched_inv["id"], pay_result.get("message", ""))
+                    unmatched += 1
+            else:
+                logger.warning("No matching invoice for incoming tx: %.2f %s", amount, tx_desc[:50])
+                unmatched += 1
+
+        elif amount < 0:
+            # Outgoing payment — match against supplier invoices
+            abs_amount = abs(amount)
+            amt_key = round(abs_amount, 2)
+            candidates = supplier_inv_by_amount.get(amt_key, [])
+
+            matched_sinv = None
+            for sinv in candidates:
+                if sinv["id"] not in used_invoice_ids:
+                    matched_sinv = sinv
+                    break
+
+            if not matched_sinv:
+                for key, sinvs in supplier_inv_by_amount.items():
+                    if abs(key - abs_amount) < 1.0:
+                        for sinv in sinvs:
+                            if sinv["id"] not in used_invoice_ids:
+                                matched_sinv = sinv
+                                break
+                        if matched_sinv:
+                            break
+
+            if matched_sinv:
+                pay_params = {
+                    "paymentDate": tx_date,
+                    "paymentTypeId": payment_type_out_id,
+                    "paidAmount": abs_amount,
+                    "paidAmountCurrency": abs_amount,
+                }
+                pay_result = client.put(f"/supplierInvoice/{matched_sinv['id']}/:registerPayment", params=pay_params)
+
+                if isinstance(pay_result, dict) and pay_result.get("status", 0) < 400:
+                    matched += 1
+                    used_invoice_ids.add(matched_sinv["id"])
+                    logger.info("Matched outgoing tx %.2f → supplier invoice %d (%s)",
+                               abs_amount, matched_sinv["id"], tx_desc[:50])
+                else:
+                    logger.warning("Supplier payment failed for invoice %d: %s",
+                                 matched_sinv["id"], pay_result.get("message", ""))
+                    unmatched += 1
+            else:
+                logger.warning("No matching supplier invoice for outgoing tx: %.2f %s", abs_amount, tx_desc[:50])
+                unmatched += 1
+
+    return (
+        f"Bank reconciliation completed: {matched} payments matched and registered, "
+        f"{unmatched} transactions unmatched out of {len(transactions)} total."
+    )
+
+
+def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle annual closure / year-end closing tasks.
+
+    Strategy:
+    1. If the LLM parser extracted structured entries (with postings), use those directly
+    2. Otherwise, fall back to regex parsing of the raw prompt for depreciation/prepaid/tax
+    """
+    import re
+
+    entities = task.get("entities", {})
+    raw_prompt = task.get("raw_prompt", "")
+    today = _today()
+    account_cache: dict[str, int] = {}
+
+    # ---------------------------------------------------------------
+    # PATH A: Use LLM-parsed entries if available (most reliable)
+    # ---------------------------------------------------------------
+    parsed_entries = entities.get("entries", [])
+    if parsed_entries:
+        logger.info("Annual closure: using %d LLM-parsed entries", len(parsed_entries))
+        vouchers_created = []
+        voucher_date = today
+        # Derive date from entities or default
+        if entities.get("closureYear") and entities.get("closureMonth"):
+            import calendar
+            y, m = entities["closureYear"], entities["closureMonth"]
+            last_day = calendar.monthrange(y, m)[1]
+            voucher_date = f"{y}-{m:02d}-{last_day:02d}"
+        elif entities.get("date"):
+            voucher_date = entities["date"]
+
+        for entry in parsed_entries:
+            entry_postings = entry.get("postings", [])
+            if not entry_postings:
+                continue
+
+            # Resolve account numbers to IDs
+            api_postings = []
+            for p in entry_postings:
+                acct_num = p.get("accountNumber")
+                if not acct_num:
+                    continue
+                acct_id = _get_or_create_account(
+                    client, str(acct_num),
+                    name=p.get("description") or f"Account {acct_num}",
+                    cache=account_cache,
+                )
+                amount = p.get("amount") or p.get("amountGross") or 0
+                api_postings.append({
+                    "account": {"id": acct_id},
+                    "amountGross": amount,
+                    "amountGrossCurrency": amount,
+                    "date": voucher_date,
+                })
+
+            if not api_postings:
+                continue
+
+            description = entry.get("description", "Voucher")
+            voucher_body: dict[str, Any] = {
+                "date": voucher_date,
+                "description": description,
+                "postings": api_postings,
+            }
+            result = client.post("/ledger/voucher", voucher_body)
+            _check_response(result, f"POST /ledger/voucher ({description})")
+            vouchers_created.append(description)
+            logger.info("Created voucher: %s", description)
+
+        return (
+            f"Annual closure completed: {len(vouchers_created)} vouchers created. "
+            + "; ".join(vouchers_created)
+        )
+
+    # ---------------------------------------------------------------
+    # PATH B: Regex-based parsing of raw prompt (legacy fallback)
+    # ---------------------------------------------------------------
+    depreciations = []
+    prompt_text = raw_prompt or str(entities)
+
+    dep_pattern = re.compile(
+        r'(\w[\w\s]*?)\s*\(\s*([\d\s.,]+)\s*(?:NOK|kr)?\s*,\s*(\d+)\s*'
+        r'(?:år|años|ans|years|Jahre|anos)\s*(?:lineales?|linéaire|linear|lineær)?\s*,\s*'
+        r'(?:cuenta|konto|account|compte|Konto)\s*(\d{4})\)',
+        re.IGNORECASE,
+    )
+    for m in dep_pattern.finditer(prompt_text):
+        name = m.group(1).strip()
+        cost_str = m.group(2).replace(" ", "").replace(",", ".")
+        cost = float(cost_str)
+        years = int(m.group(3))
+        asset_account = m.group(4)
+        depreciations.append({
+            "name": name,
+            "cost": cost,
+            "years": years,
+            "asset_account": asset_account,
+        })
+
+    # Extract expense account for depreciation
+    expense_account = "6010"
+    exp_match = re.search(
+        r'(?:cuenta|konto|account|compte|Konto)\s*(\d{4})\s*(?:para|for|pour|für|til)\s*'
+        r'(?:gasto|expense|charge|Aufwand|kostnad|avskrivning|depreciación|amortissement|depreciation)',
+        prompt_text, re.IGNORECASE,
+    )
+    if exp_match:
+        expense_account = exp_match.group(1)
+    else:
+        exp_match2 = re.search(
+            r'(?:avskrivning|depreci|amortiss|Abschreibung).*?(?:cuenta|konto|account|compte|Konto)\s*(\d{4})',
+            prompt_text, re.IGNORECASE,
+        )
+        if exp_match2:
+            expense_account = exp_match2.group(1)
+
+    # Extract accumulated depreciation account
+    accum_account = "1209"
+    accum_match = re.search(
+        r'(?:cuenta|konto|account|compte|Konto)?\s*(\d{4})\s*(?:para|for|pour|für|til)\s*'
+        r'(?:depreciación acumulada|accumulated depreciation|amortissement cumulé|'
+        r'akkumulert avskrivning|kumulierte Abschreibung|amortização acumulada)',
+        prompt_text, re.IGNORECASE,
+    )
+    if accum_match:
+        accum_account = accum_match.group(1)
+
+    # Extract prepaid reversal info
+    prepaid_amount = None
+    prepaid_account = "1700"
+    prepaid_match = re.search(
+        r'(?:prepagados?|prepaid|prépayé|forskuddsbetalt|Vorauszahlung|pré-pago|forhåndsbetalt|régularisation)'
+        r'.*?(?:total)?\s*([\d\s.,]+)\s*(?:NOK|kr)',
+        prompt_text, re.IGNORECASE,
+    )
+    if prepaid_match:
+        amt_str = prepaid_match.group(1).replace(" ", "").replace(",", ".")
+        prepaid_amount = float(amt_str)
+    prepaid_acct_match = re.search(
+        r'(?:cuenta|konto|account|compte|Konto)\s*(\d{4}).*?(?:prepagados?|prepaid|forskuddsbetalt|régularisation)',
+        prompt_text, re.IGNORECASE,
+    )
+    if not prepaid_acct_match:
+        prepaid_acct_match = re.search(
+            r'(?:prepagados?|prepaid|forskuddsbetalt|régularisation).*?(?:cuenta|konto|account|compte|Konto)\s*(\d{4})',
+            prompt_text, re.IGNORECASE,
+        )
+    if prepaid_acct_match:
+        prepaid_account = prepaid_acct_match.group(1)
+
+    # Extract tax provision info
+    tax_rate = 0.22
+    tax_rate_match = re.search(r'(\d+)\s*%', prompt_text)
+    if tax_rate_match:
+        rate = int(tax_rate_match.group(1))
+        if 15 <= rate <= 30:
+            tax_rate = rate / 100
+
+    tax_expense_account = "8700"
+    tax_liability_account = "2920"
+    tax_exp_match = re.search(
+        r'(?:cuenta|konto|account)\s*(\d{4})\s*/\s*(\d{4})',
+        prompt_text, re.IGNORECASE,
+    )
+    if tax_exp_match:
+        tax_expense_account = tax_exp_match.group(1)
+        tax_liability_account = tax_exp_match.group(2)
+
+    logger.info("Annual closure (regex): %d depreciations, prepaid=%s, tax_rate=%.0f%%",
+                len(depreciations), prepaid_amount, tax_rate * 100)
+
+    vouchers_created = []
+    total_depreciation_expense = 0.0
+    closure_date = entities.get("date", f"{date.today().year - 1}-12-31")
+
+    # Create depreciation vouchers
+    for dep in depreciations:
+        annual_dep = round(dep["cost"] / dep["years"], 2)
+        total_depreciation_expense += annual_dep
+
+        expense_acct_id = _get_or_create_account(client, expense_account, cache=account_cache)
+        accum_acct_id = _get_or_create_account(client, accum_account, cache=account_cache)
+
+        voucher_body = {
+            "date": closure_date,
+            "description": f"Avskrivning {dep['name']}",
+            "postings": [
+                {
+                    "account": {"id": expense_acct_id},
+                    "amountGross": annual_dep,
+                    "amountGrossCurrency": annual_dep,
+                    "date": closure_date,
+                },
+                {
+                    "account": {"id": accum_acct_id},
+                    "amountGross": -annual_dep,
+                    "amountGrossCurrency": -annual_dep,
+                    "date": closure_date,
+                },
+            ],
+        }
+        result = client.post("/ledger/voucher", voucher_body)
+        _check_response(result, f"POST /ledger/voucher (depreciation {dep['name']})")
+        vouchers_created.append(f"Depreciation {dep['name']}: {annual_dep} NOK")
+
+    # Prepaid expense reversal
+    if prepaid_amount:
+        prepaid_acct_id = _get_or_create_account(client, prepaid_account, cache=account_cache)
+        prepaid_expense_id = _get_or_create_account(client, expense_account, cache=account_cache)
+
+        voucher_body = {
+            "date": closure_date,
+            "description": "Reversering forskuddsbetalt kostnad",
+            "postings": [
+                {
+                    "account": {"id": prepaid_expense_id},
+                    "amountGross": prepaid_amount,
+                    "amountGrossCurrency": prepaid_amount,
+                    "date": closure_date,
+                },
+                {
+                    "account": {"id": prepaid_acct_id},
+                    "amountGross": -prepaid_amount,
+                    "amountGrossCurrency": -prepaid_amount,
+                    "date": closure_date,
+                },
+            ],
+        }
+        result = client.post("/ledger/voucher", voucher_body)
+        _check_response(result, "POST /ledger/voucher (prepaid reversal)")
+        vouchers_created.append(f"Prepaid reversal: {prepaid_amount} NOK")
+
+    # Tax provision
+    taxable_income = total_depreciation_expense + (prepaid_amount or 0)
+    tax_amount = round(taxable_income * tax_rate, 2)
+
+    if tax_amount > 0:
+        tax_exp_id = _get_or_create_account(client, tax_expense_account, cache=account_cache)
+        tax_liab_id = _get_or_create_account(client, tax_liability_account, cache=account_cache)
+
+        voucher_body = {
+            "date": closure_date,
+            "description": "Skatteavsetning",
+            "postings": [
+                {
+                    "account": {"id": tax_exp_id},
+                    "amountGross": tax_amount,
+                    "amountGrossCurrency": tax_amount,
+                    "date": closure_date,
+                },
+                {
+                    "account": {"id": tax_liab_id},
+                    "amountGross": -tax_amount,
+                    "amountGrossCurrency": -tax_amount,
+                    "date": closure_date,
+                },
+            ],
+        }
+        result = client.post("/ledger/voucher", voucher_body)
+        _check_response(result, "POST /ledger/voucher (tax provision)")
+        vouchers_created.append(f"Tax provision ({tax_rate*100:.0f}%): {tax_amount} NOK")
+
+    return (
+        f"Annual closure completed: {len(vouchers_created)} vouchers created. "
+        + "; ".join(vouchers_created)
+    )
+
+
 _HANDLERS = {
     "create_employee": _handle_create_employee,
     "update_employee": _handle_update_employee,
@@ -1946,4 +2640,6 @@ _HANDLERS = {
     "create_dimension_voucher": _handle_create_dimension_voucher,
     "reverse_invoice_payment": _handle_reverse_invoice_payment,
     "run_payroll": _handle_run_payroll,
+    "bank_reconciliation": _handle_bank_reconciliation,
+    "annual_closure": _handle_annual_closure,
 }

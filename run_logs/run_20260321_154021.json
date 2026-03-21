@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-03-21T15:40:21.767867",
+  "prompt_fingerprint": "d7400829e05f",
+  "prompt": "Opprett kunden Skogheim AS med organisasjonsnummer 953656744. Adressa er Kirkegata 7, 7010 Trondheim. E-post: post@skogheim.no.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Skogheim AS",
+      "organizationNumber": "953656744",
+      "email": "post@skogheim.no",
+      "postalAddress": {
+        "addressLine1": "Kirkegata 7",
+        "postalCode": "7010",
+        "city": "Trondheim",
+        "country": {
+          "id": 161
+        }
+      }
+    },
+    "raw_prompt": "Opprett kunden Skogheim AS med organisasjonsnummer 953656744. Adressa er Kirkegata 7, 7010 Trondheim. E-post: post@skogheim.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Skogheim AS (id=108368190)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.13,
+  "phase_times": {
+    "parse": 1.49,
+    "prefetch": 0.0,
+    "handler": 1.64
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108368190
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T15:40:21.767155",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Skogheim AS",
+        "isCustomer": true,
+        "email": "post@skogheim.no",
+        "organizationNumber": "953656744",
+        "postalAddress": {
+          "addressLine1": "Kirkegata 7",
+          "postalCode": "7010",
+          "city": "Trondheim",
+          "country": {
+            "id": 161
+          }
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108368190,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108368190",
+          "name": "Skogheim AS",
+          "organizationNumber": "953656744",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@skogheim.no",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Skogheim AS (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405586056,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405586056",
+            "addressLine1": "Kirkegata 7",
+            "addressLine2": "",
+            "postalCode": "7010",
+            "city": "Trondheim",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Skogheim AS, Kirkegata 7, 7010 Trondheim, Norge",
+            "addressAsString": "Kirkegata 7, 7010 Trondheim, Norge",
+            "displayNameInklMatrikkel": "Skogheim AS, Kirkegata 7, 7010 Trondheim, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405586055,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405586055"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 371367336,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/371367336"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

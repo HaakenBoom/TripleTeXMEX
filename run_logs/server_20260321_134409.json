@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T13:44:09.163799",
+  "prompt": "Effectuez la clôture mensuelle de mars 2026. Comptabilisez la régularisation (5650 NOK par mois du compte 1720 vers charges). Enregistrez l'amortissement mensuel d'une immobilisation avec un coût d'acquisition de 80050 NOK et une durée de vie utile de 7 ans (amortissement linéaire sur compte 6010). Vérifiez que la balance est à zéro. Comptabilisez également une provision pour salaires (débit compte de charges salariales 5000, crédit compte de salaires à payer 2900).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 0 vouchers created. ",
+  "error": null,
+  "elapsed_seconds": 3.01
+}

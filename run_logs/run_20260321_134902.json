@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-03-21T13:49:02.761305",
+  "prompt_fingerprint": "b0b7856f80e6",
+  "prompt": "Realize o encerramento mensal de março de 2026. Registe a reversão de acréscimos (14600 NOK por mês da conta 1720 para despesa). Registe a depreciação mensal de um ativo fixo com custo de aquisição 292100 NOK e vida útil 6 anos (depreciação linear para conta 6030). Verifique se o balancete está a zero. Registe também uma provisão salarial (débito conta de despesas salariais 5000, crédito conta de salários acumulados 2900).",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "annual_closure",
+    "entities": {
+      "year": 2026,
+      "month": 3,
+      "postings": [
+        {
+          "description": "Reversão de acréscimos",
+          "accountNumber": 1720,
+          "amount": -14600,
+          "debitOrCredit": "credit"
+        },
+        {
+          "description": "Despesa de acréscimos revertidos",
+          "accountNumber": 6000,
+          "amount": 14600,
+          "debitOrCredit": "debit"
+        },
+        {
+          "description": "Depreciação mensal de ativo fixo",
+          "accountNumber": 6030,
+          "amount": 4084.72,
+          "debitOrCredit": "debit",
+          "fixedAssetCost": 292100,
+          "usefulLifeYears": 6,
+          "depreciationMethod": "linear"
+        },
+        {
+          "description": "Acumulação de depreciação",
+          "accountNumber": 1700,
+          "amount": -4084.72,
+          "debitOrCredit": "credit"
+        },
+        {
+          "description": "Provisão salarial - despesa",
+          "accountNumber": 5000,
+          "amount": 5000,
+          "debitOrCreit": "debit"
+        },
+        {
+          "description": "Provisão salarial - acumulado",
+          "accountNumber": 2900,
+          "amount": -5000,
+          "debitOrCredit": "credit"
+        }
+      ],
+      "verifyTrialBalance": true,
+      "closingType": "monthly_closure"
+    },
+    "raw_prompt": "Realize o encerramento mensal de março de 2026. Registe a reversão de acréscimos (14600 NOK por mês da conta 1720 para despesa). Registe a depreciação mensal de um ativo fixo com custo de aquisição 292100 NOK e vida útil 6 anos (depreciação linear para conta 6030). Verifique se o balancete está a zero. Registe também uma provisão salarial (débito conta de despesas salariais 5000, crédito conta de salários acumulados 2900).",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Annual closure completed: 0 vouchers created. ",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.02,
+  "phase_times": {
+    "parse": 3.02,
+    "prefetch": 0.0,
+    "handler": 0.0
+  },
+  "total_api_calls": 0,
+  "errors_4xx": 0,
+  "status_counts": {},
+  "call_phases": {
+    "prefetch": 0,
+    "action": 0,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": []
+}

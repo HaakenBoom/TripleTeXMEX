@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T15:45:58.556997",
+  "prompt": "Register a travel expense for Thomas Lewis (thomas.lewis@example.org) for \"Client visit Oslo\". The trip lasted 4 days with per diem (daily rate 800 NOK). Expenses: flight ticket 7250 NOK and taxi 600 NOK.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created travel expense 'Client visit Oslo' (id=11148653)",
+  "error": null,
+  "elapsed_seconds": 13.6
+}

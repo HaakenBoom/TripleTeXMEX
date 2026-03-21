@@ -1,0 +1,765 @@
+{
+  "timestamp": "2026-03-21T15:40:08.675892",
+  "prompt_fingerprint": "784178a8904d",
+  "prompt": "Registrer 19 timer for Thea Ødegård (thea.degard@example.org) på aktiviteten \"Design\" i prosjektet \"Datamigrering\" for Tindra AS (org.nr 812877895). Timesats: 1600 kr/t. Generer en prosjektfaktura til kunden basert på de registrerte timene.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "log_timesheet_hours",
+    "entities": {
+      "employeeName": "Thea Ødegård",
+      "employeeEmail": "thea.degard@example.org",
+      "hours": 19,
+      "activityName": "Design",
+      "projectName": "Datamigrering",
+      "customerName": "Tindra AS",
+      "customerOrganizationNumber": "812877895",
+      "hourlyRate": 1600,
+      "date": "2026-03-21"
+    },
+    "raw_prompt": "Registrer 19 timer for Thea Ødegård (thea.degard@example.org) på aktiviteten \"Design\" i prosjektet \"Datamigrering\" for Tindra AS (org.nr 812877895). Timesats: 1600 kr/t. Generer en prosjektfaktura til kunden basert på de registrerte timene.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Logged 19 hours for employee Thea Ødegård on project 'Datamigrering' activity 'Design' (entry id=175908509)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 9.82,
+  "phase_times": {
+    "parse": 1.32,
+    "prefetch": 1.41,
+    "handler": 7.09
+  },
+  "total_api_calls": 6,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 6
+  },
+  "call_phases": {
+    "prefetch": 5,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175908509
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T15:40:01.587792",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 4,
+        "from": 0,
+        "count": 4,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18241544,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18241544",
+            "firstName": "Admin",
+            "lastName": "NM",
+            "displayName": "Admin NM",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "nmiai-pool@test.no",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 733268,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/733268"
+            },
+            "employments": [
+              {
+                "id": 2637183,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2637183"
+              }
+            ],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 107904405,
+            "vismaConnect2FAactive": false
+          },
+          {
+            "id": 18611401,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611401",
+            "firstName": "Bjørn",
+            "lastName": "Kvamme",
+            "displayName": "Bjørn Kvamme",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "bjrn.kvamme@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 733268,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/733268"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 107904405,
+            "vismaConnect2FAactive": false
+          },
+          {
+            "id": 18611408,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611408",
+            "firstName": "Victoria",
+            "lastName": "Lewis",
+            "displayName": "Victoria Lewis",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "victoria.lewis@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 733268,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/733268"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 107904405,
+            "vismaConnect2FAactive": false
+          },
+          {
+            "id": 18611410,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611410",
+            "firstName": "Thea",
+            "lastName": "Ødegård",
+            "displayName": "Thea Ødegård",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "thea.degard@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 733268,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/733268"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 107904405,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T15:40:03.082843",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "thea.degard@example.org",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18611410,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611410",
+            "firstName": "Thea",
+            "lastName": "Ødegård",
+            "displayName": "Thea Ødegård",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "thea.degard@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 733268,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/733268"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 107904405,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T15:40:04.555462",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "812877895",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108318094,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108318094",
+            "name": "Tindra AS",
+            "organizationNumber": "812877895",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10002,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Tindra AS (10002)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405486741,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405486741"
+            },
+            "physicalAddress": {
+              "id": 405486740,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405486740"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 371263652,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/371263652"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T15:40:05.926029",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 200,
+      "request_params": {
+        "name": "Datamigrering",
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 2,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 401988143,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/401988143",
+            "name": "Datamigrering",
+            "number": "1",
+            "displayName": "1 Datamigrering",
+            "description": "",
+            "projectManager": {
+              "id": 18611401,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611401"
+            },
+            "department": null,
+            "mainProject": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "customer": {
+              "id": 108318076,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108318076"
+            },
+            "isClosed": false,
+            "isReadyForInvoicing": false,
+            "isInternal": false,
+            "isOffer": false,
+            "isFixedPrice": false,
+            "projectCategory": null,
+            "deliveryAddress": null,
+            "boligmappaAddress": null,
+            "displayNameFormat": "NAME_STANDARD",
+            "reference": "",
+            "externalAccountsNumber": "",
+            "discountPercentage": 0.0,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "fixedprice": 0,
+            "contributionMarginPercent": 0,
+            "numberOfSubProjects": 0,
+            "numberOfProjectParticipants": 1,
+            "orderLines": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "markUpOrderLines": 0.0,
+            "markUpFeesEarned": 0.0,
+            "isPriceCeiling": false,
+            "priceCeilingAmount": 0.0,
+            "projectHourlyRates": [
+              {
+                "id": 11077260,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11077260"
+              }
+            ],
+            "forParticipantsOnly": false,
+            "participants": [
+              {
+                "id": 15631809,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15631809"
+              }
+            ],
+            "contact": null,
+            "attention": null,
+            "invoiceComment": "",
+            "invoicingPlan": [],
+            "preliminaryInvoice": null,
+            "generalProjectActivitiesPerProjectOnly": false,
+            "projectActivities": [],
+            "hierarchyNameAndNumber": "1 Datamigrering",
+            "invoiceDueDate": 14,
+            "invoiceDueDateType": "DAYS",
+            "invoiceReceiverEmail": "",
+            "overdueNoticeEmail": "",
+            "accessType": "WRITE",
+            "useProductNetPrice": false,
+            "ignoreCompanyProductDiscountAgreement": false,
+            "customerName": "Fjelltopp AS",
+            "hierarchyLevel": 0,
+            "projectManagerNameAndNumber": "Bjørn Kvamme",
+            "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+            "invoiceOnAccountVatHigh": false,
+            "invoiceReserveTotalAmountCurrency": 0,
+            "accountingDimensionValues": []
+          },
+          {
+            "id": 401988158,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/401988158",
+            "name": "Datamigrering",
+            "number": "2",
+            "displayName": "2 Datamigrering",
+            "description": "",
+            "projectManager": {
+              "id": 18611410,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611410"
+            },
+            "department": null,
+            "mainProject": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "customer": {
+              "id": 108318094,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108318094"
+            },
+            "isClosed": false,
+            "isReadyForInvoicing": false,
+            "isInternal": false,
+            "isOffer": false,
+            "isFixedPrice": false,
+            "projectCategory": null,
+            "deliveryAddress": null,
+            "boligmappaAddress": null,
+            "displayNameFormat": "NAME_STANDARD",
+            "reference": "",
+            "externalAccountsNumber": "",
+            "discountPercentage": 0.0,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "fixedprice": 0,
+            "contributionMarginPercent": 0,
+            "numberOfSubProjects": 0,
+            "numberOfProjectParticipants": 1,
+            "orderLines": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "markUpOrderLines": 0.0,
+            "markUpFeesEarned": 0.0,
+            "isPriceCeiling": false,
+            "priceCeilingAmount": 0.0,
+            "projectHourlyRates": [
+              {
+                "id": 11077265,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11077265"
+              }
+            ],
+            "forParticipantsOnly": false,
+            "participants": [
+              {
+                "id": 15631814,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15631814"
+              }
+            ],
+            "contact": null,
+            "attention": null,
+            "invoiceComment": "",
+            "invoicingPlan": [],
+            "preliminaryInvoice": null,
+            "generalProjectActivitiesPerProjectOnly": false,
+            "projectActivities": [],
+            "hierarchyNameAndNumber": "2 Datamigrering",
+            "invoiceDueDate": 14,
+            "invoiceDueDateType": "DAYS",
+            "invoiceReceiverEmail": "",
+            "overdueNoticeEmail": "",
+            "accessType": "WRITE",
+            "useProductNetPrice": false,
+            "ignoreCompanyProductDiscountAgreement": false,
+            "customerName": "Tindra AS",
+            "hierarchyLevel": 0,
+            "projectManagerNameAndNumber": "Thea Ødegård",
+            "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+            "invoiceOnAccountVatHigh": false,
+            "invoiceReserveTotalAmountCurrency": 0,
+            "accountingDimensionValues": []
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T15:40:07.214226",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity/>forTimeSheet",
+      "status": 200,
+      "request_params": {
+        "projectId": 401988143,
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 4,
+        "from": 0,
+        "count": 4,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 5877967,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5877967",
+            "name": "Analyse",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Analyse",
+            "deletable": true
+          },
+          {
+            "id": 5877969,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5877969",
+            "name": "Design",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Design",
+            "deletable": true
+          },
+          {
+            "id": 5188347,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5188347",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 5188346,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5188346",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T15:40:08.675185",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18611410
+        },
+        "project": {
+          "id": 401988143
+        },
+        "activity": {
+          "id": 5877969
+        },
+        "date": "2026-03-21",
+        "hours": 19
+      },
+      "response_body": {
+        "value": {
+          "id": 175908509,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175908509",
+          "project": {
+            "id": 401988143,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/401988143"
+          },
+          "activity": {
+            "id": 5877969,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5877969"
+          },
+          "date": "2026-03-21",
+          "hours": 19.0,
+          "chargeableHours": 19.0,
+          "employee": {
+            "id": 18611410,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18611410"
+          },
+          "timeClocks": [],
+          "comment": "",
+          "locked": false,
+          "chargeable": false,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 19.0
+        }
+      }
+    }
+  ]
+}

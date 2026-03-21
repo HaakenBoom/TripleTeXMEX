@@ -1276,18 +1276,28 @@ def _handle_create_department(task: dict, client: TripletexClient, context: dict
     if not names:
         raise RuntimeError("create_department: no name or names provided")
 
-    created = []
+    # Build department bodies
+    bodies = []
     for dept_name in names:
         body: dict[str, Any] = {"name": dept_name}
         if entities.get("departmentNumber") is not None and len(names) == 1:
             body["departmentNumber"] = entities["departmentNumber"]
         if mgr_ref:
             body["departmentManager"] = mgr_ref
+        bodies.append(body)
 
-        result = client.post("/department", body)
-        _check_response(result, f"POST /department ({dept_name})")
+    # Use batch endpoint for multiple departments, single for one
+    created = []
+    if len(bodies) == 1:
+        result = client.post("/department", bodies[0])
+        _check_response(result, "POST /department")
         value = result.get("value", {})
         created.append(f"{value.get('name', '')} (id={value.get('id', '?')})")
+    else:
+        result = client.post("/department/list", bodies)
+        _check_response(result, "POST /department/list")
+        for value in result.get("values", []):
+            created.append(f"{value.get('name', '')} (id={value.get('id', '?')})")
 
     return f"Created {len(created)} department(s): {', '.join(created)}"
 

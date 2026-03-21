@@ -411,12 +411,17 @@ def classify_task(prompt: str) -> str:
     # 24. Create/register customer or supplier
     if any(kw in p for kw in [
         "opprett kunden", "registrer kunden", "opprett leverandøren",
+        "registrer leverandøren", "registrer leverandören",
         "create the customer", "register the customer", "create customer",
         "register the supplier", "create the supplier",
         "cree el cliente", "registre el cliente", "cree el proveedor",
+        "registre el proveedor",
         "crie o cliente", "registre o cliente", "crie o fornecedor",
+        "registre o fornecedor", "registe o fornecedor", "registe o cliente",
         "erstellen sie den kunden", "registrieren sie den",
+        "erstellen sie den lieferanten", "registrieren sie den lieferanten",
         "créez le client", "enregistrez le client", "créez le fournisseur",
+        "enregistrez le fournisseur",
     ]):
         return "create_customer"
 

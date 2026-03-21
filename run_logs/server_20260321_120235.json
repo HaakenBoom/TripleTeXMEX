@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T12:02:35.732858",
+  "prompt": "Opprett produktet \"Havregryn\" med produktnummer 3113. Prisen er 29250 kr eksklusiv MVA, og MVA-sats for næringsmiddel på 15 % skal nyttast.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created product Havregryn (id=84415014)",
+  "error": null,
+  "elapsed_seconds": 10.06
+}

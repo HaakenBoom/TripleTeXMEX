@@ -1,0 +1,541 @@
+# Tripletex API Reference (from OpenAPI spec)
+
+## Response formats
+- Single entity: {"value": {...}}
+- List: {"fullResultSize": N, "values": [...]}
+- Error: {"status": 4xx, "message": "...", "validationMessages": [...]}
+- Reference fields: {"id": <int>} — NEVER raw strings
+- Dates: YYYY-MM-DD format
+
+## Employee
+  GET /employee — Search employees
+  POST /employee — Create employee
+  GET /employee/{id} — Get by ID
+  PUT /employee/{id} — Update employee
+  Query: id, firstName, lastName, email, fields, count, from
+  Body fields (Employee):
+    address: {Address}
+    bankAccountNumber: string
+    bic: string
+    comments: string
+    creditorBankCountryId: int32
+    dateOfBirth: string
+    department: {Department}
+    dnumber: string
+    email: string
+    employeeCategory: {EmployeeCategory}
+    employeeNumber: string
+    employments: [Employment]
+    firstName: string
+    holidayAllowanceEarned: {HolidayAllowanceEarned}
+    iban: string
+    id: int64
+    internationalId: {InternationalId}
+    isContact: boolean
+    lastName: string
+    nationalIdentityNumber: string
+    phoneNumberHome: string
+    phoneNumberMobile: string
+    phoneNumberMobileCountry: {Country}
+    phoneNumberWork: string
+    userType: STANDARD|EXTENDED|NO_ACCESS
+    usesAbroadPayment: boolean
+    version: int32
+
+## Customer
+  GET /customer — Search customers
+  POST /customer — Create customer
+  GET /customer/{id} — Get by ID
+  PUT /customer/{id} — Update customer
+  Query: id, name, email, organizationNumber, customerAccountNumber, isSupplier, fields, count, from
+  Body fields (Customer):
+    accountManager: {Employee}
+    bankAccountPresentation: [CompanyBankAccountPresentation]
+    bankAccounts: [string]
+    category1: {CustomerCategory}
+    category2: {CustomerCategory}
+    category3: {CustomerCategory}
+    currency: {Currency}
+    customerNumber: int32
+    deliveryAddress: {DeliveryAddress}
+    department: {Department}
+    description: string
+    discountPercentage: number
+    displayName: string
+    email: string
+    emailAttachmentType: LINK|ATTACHMENT
+    globalLocationNumber: int64
+    id: int64
+    invoiceEmail: string
+    invoiceSMSNotificationNumber: string
+    invoiceSendMethod: EMAIL|EHF|EFAKTURA|AVTALEGIRO|VIPPS|PAPER|...
+    invoiceSendSMSNotification: boolean
+    invoicesDueIn: int32
+    invoicesDueInType: DAYS|MONTHS|RECURRING_DAY_OF_MONTH
+    isAutomaticNoticeOfDebtCollectionEnabled: boolean
+    isAutomaticReminderEnabled: boolean
+    isAutomaticSoftReminderEnabled: boolean
+    isFactoring: boolean
+    isInactive: boolean
+    isPrivateIndividual: boolean
+    isSupplier: boolean
+    language: NO|EN
+    ledgerAccount: {Account}
+    name: string
+    organizationNumber: string
+    overdueNoticeEmail: string
+    phoneNumber: string
+    phoneNumberMobile: string
+    physicalAddress: {Address}
+    postalAddress: {Address}
+    singleCustomerInvoice: boolean
+    supplierNumber: int32
+    version: int32
+    website: string
+
+## Product
+  GET /product — Search products
+  POST /product — Create product
+  GET /product/{id} — Get by ID
+  PUT /product/{id} — Update product
+  Query: number, name, isInactive, fields, count, from
+  Body fields (Product):
+    account: {Account}
+    costExcludingVatCurrency: number
+    currency: {Currency}
+    department: {Department}
+    description: string
+    discountGroup: {DiscountGroup}
+    ean: string
+    expenses: number
+    hasSupplierProductConnected: boolean
+    hsnCode: string
+    id: int64
+    image: {Document}
+    isDeletable: boolean
+    isInactive: boolean
+    isStockItem: boolean
+    mainSupplierProduct: {SupplierProduct}
+    minStockLevel: number
+    name: string
+    number: string
+    orderLineDescription: string
+    priceExcludingVatCurrency: number
+    priceIncludingVatCurrency: number
+    productUnit: {ProductUnit}
+    resaleProduct: {Product}
+    supplier: {Supplier}
+    vatType: {VatType}
+    version: int32
+    volume: number
+    volumeUnit: cm3|dm3|m3
+    weight: number
+    weightUnit: kg|g|hg
+
+## Order
+  GET /order — Search orders
+  POST /order — Create order
+  GET /order/{id} — Get by ID
+  PUT /order/{id} — Update order
+  Query: id, orderDateFrom, orderDateTo, customerId, fields, count, from
+  Body fields (Order):
+    attn: {Contact}
+    contact: {Contact}
+    currency: {Currency}
+    customer: {Customer}
+    deliveryAddress: {DeliveryAddress}
+    deliveryComment: string
+    deliveryDate: string
+    department: {Department}
+    discountPercentage: number
+    id: int64
+    invoiceComment: string
+    invoiceOnAccountVatHigh: boolean
+    invoiceSMSNotificationNumber: string
+    invoicesDueIn: int32
+    invoicesDueInType: DAYS|MONTHS|RECURRING_DAY_OF_MONTH
+    isClosed: boolean
+    isPrioritizeAmountsIncludingVat: boolean
+    isShowOpenPostsOnInvoices: boolean
+    isSubscription: boolean
+    isSubscriptionAutoInvoicing: boolean
+    markUpOrderLines: number
+    number: string
+    orderDate: string
+    orderGroups: [OrderGroup]
+    orderLineSorting: ID|PRODUCT|PRODUCT_DESCENDING|CUSTOM
+    orderLines: [OrderLine]
+    ourContact: {Contact}
+    ourContactEmployee: {Employee}
+    overdueNoticeEmail: string
+    preliminaryInvoice: {Invoice}
+    project: {Project}
+    receiverEmail: string
+    reference: string
+    sendMethodDescription: string
+    status: NOT_CHOSEN|NEW|CONFIRMATION_SENT|READY_FOR_PICKING|PICKED|PACKED|...
+    subscriptionDuration: int32
+    subscriptionDurationType: MONTHS|YEAR
+    subscriptionInvoicingTime: int32
+    subscriptionInvoicingTimeInAdvanceOrArrears: ADVANCE|ARREARS
+    subscriptionInvoicingTimeType: DAYS|MONTHS
+    subscriptionPeriodsOnInvoice: int32
+    version: int32
+
+## OrderLine
+  POST /order/orderline — Create order line
+  PUT /order/orderline/{id} — Update order line
+  DELETE /order/orderline/{id} — Delete order line
+  Body fields (OrderLine):
+    count: number
+    currency: {Currency}
+    description: string
+    discount: number
+    id: int64
+    inventory: {Inventory}
+    inventoryLocation: {InventoryLocation}
+    isCharged: boolean
+    isPicked: boolean
+    isSubscription: boolean
+    markup: number
+    order: {Order}
+    orderGroup: {OrderGroup}
+    orderedQuantity: number
+    pickedDate: string
+    product: {Product}
+    sortIndex: int32
+    subscriptionPeriodEnd: string
+    subscriptionPeriodStart: string
+    unitCostCurrency: number
+    unitPriceExcludingVatCurrency: number
+    unitPriceIncludingVatCurrency: number
+    vatType: {VatType}
+    vendor: {Company}
+    version: int32
+
+## Invoice
+  GET /invoice — Search invoices
+  POST /invoice — Create invoice from order(s). Query: sendToCustomer, paymentTypeId, paidAmount, paidAmountAccountCurrency
+  GET /invoice/{id} — Get by ID
+  PUT /invoice/{id}/:createCreditNote — Create credit note. Query: date, comment, creditNoteEmail
+  PUT /invoice/{id}/:payment — Register payment. Query: paymentDate, paymentTypeId, paidAmount, paidAmountCurrency
+  PUT /invoice/{id}/:send — Send invoice
+  Query: id, invoiceDateFrom, invoiceDateTo, invoiceNumber, customerId, fields, count, from
+  Body fields (Invoice):
+    comment: string
+    currency: {Currency}
+    customer: {Customer}
+    ehfSendStatus: DO_NOT_SEND|SEND|SENT|SEND_FAILURE_RECIPIENT_NOT_FOUND
+    id: int64
+    invoiceDate: string
+    invoiceDueDate: string
+    invoiceNumber: int32
+    invoiceRemark: {InvoiceRemark}
+    invoiceRemarks: string
+    kid: string
+    orders: [Order]
+    paidAmount: number
+    paymentTypeId: int32
+    version: int32
+    voucher: {Voucher}
+
+## Department
+  GET /department — Search departments
+  POST /department — Create department
+  GET /department/{id} — Get by ID
+  PUT /department/{id} — Update department
+  DELETE /department/{id} — Delete department
+  Query: id, name, departmentNumber, fields, count, from
+  Body fields (Department):
+    departmentManager: {Employee}
+    departmentNumber: string
+    id: int64
+    isInactive: boolean
+    name: string
+    version: int32
+
+## Project
+  GET /project — Search projects
+  POST /project — Create project
+  GET /project/{id} — Get by ID
+  PUT /project/{id} — Update project
+  DELETE /project — Delete projects
+  Query: id, name, number, projectManagerId, isOffer, fields, count, from
+  Body fields (Project):
+    accessType: NONE|READ|WRITE
+    accountingDimensionValues: [AccountingDimensionValue]
+    attention: {Contact}
+    boligmappaAddress: {Address}
+    contact: {Contact}
+    currency: {Currency}
+    customer: {Customer}
+    deliveryAddress: {Address}
+    department: {Department}
+    description: string
+    displayNameFormat: NAME_STANDARD|NAME_INCL_CUSTOMER_NAME|NAME_INCL_PARENT_NAME|NAME_INCL_PARENT_NUMBER|NAME_INCL_PARENT_NAME_AND_NUMBER
+    endDate: string
+    externalAccountsNumber: string
+    fixedprice: number
+    forParticipantsOnly: boolean
+    generalProjectActivitiesPerProjectOnly: boolean
+    id: int64
+    ignoreCompanyProductDiscountAgreement: boolean
+    invoiceComment: string
+    invoiceDueDate: int32
+    invoiceDueDateType: DAYS|MONTHS|RECURRING_DAY_OF_MONTH
+    invoiceOnAccountVatHigh: boolean
+    invoiceReceiverEmail: string
+    isClosed: boolean
+    isFixedPrice: boolean
+    isInternal: boolean
+    isOffer: boolean
+    isPriceCeiling: boolean
+    isReadyForInvoicing: boolean
+    mainProject: {Project}
+    markUpFeesEarned: number
+    markUpOrderLines: number
+    name: string
+    number: string
+    overdueNoticeEmail: string
+    participants: [ProjectParticipant]
+    preliminaryInvoice: {Invoice}
+    priceCeilingAmount: number
+    projectActivities: [ProjectActivity]
+    projectCategory: {ProjectCategory}
+    projectHourlyRates: [ProjectHourlyRate]
+    projectManager: {Employee}
+    reference: string
+    startDate: string
+    useProductNetPrice: boolean
+    vatType: {VatType}
+    version: int32
+
+## TravelExpense
+  GET /travelExpense — Search travel expenses
+  POST /travelExpense — Create travel expense
+  GET /travelExpense/{id} — Get by ID
+  PUT /travelExpense/{id} — Update travel expense
+  DELETE /travelExpense/{id} — Delete travel expense
+  PUT /travelExpense/:approve — Approve. Query: id (can be repeated)
+  PUT /travelExpense/:deliver — Deliver. Query: id (can be repeated)
+  Query: employeeId, departmentId, projectId, state, from, count
+  Body fields (TravelExpense):
+    approvedBy: {Employee}
+    attachment: {Document}
+    attestation: {Attestation}
+    attestationSteps: [AttestationStep]
+    completedBy: {Employee}
+    costs: [Cost]
+    department: {Department}
+    employee: {Employee}
+    fixedInvoicedAmount: number
+    freeDimension1: {AccountingDimensionValue}
+    freeDimension2: {AccountingDimensionValue}
+    freeDimension3: {AccountingDimensionValue}
+    id: int64
+    invoice: {Invoice}
+    isChargeable: boolean
+    isFixedInvoicedAmount: boolean
+    isIncludeAttachedReceiptsWhenReinvoicing: boolean
+    isMarkupInvoicedPercent: boolean
+    markupInvoicedPercent: number
+    paymentCurrency: {Currency}
+    payslip: {Payslip}
+    perDiemCompensations: [PerDiemCompensation]
+    project: {Project}
+    rejectedBy: {Employee}
+    title: string
+    travelAdvance: number
+    travelDetails: {TravelDetails}
+    vatType: {VatType}
+    version: int32
+    voucher: {Voucher}
+
+## TravelExpenseCost
+  GET /travelExpense/cost — Search costs
+  POST /travelExpense/cost — Create cost
+  PUT /travelExpense/cost/{id} — Update cost
+  DELETE /travelExpense/cost/{id} — Delete cost
+  Body fields (Cost):
+    amountCurrencyIncVat: number
+    amountNOKInclVAT: number
+    category: string
+    comments: string
+    costCategory: {TravelCostCategory}
+    currency: {Currency}
+    date: string
+    id: int64
+    isChargeable: boolean
+    participants: [CostParticipant]
+    paymentType: {TravelPaymentType}
+    predictions: object
+    rate: number
+    travelExpense: {TravelExpense}
+    vatType: {VatType}
+    version: int32
+
+## Company
+NOTE: GET /company (without ID) returns 405. Use GET /token/session/>whoAmI to get companyId first.
+  PUT /company — Update company
+  GET /company/{id} — Get by ID
+  Body fields (Company):
+    address: {Address}
+    currency: {Currency}
+    email: string
+    endDate: string
+    faxNumber: string
+    id: int64
+    name: string
+    organizationNumber: string
+    phoneNumber: string
+    phoneNumberMobile: string
+    startDate: string
+    type: NONE|ENK|AS|NUF|ANS|DA|...
+    version: int32
+
+## Ledger Account
+  GET /ledger/account — Search accounts
+  POST /ledger/account — Create account
+  GET /ledger/account/{id} — Get by ID
+  PUT /ledger/account/{id} — Update account
+  Query: id, number, isBankAccount, fields, count, from
+  Body fields (Account):
+    bankAccountCountry: {Country}
+    bankAccountIBAN: string
+    bankAccountNumber: string
+    bankAccountSWIFT: string
+    bankName: string
+    currency: {Currency}
+    department: {Department}
+    description: string
+    displayName: string
+    groupingCode: string
+    id: int64
+    invoicingDepartment: {Department}
+    isApplicableForSupplierInvoice: boolean
+    isBankAccount: boolean
+    isCloseable: boolean
+    isInactive: boolean
+    isInvoiceAccount: boolean
+    isPostingsExist: boolean
+    ledgerType: GENERAL|CUSTOMER|VENDOR|EMPLOYEE|ASSET
+    name: string
+    number: int32
+    quantityType1: {ProductUnit}
+    quantityType2: {ProductUnit}
+    requireReconciliation: boolean
+    requiresDepartment: boolean
+    requiresProject: boolean
+    saftCode: string
+    vatLocked: boolean
+    vatType: {VatType}
+    version: int32
+
+## Ledger Accounting Dimension
+  GET /ledger/accountingDimensionName — Get all dimension names
+  POST /ledger/accountingDimensionName — Create a new custom dimension
+  GET /ledger/accountingDimensionName/search — Search dimensions
+  GET /ledger/accountingDimensionName/{id} — Get by ID
+  PUT /ledger/accountingDimensionName/{id} — Update dimension
+  DELETE /ledger/accountingDimensionName/{id} — Delete dimension
+  Query: dimensionIndex, activeOnly, onlyDimensionsWithActiveValues, fields, count, from
+  Body fields (AccountingDimensionName):
+    dimensionName: string — The name of the dimension
+    description: string
+    active: boolean
+
+  POST /ledger/accountingDimensionValue — Create a value for a custom dimension
+  GET /ledger/accountingDimensionValue/search — Search dimension values
+  GET /ledger/accountingDimensionValue/{id} — Get value by ID
+  DELETE /ledger/accountingDimensionValue/{id} — Delete value
+  Query: dimensionIndex, activeOnly, showInVoucherRegistration, fields, count, from
+  Body fields (AccountingDimensionValue):
+    displayName: string — The name of the value
+    dimensionIndex: int32 — Which dimension this value belongs to (1, 2, or 3)
+    active: boolean
+    number: string — Code/number for the value
+    showInVoucherRegistration: boolean
+
+  NOTE: Voucher postings can link to dimensions via freeAccountingDimension1/2/3 fields
+  on Posting objects, using {"id": <dimensionValueId>}
+
+## Ledger Voucher
+  GET /ledger/voucher — Search vouchers
+  POST /ledger/voucher — Create voucher with postings
+  GET /ledger/voucher/{id} — Get by ID
+  DELETE /ledger/voucher/{id} — Delete voucher
+  Query: dateFrom, dateTo, id, number, fields, count, from
+  Body fields (Voucher):
+    attachment: {Document}
+    date: string
+    description: string
+    document: {Document}
+    ediDocument: {Document}
+    externalVoucherNumber: string
+    id: int64
+    postings: [Posting]
+    reverseVoucher: {Voucher}
+    vendorInvoiceNumber: string
+    version: int32
+    voucherType: {VoucherType}
+
+## Ledger Posting
+  GET /ledger/posting — Search postings
+  GET /ledger/posting/openPost — Open posts
+  Query: dateFrom, dateTo, accountId, type, fields, count, from
+  Body fields (Posting):
+    account: {Account}
+    amortizationAccount: {Account}
+    amortizationEndDate: string
+    amortizationStartDate: string
+    amount: number
+    amountCurrency: number
+    amountGross: number
+    amountGrossCurrency: number
+    asset: {Asset}
+    closeGroup: {CloseGroup}
+    currency: {Currency}
+    customer: {Customer}
+    date: string
+    department: {Department}
+    description: string
+    employee: {Employee}
+    freeAccountingDimension1: {AccountingDimensionValue}
+    freeAccountingDimension2: {AccountingDimensionValue}
+    freeAccountingDimension3: {AccountingDimensionValue}
+    id: int64
+    invoiceNumber: string
+    postingRuleId: int32
+    product: {Product}
+    project: {Project}
+    quantityAmount1: number
+    quantityAmount2: number
+    quantityType1: {ProductUnit}
+    quantityType2: {ProductUnit}
+    row: int32
+    supplier: {Supplier}
+    termOfPayment: string
+    vatType: {VatType}
+    version: int32
+    voucher: {Voucher}
+
+## Ledger VAT Type
+  GET /ledger/vatType — List VAT types
+  GET /ledger/vatType/{id} — Get by ID
+  Query: id, number, fields, count, from
+  Body fields (VatType):
+    deductionPercentage: number
+    displayName: string
+    id: int64
+    name: string
+    number: string
+    parentType: {VatType}
+    percentage: number
+    version: int32
+
+## Ledger Payment Type
+  GET /ledger/paymentTypeOut — List outgoing payment types
+  Query: id, description, fields, count, from
+
+## Token
+  GET /token/session/>whoAmI — Get current user/company info

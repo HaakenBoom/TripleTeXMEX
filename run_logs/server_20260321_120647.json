@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T12:06:47.359736",
+  "prompt": "Realice el cierre anual simplificado de 2025: 1) Calcule y contabilice la depreciación anual de tres activos: Kontormaskiner (50350 NOK, 3 años lineales, cuenta 1200), Programvare (167200 NOK, 5 años, cuenta 1250), Inventar (310400 NOK, 3 años, cuenta 1240). Use cuenta 6010 para gasto de depreciación y 1209 para depreciación acumulada. 2) Revierta gastos prepagados (total 77400 NOK en cuenta 1700). 3) Calcule y contabilice la provisión de impuestos (22 % del resultado imponible) en cuenta 8700/2",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Rate limited — could not complete task",
+  "error": null,
+  "elapsed_seconds": 168.98
+}

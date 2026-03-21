@@ -1,0 +1,1949 @@
+"""Deterministic task handlers for Tripletex API operations.
+
+Each handler takes parsed task data and a TripletexClient, executes the
+exact API calls needed, and returns a result summary string.
+"""
+
+import logging
+from datetime import date
+from typing import Any
+
+from .tripletex_client import TripletexClient
+
+logger = logging.getLogger(__name__)
+
+
+def _today() -> str:
+    return date.today().isoformat()
+
+
+def _check_response(result: dict, operation: str) -> dict:
+    """Check API response for errors. Raises RuntimeError on 4xx."""
+    if isinstance(result, dict) and result.get("status") and result["status"] >= 400:
+        msg = result.get("message", result.get("developerMessage", str(result)))
+        raise RuntimeError(f"{operation} failed ({result['status']}): {msg}")
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Context prefetch
+# ---------------------------------------------------------------------------
+
+# Task types that need specific prefetch categories
+_NEEDS_DEPARTMENT = {
+    "create_employee", "update_employee", "update_employee_role",
+    "create_project", "create_travel_expense",
+}
+_NEEDS_EMPLOYEES = {
+    "update_employee", "update_employee_role",
+    "create_project", "create_travel_expense", "delete_travel_expense",
+    "log_timesheet_hours", "run_payroll",
+}
+_NEEDS_VAT_TYPES = {
+    "create_product", "create_invoice", "create_invoice_with_payment",
+    "create_credit_note",
+}
+_NEEDS_BANK_ACCOUNT = {
+    "create_invoice", "create_invoice_with_payment",
+    "create_credit_note",
+}
+
+
+def prefetch_context(client: TripletexClient, task_type: str = "unknown") -> dict:
+    """Task-aware prefetch: only fetch what this task type actually needs.
+
+    For simple tasks like create_customer, this saves 2-4 unnecessary GET calls.
+    """
+    context: dict[str, Any] = {
+        "default_department_id": None,
+        "departments": [],
+        "employees": [],
+        "vat_types": [],
+        "company_id": None,
+        "_bank_account_checked": False,
+        "_created_entities": {},
+    }
+
+    # For unknown tasks, only fetch employees (most commonly needed).
+    # Skip expensive prefetches (VAT types, bank account) to save API calls.
+    fetch_all = False
+    fetch_employees_only = task_type == "unknown"
+
+    if task_type in _NEEDS_DEPARTMENT:
+        try:
+            dept_resp = client.get("/department", {"count": 100})
+            departments = dept_resp.get("values", [])
+            context["departments"] = departments
+            if departments:
+                context["default_department_id"] = departments[0].get("id")
+            logger.info("Prefetched %d departments", len(departments))
+        except Exception as exc:
+            logger.warning("Failed to prefetch departments: %s", exc)
+
+    if fetch_employees_only or task_type in _NEEDS_EMPLOYEES:
+        try:
+            emp_resp = client.get("/employee", {"count": 100})
+            employees = emp_resp.get("values", [])
+            context["employees"] = employees
+            logger.info("Prefetched %d employees", len(employees))
+        except Exception as exc:
+            logger.warning("Failed to prefetch employees: %s", exc)
+
+    if task_type in _NEEDS_VAT_TYPES:
+        try:
+            vat_resp = client.get("/ledger/vatType", {"count": 1000})
+            vat_types = vat_resp.get("values", [])
+            context["vat_types"] = vat_types
+            logger.info("Prefetched %d VAT types", len(vat_types))
+        except Exception as exc:
+            logger.warning("Failed to prefetch VAT types: %s", exc)
+
+    if task_type in _NEEDS_BANK_ACCOUNT:
+        # Get company ID (needed for bank account setup)
+        try:
+            who = client.get("/token/session/>whoAmI")
+            company_id = who.get("value", {}).get("companyId")
+            context["company_id"] = company_id
+            logger.info("Company ID: %s", company_id)
+        except Exception as exc:
+            logger.warning("Failed to get company ID: %s", exc)
+
+        # Set up bank account (required for invoices)
+        _ensure_company_bank_account(client, context)
+
+    return context
+
+
+# ---------------------------------------------------------------------------
+# Dispatcher
+# ---------------------------------------------------------------------------
+
+def execute_task(task: dict, client: TripletexClient, context: dict) -> str | None:
+    """Route to the right handler. Returns summary string or None for unknown types."""
+    task_type = task.get("task_type") or task.get("type", "")
+    handler = _HANDLERS.get(task_type)
+    if handler is None:
+        logger.warning("Unknown task type: %s", task_type)
+        return None
+    return handler(task, client, context)
+
+
+# ---------------------------------------------------------------------------
+# Individual handlers
+# ---------------------------------------------------------------------------
+
+def _ensure_department(client: TripletexClient, context: dict) -> int:
+    """Ensure a department exists and return its ID. Creates one if needed."""
+    dept_id = context.get("default_department_id")
+    if dept_id:
+        return dept_id
+    # No department found — create one
+    logger.info("No department found, creating default...")
+    result = client.post("/department", {"name": "Avdeling"})
+    _check_response(result, "POST /department")
+    dept_id = result["value"]["id"]
+    context["default_department_id"] = dept_id
+    context["departments"] = [result["value"]]
+    return dept_id
+
+
+def _ensure_employee(client: TripletexClient, context: dict) -> int:
+    """Ensure an employee exists and return their ID. Creates one if needed."""
+    employees = context.get("employees", [])
+    if employees:
+        return employees[0].get("id")
+    # No employee — create a minimal one
+    logger.info("No employee found, creating default for references...")
+    dept_id = _ensure_department(client, context)
+    result = client.post("/employee", {
+        "firstName": "System",
+        "lastName": "Bruker",
+        "userType": "NO_ACCESS",
+        "department": {"id": dept_id},
+        "allowInformationRegistration": True,
+    })
+    _check_response(result, "POST /employee (default)")
+    emp = result["value"]
+    context["employees"] = [emp]
+    return emp["id"]
+
+
+def _resolve_vat_type(vat_str: str | None, context: dict) -> dict | None:
+    """Resolve a VAT type string (e.g. '25%', '25', 'MVA 25%') to a {'id': N} reference.
+
+    Matching priority:
+    1. Exact percentage match with typeOfVat=OUTGOING (sales VAT)
+    2. Exact percentage match (any type)
+    3. None if no match
+    """
+    if not vat_str:
+        return None
+
+    # Handle "exempt"/"fritatt" → 0% outgoing VAT (id=5 innenfor or id=6 utenfor)
+    vat_lower = str(vat_str).lower()
+    _EXEMPT_KEYWORDS = ("exempt", "fritatt", "avgiftsfri", "exento", "exonéré", "befreit")
+    if any(kw in vat_lower for kw in _EXEMPT_KEYWORDS):
+        return {"id": 6}  # Ingen utgående avgift (utenfor mva-loven)
+
+    # Extract numeric percentage from string like "25%", "25", "MVA 25%"
+    import re
+    match = re.search(r"(\d+(?:\.\d+)?)\s*%?", str(vat_str))
+    if not match:
+        # If it's already an ID reference like {"id": 3}, pass through
+        if isinstance(vat_str, dict) and "id" in vat_str:
+            return vat_str
+        return None
+
+    target_pct = float(match.group(1))
+    vat_types = context.get("vat_types", [])
+
+    # First pass: match percentage with OUTGOING type (sales/output VAT)
+    for vt in vat_types:
+        if (vt.get("percentage") == target_pct and
+                "utgående" in vt.get("name", "").lower()):
+            return {"id": vt["id"]}
+
+    # Special case for 0%: prefer "utenfor mva-loven" (id=6) which is "avgiftsfri"
+    # over "innenfor mva-loven" (id=5) — the more common intent for invoices
+    if target_pct == 0.0:
+        for vt in vat_types:
+            if vt.get("percentage") == 0.0 and "utenfor" in vt.get("name", "").lower():
+                return {"id": vt["id"]}
+
+    # Second pass: match any VAT type with this percentage
+    for vt in vat_types:
+        if vt.get("percentage") == target_pct:
+            return {"id": vt["id"]}
+
+    # Third pass: hardcoded fallback for standard Norwegian VAT types
+    # These IDs are standard across all Tripletex accounts
+    _HARDCODED_VAT = {25.0: 3, 15.0: 31, 12.0: 32, 0.0: 6}  # 0% → id=6 (avgiftsfri/utenfor mva-loven)
+    if target_pct in _HARDCODED_VAT:
+        logger.info("Using hardcoded VAT type for %.0f%%: id=%d", target_pct, _HARDCODED_VAT[target_pct])
+        return {"id": _HARDCODED_VAT[target_pct]}
+
+    logger.warning("Could not resolve VAT type '%s' (target %.1f%%)", vat_str, target_pct)
+    return None
+
+
+def _ensure_company_bank_account(client: TripletexClient, context: dict) -> None:
+    """Ensure the company has a bank account registered (required for invoices).
+
+    The Company schema has NO bankAccountNumber field. The correct approach is
+    to set bankAccountNumber on ledger account 1920 (Bank) via PUT /ledger/account/{id}.
+
+    Raises RuntimeError if bank account setup fails — this is critical for invoice
+    tasks and should trigger targeted repair rather than silently proceeding.
+    """
+    if context.get("_bank_account_checked"):
+        return
+
+    try:
+        # Find ledger account 1920 (Bank)
+        acct_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
+        accounts = acct_resp.get("values", [])
+
+        if not accounts:
+            logger.warning("Ledger account 1920 not found, skipping bank account setup")
+            context["_bank_account_checked"] = True
+            return
+
+        acct = accounts[0]
+        acct_id = acct["id"]
+
+        # Already set — skip
+        if acct.get("bankAccountNumber"):
+            logger.info("Bank account 1920 already has number: %s", acct["bankAccountNumber"])
+            context["_bank_account_checked"] = True
+            return
+
+        # Set bank account number — send the full account object back with the new field
+        # The API requires matching version to avoid conflicts
+        put_body = {
+            "id": acct_id,
+            "version": acct.get("version", 0),
+            "name": acct.get("name", "Bank"),
+            "number": acct.get("number", 1920),
+            "isBankAccount": True,
+            "bankAccountNumber": "12345678903",
+        }
+        result = client.put(f"/ledger/account/{acct_id}", put_body)
+        if isinstance(result, dict) and result.get("status", 0) >= 400:
+            logger.warning("PUT /ledger/account/%d failed: %s — trying minimal body", acct_id, result.get("message", ""))
+            # Retry with minimal body
+            result2 = client.put(f"/ledger/account/{acct_id}", {
+                "id": acct_id,
+                "version": acct.get("version", 0),
+                "bankAccountNumber": "12345678903",
+            })
+            if isinstance(result2, dict) and result2.get("status", 0) >= 400:
+                error_msg = result2.get("message", str(result2))
+                logger.error("Bank account setup failed on retry: %s", error_msg)
+                # Mark as NOT checked so targeted repair can retry
+                context["_bank_account_checked"] = False
+                raise RuntimeError(f"bank account setup failed: {error_msg}")
+            else:
+                logger.info("Bank account set on ledger account %d (minimal body)", acct_id)
+        else:
+            logger.info("Bank account set on ledger account %d", acct_id)
+
+        context["_bank_account_checked"] = True
+
+    except RuntimeError:
+        raise  # Re-raise our own errors for targeted repair
+    except Exception as exc:
+        logger.warning("Failed to setup bank account: %s", exc)
+        # Mark as checked to avoid infinite retry loops, but log the failure
+        context["_bank_account_checked"] = True
+
+
+
+def _resolve_product_in_order_line(line: dict, client: TripletexClient, context: dict) -> dict:
+    """Build a proper order line dict, resolving product references and VAT types."""
+    ol: dict[str, Any] = {}
+    products: list = []  # Track fetched product data for VAT type inference
+
+    # Resolve product: if a product number is given, look it up
+    product_ref = line.get("product")
+    if product_ref and isinstance(product_ref, str):
+        # It's a product number string — look it up
+        resp = client.get("/product", {"number": product_ref, "count": 1})
+        products = resp.get("values", [])
+        if products:
+            ol["product"] = {"id": products[0]["id"]}
+            logger.info("Resolved product number '%s' -> id=%d", product_ref, products[0]["id"])
+        else:
+            # Product not found by number — use description-only line
+            logger.warning("Product number '%s' not found, using description only", product_ref)
+    elif product_ref and isinstance(product_ref, dict) and "id" in product_ref:
+        ol["product"] = product_ref
+
+    # Description
+    if line.get("description"):
+        ol["description"] = line["description"]
+
+    # Count/quantity — default to 1
+    count = line.get("count") or line.get("quantity") or 1
+    ol["count"] = count
+
+    # Price
+    if line.get("unitPrice") is not None:
+        ol["unitPriceExcludingVatCurrency"] = line["unitPrice"]
+    if line.get("unitPriceIncludingVat") is not None:
+        ol["unitPriceIncludingVatCurrency"] = line["unitPriceIncludingVat"]
+
+    # VAT type: resolve from prompt, or use product's own VAT type
+    raw_vat = line.get("vatType")
+    vat_ref = _resolve_vat_type(raw_vat, context)
+
+    # If a product was found, check if we should trust the product's own VAT type
+    # instead of the parser's potentially incorrect extraction
+    product_vat_ref = None
+    if ol.get("product") and products:
+        product_vat = products[0].get("vatType")
+        if isinstance(product_vat, dict) and "id" in product_vat:
+            product_vat_ref = {"id": product_vat["id"]}
+
+    # Safety: if parser sent "0%" for what was really "excl. VAT" (sem IVA/ohne MwSt),
+    # the resolved id would be 5 or 6 (0% VAT). Only keep 0% if:
+    # (a) the original string clearly indicates exempt, OR
+    # (b) the product itself has 0% VAT (trust pre-seeded product data)
+    if vat_ref and vat_ref.get("id") in (5, 6, 0):
+        raw_lower = str(raw_vat).lower() if raw_vat else ""
+        _EXEMPT_KEYWORDS = ("exempt", "fritatt", "avgiftsfri", "exento", "exonéré",
+                            "befreit", "isento", "friteken")
+        product_is_exempt = (product_vat_ref and product_vat_ref.get("id") in (5, 6))
+        if product_is_exempt:
+            # Trust the product's own VAT type — it was pre-seeded correctly
+            logger.info("Keeping 0%% VAT (id=%d) — product has 0%% VAT", vat_ref["id"])
+        elif not any(kw in raw_lower for kw in _EXEMPT_KEYWORDS):
+            logger.info("Overriding 0%% VAT (id=%d) to 25%% — parser likely misinterpreted 'excl. VAT'", vat_ref["id"])
+            vat_ref = {"id": 3}  # 25% standard outgoing VAT
+
+    if vat_ref:
+        ol["vatType"] = vat_ref
+    elif product_vat_ref:
+        # No explicit VAT from parser, but product has a VAT type — use it
+        ol["vatType"] = product_vat_ref
+        logger.info("Using product's own VAT type: id=%d", product_vat_ref["id"])
+    elif not ol.get("product"):
+        # No product and no explicit VAT type — default to 25% outgoing VAT (id=3)
+        ol["vatType"] = {"id": 3}
+    # else: product exists and no explicit VAT → let product's own vatType be used
+
+    # Discount
+    if line.get("discount") is not None:
+        ol["discount"] = line["discount"]
+
+    return ol
+
+
+def _handle_create_employee(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+    emp = entities.get("employee", entities)
+    dept_id = _ensure_department(client, context)
+
+    body: dict[str, Any] = {
+        "firstName": emp["firstName"],
+        "lastName": emp["lastName"],
+        "userType": "EXTENDED" if emp.get("isAdministrator") else "NO_ACCESS",
+        "department": {"id": dept_id},
+        "allowInformationRegistration": True,
+    }
+
+    optional_fields = [
+        "email", "dateOfBirth", "phoneNumberMobile",
+        "nationalIdentityNumber", "bankAccountNumber",
+        "employeeNumber", "comments",
+    ]
+    for field in optional_fields:
+        if emp.get(field):
+            body[field] = emp[field]
+    if emp.get("address"):
+        body["address"] = emp["address"]
+
+    result = client.post("/employee", body)
+    _check_response(result, "POST /employee")
+    value = result.get("value", {})
+    emp_id = value.get("id")
+    emp_name = f"{value.get('firstName', '')} {value.get('lastName', '')}"
+
+    # Create employment record if start date or salary info is provided
+    has_employment = any(emp.get(f) for f in (
+        "startDate", "annualSalary", "employmentPercentage",
+        "occupationCode", "employmentType", "remunerationType",
+    ))
+    if has_employment and emp_id:
+        _create_employment(emp, emp_id, client)
+
+    return f"Created employee {emp_name} (id={emp_id})"
+
+
+def _create_employment(emp: dict, emp_id: int, client: TripletexClient):
+    """Create employment and employment details for an employee."""
+    start_date = emp.get("startDate", _today())
+
+    # Step 1: POST /employee/employment
+    employment_body: dict[str, Any] = {
+        "employee": {"id": emp_id},
+        "startDate": start_date,
+        "isMainEmployer": True,
+    }
+    if emp.get("occupationCode"):
+        employment_body["occupationCode"] = str(emp["occupationCode"])
+
+    try:
+        emp_result = client.post("/employee/employment", employment_body)
+        _check_response(emp_result, "POST /employee/employment")
+        employment_id = emp_result.get("value", {}).get("id")
+        logger.info("Created employment id=%s for employee %d", employment_id, emp_id)
+    except Exception as e:
+        logger.warning("Failed to create employment: %s", e)
+        return
+
+    if not employment_id:
+        return
+
+    # Step 2: POST /employee/employment/details (salary, percentage, type)
+    has_details = any(emp.get(f) for f in (
+        "annualSalary", "employmentPercentage", "employmentType", "remunerationType",
+    ))
+    if has_details:
+        details_body: dict[str, Any] = {
+            "employment": {"id": employment_id},
+            "date": start_date,
+        }
+        if emp.get("annualSalary"):
+            details_body["annualSalary"] = emp["annualSalary"]
+        if emp.get("employmentPercentage"):
+            details_body["percentageOfFullTimeEquivalent"] = emp["employmentPercentage"]
+        if emp.get("employmentType"):
+            details_body["employmentType"] = emp["employmentType"]
+        if emp.get("remunerationType"):
+            details_body["remunerationType"] = emp["remunerationType"]
+
+        try:
+            det_result = client.post("/employee/employment/details", details_body)
+            _check_response(det_result, "POST /employee/employment/details")
+            logger.info("Created employment details for employment %d", employment_id)
+        except Exception as e:
+            logger.warning("Failed to create employment details: %s", e)
+
+
+def _handle_update_employee(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+    search = entities.get("search", entities)
+    updates = entities.get("updates", {})
+
+    # Search for the employee
+    search_params: dict[str, Any] = {"count": 1, "fields": "*"}
+    if search.get("firstName"):
+        search_params["firstName"] = search["firstName"]
+    if search.get("lastName"):
+        search_params["lastName"] = search["lastName"]
+    if search.get("email"):
+        search_params["email"] = search["email"]
+
+    search_resp = client.get("/employee", search_params)
+    logger.info("update_employee search result: %s", search_resp)
+    values = search_resp.get("values", [])
+    if not values:
+        raise RuntimeError(
+            f"Employee not found: {search}"
+        )
+
+    existing = values[0]
+    emp_id = existing["id"]
+    version = existing.get("version")
+
+    # Merge: start from existing, overlay with updates
+    body = dict(existing)
+    for key, val in updates.items():
+        if val is not None and key not in ("search", "updates"):
+            body[key] = val
+    # Handle isAdministrator -> userType mapping
+    if updates.get("isAdministrator"):
+        body["userType"] = "EXTENDED"
+    body["id"] = emp_id
+    if version is not None:
+        body["version"] = version
+
+    result = client.put(f"/employee/{emp_id}", body)
+    logger.info("update_employee result: %s", result)
+    value = result.get("value", {})
+    return (
+        f"Updated employee {value.get('firstName', '')} "
+        f"{value.get('lastName', '')} (id={emp_id})"
+    )
+
+
+def _sanitize_address(addr: Any) -> dict | None:
+    """Sanitize an address object for the Tripletex API.
+
+    Converts country strings to {"id": N} references and removes None values.
+    """
+    if not isinstance(addr, dict):
+        return None
+
+    # Country must be {"id": N}, not a string
+    country = addr.get("country")
+    if isinstance(country, str):
+        # Map common country names/codes to Tripletex country IDs
+        _COUNTRY_MAP = {
+            "norway": 161, "no": 161, "norge": 161, "noreg": 161,
+            "sweden": 195, "se": 195, "sverige": 195,
+            "denmark": 48, "dk": 48, "danmark": 48,
+            "germany": 66, "de": 66, "deutschland": 66, "tyskland": 66,
+            "united kingdom": 217, "uk": 217, "gb": 217,
+            "united states": 218, "us": 218, "usa": 218,
+            "france": 62, "fr": 62, "frankrike": 62,
+            "spain": 192, "es": 192, "españa": 192, "spania": 192,
+            "portugal": 171, "pt": 171,
+            "brazil": 27, "br": 27, "brasil": 27,
+        }
+        country_id = _COUNTRY_MAP.get(country.lower().strip())
+        if country_id:
+            addr["country"] = {"id": country_id}
+        else:
+            # Unknown country string — remove it rather than crash
+            del addr["country"]
+
+    # Remove None values
+    return {k: v for k, v in addr.items() if v is not None}
+
+
+def _handle_create_customer(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+
+    body: dict[str, Any] = {"name": entities["name"]}
+    optional_fields = [
+        "email", "phoneNumber", "organizationNumber",
+        "invoiceEmail", "description", "isCustomer", "isSupplier",
+        "accountManager",
+        "isPrivateIndividual", "language", "invoiceSendMethod",
+        "invoicesDueIn", "invoicesDueInType",
+    ]
+    for field in optional_fields:
+        if entities.get(field) is not None:
+            body[field] = entities[field]
+
+    # Sanitize address objects (country must be {"id": N}, not a string)
+    for addr_field in ("postalAddress", "physicalAddress"):
+        if entities.get(addr_field):
+            sanitized = _sanitize_address(entities[addr_field])
+            if sanitized:
+                body[addr_field] = sanitized
+
+    result = client.post("/customer", body)
+    _check_response(result, "POST /customer")
+    value = result.get("value", {})
+    return f"Created customer {value.get('name', '')} (id={value.get('id', '?')})"
+
+
+def _handle_update_customer(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+    # Parser outputs: search (object) + updates (object)
+    search = entities.get("search", entities)
+    updates = entities.get("updates", {})
+    name = search.get("name", entities.get("name", ""))
+
+    # Search for the customer
+    search_params: dict[str, Any] = {"count": 1}
+    if name:
+        search_params["name"] = name
+    if search.get("email"):
+        search_params["email"] = search["email"]
+
+    search_resp = client.get("/customer", search_params)
+    logger.info("update_customer search result: %s", search_resp)
+    values = search_resp.get("values", [])
+    if not values:
+        raise RuntimeError(f"Customer not found: {search}")
+
+    existing = values[0]
+    cust_id = existing["id"]
+    version = existing.get("version")
+
+    body = dict(existing)
+    for key, val in updates.items():
+        if val is not None and key not in ("search", "updates"):
+            body[key] = val
+    body["id"] = cust_id
+    if version is not None:
+        body["version"] = version
+
+    result = client.put(f"/customer/{cust_id}", body)
+    logger.info("update_customer result: %s", result)
+    value = result.get("value", {})
+    return f"Updated customer {value.get('name', '')} (id={cust_id})"
+
+
+def _handle_create_product(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+
+    body: dict[str, Any] = {"name": entities["name"]}
+
+    # Map parser field names → API field names
+    field_map = {
+        "priceExcludingVat": "priceExcludingVatCurrency",
+        "priceIncludingVat": "priceIncludingVatCurrency",
+        "costExcludingVat": "costExcludingVatCurrency",
+    }
+    for parser_name, api_name in field_map.items():
+        val = entities.get(parser_name) or entities.get(api_name)
+        if val is not None:
+            body[api_name] = val
+
+    optional_fields = [
+        "number", "description", "isInactive", "productUnit",
+        "isStockItem",
+    ]
+    for field in optional_fields:
+        if entities.get(field) is not None:
+            body[field] = entities[field]
+
+    # Resolve vatType string → {"id": N}
+    if entities.get("vatType"):
+        vat_ref = _resolve_vat_type(entities["vatType"], context)
+        if vat_ref:
+            body["vatType"] = vat_ref
+
+    result = client.post("/product", body)
+    _check_response(result, "POST /product")
+    value = result.get("value", {})
+    return f"Created product {value.get('name', '')} (id={value.get('id', '?')})"
+
+
+def _find_or_create_customer(customer_data: dict, client: TripletexClient, context: dict) -> int:
+    """Search for an existing customer by name, or create one. Returns customer ID.
+
+    Verifies the search result actually matches to avoid Tripletex fuzzy matching
+    returning unrelated customers.
+    """
+    name = customer_data.get("name", "")
+    org_number = customer_data.get("organizationNumber", "")
+
+    # Search by organizationNumber first (exact match, most reliable)
+    if org_number:
+        resp = client.get("/customer", {"organizationNumber": org_number, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            logger.info("Found existing customer by orgNr '%s': id=%d", org_number, values[0]["id"])
+            return values[0]["id"]
+
+    # Fallback: search by name, but verify the result actually matches
+    if name:
+        resp = client.get("/customer", {"name": name, "count": 5})
+        values = resp.get("values", [])
+        for v in values:
+            # Check if the returned name actually matches (case-insensitive)
+            if v.get("name", "").strip().lower() == name.strip().lower():
+                logger.info("Found existing customer '%s': id=%d", name, v["id"])
+                return v["id"]
+            # Also accept org number match
+            if org_number and v.get("organizationNumber") == org_number:
+                logger.info("Found existing customer by orgNr in name search: id=%d", v["id"])
+                return v["id"]
+        if values:
+            logger.warning(
+                "Name search for '%s' returned non-matching results: %s",
+                name, [v.get("name") for v in values],
+            )
+
+    # Not found — create
+    cust_body: dict[str, Any] = {"name": name}
+    for field in ["email", "phoneNumber", "organizationNumber", "invoiceEmail"]:
+        if customer_data.get(field):
+            cust_body[field] = customer_data[field]
+
+    cust = client.post("/customer", cust_body)
+    _check_response(cust, "POST /customer")
+    cust_id = cust["value"]["id"]
+    logger.info("Created new customer '%s': id=%d", name, cust_id)
+    return cust_id
+
+
+def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -> str:
+    e = task["entities"]
+    today = e.get("today", _today())
+
+    # Ensure bank account is set up (may have been skipped in prefetch)
+    if not context.get("_bank_account_checked"):
+        if not context.get("company_id"):
+            try:
+                who = client.get("/token/session/>whoAmI")
+                context["company_id"] = who.get("value", {}).get("companyId")
+            except Exception:
+                pass
+        _ensure_company_bank_account(client, context)
+
+    # Step 1: Find or create customer (avoids duplicates)
+    customer_id = _find_or_create_customer(e["customer"], client, context)
+    context.setdefault("_created_entities", {})["customer_id"] = customer_id
+
+    # Step 2: Create order with lines (resolving products and VAT types)
+    order_lines = []
+    for line in e.get("orderLines", []):
+        ol = _resolve_product_in_order_line(line, client, context)
+        order_lines.append(ol)
+
+    order_body: dict[str, Any] = {
+        "customer": {"id": customer_id},
+        "orderDate": e.get("orderDate", today),
+        "deliveryDate": e.get("deliveryDate", today),
+    }
+    if order_lines:
+        order_body["orderLines"] = order_lines
+    if e.get("isPrioritizeAmountsIncludingVat"):
+        order_body["isPrioritizeAmountsIncludingVat"] = True
+
+    order = client.post("/order", order_body)
+    _check_response(order, "POST /order")
+    order_id = order["value"]["id"]
+
+    # Step 3: Create invoice
+    inv_body: dict[str, Any] = {
+        "invoiceDate": e.get("invoiceDate", today),
+        "invoiceDueDate": e.get("invoiceDueDate", today),
+        "orders": [{"id": order_id}],
+    }
+    if e.get("comment"):
+        inv_body["comment"] = e["comment"]
+
+    params: dict[str, Any] = {}
+    if e.get("sendToCustomer") is not None:
+        params["sendToCustomer"] = e["sendToCustomer"]
+    else:
+        params["sendToCustomer"] = False
+
+    inv = client.post("/invoice", inv_body, params if params else None)
+
+    # If invoice fails due to bank account, try setting it up and retry
+    if isinstance(inv, dict) and inv.get("status", 0) >= 400:
+        error_msg = str(inv.get("message", "")) + str(inv.get("validationMessages", ""))
+        if "bankkontonummer" in error_msg.lower() or "bank" in error_msg.lower():
+            logger.info("Invoice failed due to bank account, setting up and retrying...")
+            context["_bank_account_checked"] = False
+            _ensure_company_bank_account(client, context)
+            inv = client.post("/invoice", inv_body, params if params else None)
+
+    _check_response(inv, "POST /invoice")
+    inv_id = inv["value"]["id"]
+    return f"Created invoice {inv_id} for customer {e['customer']['name']}"
+
+
+def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, context: dict) -> str:
+    e = task["entities"]
+    today = e.get("today", _today())
+
+    # Ensure bank account is set up
+    if not context.get("_bank_account_checked"):
+        if not context.get("company_id"):
+            try:
+                who = client.get("/token/session/>whoAmI")
+                context["company_id"] = who.get("value", {}).get("companyId")
+            except Exception:
+                pass
+        _ensure_company_bank_account(client, context)
+
+    # Step 0b: Find payment type via /invoice/paymentType (NOT /ledger/paymentTypeOut!)
+    # /invoice/paymentType = incoming payments (customer → us)
+    # /ledger/paymentTypeOut = outgoing payments (us → supplier) — WRONG for invoices
+    pt_resp = client.get("/invoice/paymentType", {"count": 100})
+    logger.info("create_invoice_with_payment: payment types: %s", pt_resp)
+    payment_types = pt_resp.get("values", [])
+    payment_type_id = None
+    desired_type = e.get("paymentTypeDescription") or e.get("paymentType") or ""
+    for pt in payment_types:
+        desc = pt.get("description", "")
+        if desired_type and desired_type.lower() in desc.lower():
+            payment_type_id = pt["id"]
+            break
+    if payment_type_id is None and payment_types:
+        payment_type_id = payment_types[0]["id"]
+
+    # Step 1: Find or create customer (avoids duplicates)
+    customer_id = _find_or_create_customer(e["customer"], client, context)
+    context.setdefault("_created_entities", {})["customer_id"] = customer_id
+
+    # Step 2: Create order with lines (resolving products and VAT types)
+    order_lines = []
+    for line in e.get("orderLines", []):
+        ol = _resolve_product_in_order_line(line, client, context)
+        order_lines.append(ol)
+
+    order_body: dict[str, Any] = {
+        "customer": {"id": customer_id},
+        "orderDate": e.get("orderDate", today),
+        "deliveryDate": e.get("deliveryDate", today),
+    }
+    if order_lines:
+        order_body["orderLines"] = order_lines
+    if e.get("isPrioritizeAmountsIncludingVat"):
+        order_body["isPrioritizeAmountsIncludingVat"] = True
+
+    order = client.post("/order", order_body)
+    _check_response(order, "POST /order (for invoice with payment)")
+    order_id = order["value"]["id"]
+
+    # Step 3: Create invoice WITH payment in a single POST call
+    # POST /invoice accepts paymentTypeId and paidAmount as query params
+    inv_body: dict[str, Any] = {
+        "invoiceDate": e.get("invoiceDate", today),
+        "invoiceDueDate": e.get("invoiceDueDate", today),
+        "orders": [{"id": order_id}],
+    }
+    if e.get("comment"):
+        inv_body["comment"] = e["comment"]
+
+    # Estimate gross amount from order lines for the payment param
+    _VAT_PCT_MAP = {3: 25, 31: 15, 32: 12, 5: 0, 6: 0}
+    estimated_gross = 0.0
+    for ol in order_lines:
+        price = ol.get("unitPriceExcludingVatCurrency", 0) or 0
+        count = ol.get("count", 1) or 1
+        vat_id = (ol.get("vatType") or {}).get("id", 3)
+        vat_pct = _VAT_PCT_MAP.get(vat_id, 25)
+        estimated_gross += count * price * (1 + vat_pct / 100)
+
+    # Primary approach: register payment at invoice creation time
+    params: dict[str, Any] = {"sendToCustomer": False}
+    if payment_type_id is not None:
+        params["paymentTypeId"] = payment_type_id
+        params["paidAmount"] = estimated_gross
+        params["paidAmountCurrency"] = estimated_gross
+
+    inv = client.post("/invoice", inv_body, params)
+
+    # If invoice fails due to bank account, try setting it up and retry
+    if isinstance(inv, dict) and inv.get("status", 0) >= 400:
+        error_msg = str(inv.get("message", "")) + str(inv.get("validationMessages", ""))
+        if "bankkontonummer" in error_msg.lower() or "bank" in error_msg.lower():
+            logger.info("Invoice failed due to bank account, setting up and retrying...")
+            context["_bank_account_checked"] = False
+            _ensure_company_bank_account(client, context)
+            inv = client.post("/invoice", inv_body, params)
+
+    # If one-call with payment failed, try without payment first
+    if isinstance(inv, dict) and inv.get("status", 0) >= 400:
+        logger.warning("POST /invoice with payment params failed, trying without...")
+        params_no_pay: dict[str, Any] = {"sendToCustomer": False}
+        inv = client.post("/invoice", inv_body, params_no_pay)
+
+    _check_response(inv, "POST /invoice (for payment)")
+    inv_id = inv["value"]["id"]
+    inv_data = inv["value"]
+    actual_amount = inv_data.get("amount") or inv_data.get("amountCurrency")
+
+    # Check if payment was registered in the one-call approach
+    outstanding = inv_data.get("amountOutstanding")
+    payment_registered = outstanding is not None and outstanding == 0
+
+    # Fallback: register payment via PUT /invoice/{id}/:payment
+    if not payment_registered and actual_amount and payment_type_id is not None:
+        logger.info("Payment not registered at creation, trying PUT /:payment...")
+        pay_params: dict[str, Any] = {
+            "paymentDate": e.get("paymentDate", today),
+            "paymentTypeId": payment_type_id,
+            "paidAmount": actual_amount,
+            "paidAmountCurrency": actual_amount,
+        }
+        pay_result = client.put(f"/invoice/{inv_id}/:payment", params=pay_params)
+        logger.info("PUT /:payment result: %s", pay_result)
+
+        # If query params didn't work, try with JSON body
+        if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+            logger.warning("PUT /:payment with query params failed, trying JSON body...")
+            pay_result = client.put(
+                f"/invoice/{inv_id}/:payment",
+                json_body={
+                    "paymentDate": e.get("paymentDate", today),
+                    "paymentTypeId": payment_type_id,
+                    "paidAmount": actual_amount,
+                    "paidAmountCurrency": actual_amount,
+                },
+            )
+            logger.info("PUT /:payment (body) result: %s", pay_result)
+
+        if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+            logger.error("All payment approaches failed: %s", pay_result.get("message", str(pay_result)))
+
+    return (
+        f"Created invoice {inv_id} with payment for customer "
+        f"{e['customer']['name']} (paymentTypeId={payment_type_id}, "
+        f"paidAmount={actual_amount})"
+    )
+
+
+def _match_invoice(invoices: list[dict], entities: dict, inv_id_obj: dict) -> int:
+    """Pick the best invoice from a list by matching amount and/or description.
+
+    Returns the invoice ID. Falls back to the first invoice if no match found.
+    """
+    if len(invoices) == 1:
+        return invoices[0]["id"]
+
+    # Target amount from parser (excl. VAT)
+    target_amount = entities.get("amount") or inv_id_obj.get("amount")
+    target_desc = (entities.get("description") or inv_id_obj.get("description") or "").lower()
+
+    # Try matching by amount first (most reliable)
+    if target_amount:
+        for inv in invoices:
+            excl = inv.get("amountExcludingVat") or inv.get("amountExcludingVatCurrency") or 0
+            if abs(excl - target_amount) < 1:
+                logger.info("Matched invoice %d by amount (%.2f ≈ %.2f)", inv["id"], excl, target_amount)
+                return inv["id"]
+
+        # Try matching including VAT (prompt might give gross amount)
+        for inv in invoices:
+            gross = inv.get("amount") or inv.get("amountCurrency") or 0
+            if abs(gross - target_amount) < 1:
+                logger.info("Matched invoice %d by gross amount (%.2f ≈ %.2f)", inv["id"], gross, target_amount)
+                return inv["id"]
+
+    # Try matching by description (check order lines if available)
+    if target_desc:
+        for inv in invoices:
+            # Check invoice comment
+            comment = (inv.get("invoiceComment") or inv.get("comment") or "").lower()
+            if target_desc in comment:
+                logger.info("Matched invoice %d by description in comment", inv["id"])
+                return inv["id"]
+
+    # Fall back to first non-credit-note invoice
+    for inv in invoices:
+        if not inv.get("isCreditNote"):
+            logger.info("No amount/description match — using first non-credit-note invoice %d", inv["id"])
+            return inv["id"]
+
+    logger.info("No match — using first invoice %d", invoices[0]["id"])
+    return invoices[0]["id"]
+
+
+def _handle_create_credit_note(task: dict, client: TripletexClient, context: dict) -> str:
+    e = task["entities"]
+    today = e.get("today", _today())
+
+    # Parser may wrap invoice info in "invoiceIdentifier" object
+    inv_id_obj = e.get("invoiceIdentifier", {})
+
+    # Extract identifiers from both top-level and invoiceIdentifier
+    inv_id = e.get("invoiceId") or inv_id_obj.get("invoiceId") or inv_id_obj.get("id")
+    inv_num = e.get("invoiceNumber") or inv_id_obj.get("invoiceNumber")
+    cust_name = e.get("customerName") or inv_id_obj.get("customerName")
+    org_number = e.get("organizationNumber") or inv_id_obj.get("organizationNumber")
+
+    # Find the invoice — GET /invoice REQUIRES invoiceDateFrom and invoiceDateTo
+    search_params: dict[str, Any] = {
+        "count": 10,
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": today,
+    }
+    if inv_id:
+        search_params["id"] = inv_id
+    elif inv_num:
+        search_params["invoiceNumber"] = inv_num
+    elif cust_name:
+        search_params["customerName"] = cust_name
+
+    search_resp = client.get("/invoice", search_params)
+    logger.info("create_credit_note: invoice search: %s", search_resp)
+    values = search_resp.get("values", [])
+
+    if not values:
+        # No invoice found — the sandbox is fresh, so we need to CREATE the invoice first
+        logger.info("No invoice found, creating it first for credit note workflow...")
+        inv_id = _create_invoice_for_credit_note(e, inv_id_obj, client, context, today)
+    else:
+        # Match by amount and/or description when multiple invoices exist
+        inv_id = _match_invoice(values, e, inv_id_obj)
+
+    # Create credit note via PUT /:createCreditNote
+    params: dict[str, Any] = {
+        "date": e.get("date", today),
+    }
+    if e.get("comment"):
+        params["comment"] = e["comment"]
+
+    result = client.put(f"/invoice/{inv_id}/:createCreditNote", params=params)
+    logger.info("create_credit_note result: %s", result)
+    _check_response(result, "PUT /invoice/:createCreditNote")
+    return f"Created credit note for invoice {inv_id}"
+
+
+def _create_invoice_for_credit_note(
+    e: dict, inv_id_obj: dict, client: TripletexClient, context: dict, today: str
+) -> int:
+    """Create the original invoice so we can then credit it.
+
+    On fresh sandboxes the invoice referenced in the prompt doesn't exist yet.
+    We must create customer → order → invoice first.
+    """
+    # Ensure bank account
+    if not context.get("_bank_account_checked"):
+        if not context.get("company_id"):
+            try:
+                who = client.get("/token/session/>whoAmI")
+                context["company_id"] = who.get("value", {}).get("companyId")
+            except Exception:
+                pass
+        _ensure_company_bank_account(client, context)
+
+    # Find or create the customer
+    cust_name = e.get("customerName") or inv_id_obj.get("customerName", "")
+    org_number = e.get("organizationNumber") or inv_id_obj.get("organizationNumber", "")
+    cust_data = {"name": cust_name}
+    if org_number:
+        cust_data["organizationNumber"] = org_number
+    customer_id = _find_or_create_customer(cust_data, client, context)
+
+    # Build order line from the credit note description
+    description = e.get("description") or inv_id_obj.get("description", "")
+    unit_price = e.get("unitPrice") or inv_id_obj.get("unitPrice") or e.get("amount") or inv_id_obj.get("amount")
+    vat_str = e.get("vatType") or inv_id_obj.get("vatType")
+
+    ol: dict[str, Any] = {"count": 1}
+    if description:
+        ol["description"] = description
+    if unit_price is not None:
+        ol["unitPriceExcludingVatCurrency"] = unit_price
+
+    # Resolve VAT type
+    vat_ref = _resolve_vat_type(vat_str, context) if vat_str else None
+    if vat_ref:
+        ol["vatType"] = vat_ref
+
+    # Create order
+    order_body: dict[str, Any] = {
+        "customer": {"id": customer_id},
+        "orderDate": today,
+        "deliveryDate": today,
+        "orderLines": [ol],
+    }
+    order = client.post("/order", order_body)
+    _check_response(order, "POST /order (for credit note)")
+    order_id = order["value"]["id"]
+
+    # Create invoice
+    inv_body: dict[str, Any] = {
+        "invoiceDate": today,
+        "invoiceDueDate": today,
+        "orders": [{"id": order_id}],
+    }
+    inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+
+    # Retry on bank account error
+    if isinstance(inv, dict) and inv.get("status", 0) >= 400:
+        error_msg = str(inv.get("message", "")) + str(inv.get("validationMessages", ""))
+        if "bankkontonummer" in error_msg.lower() or "bank" in error_msg.lower():
+            context["_bank_account_checked"] = False
+            _ensure_company_bank_account(client, context)
+            inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+
+    _check_response(inv, "POST /invoice (for credit note)")
+    logger.info("Created invoice %d for credit note workflow", inv["value"]["id"])
+    return inv["value"]["id"]
+
+
+def _find_or_create_employee_by_name(name: str, client: TripletexClient, context: dict) -> int:
+    """Find an employee by name, or create one if not found."""
+    if not name:
+        return _ensure_employee(client, context)
+
+    # Split name into first/last
+    parts = name.strip().split()
+    first_name = parts[0] if parts else name
+    last_name = " ".join(parts[1:]) if len(parts) > 1 else ""
+
+    # Search existing employees in context first
+    for emp in context.get("employees", []):
+        emp_first = emp.get("firstName", "").lower()
+        emp_last = emp.get("lastName", "").lower()
+        if emp_first == first_name.lower() and (not last_name or emp_last == last_name.lower()):
+            return emp["id"]
+
+    # Search via API
+    search_params: dict[str, Any] = {"count": 1, "firstName": first_name}
+    if last_name:
+        search_params["lastName"] = last_name
+    resp = client.get("/employee", search_params)
+    values = resp.get("values", [])
+    if values:
+        return values[0]["id"]
+
+    # Not found — create the employee
+    dept_id = _ensure_department(client, context)
+    result = client.post("/employee", {
+        "firstName": first_name,
+        "lastName": last_name or "Bruker",
+        "userType": "NO_ACCESS",
+        "department": {"id": dept_id},
+        "allowInformationRegistration": True,
+    })
+    _check_response(result, "POST /employee (for reference)")
+    emp = result["value"]
+    context["employees"].append(emp)
+    return emp["id"]
+
+
+def _handle_create_project(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+
+    # Determine project manager — by ID, by name, or default
+    pm_id = entities.get("projectManagerId")
+    if not pm_id and entities.get("projectManagerName"):
+        pm_id = _find_or_create_employee_by_name(entities["projectManagerName"], client, context)
+    if not pm_id:
+        pm_id = _ensure_employee(client, context)
+
+    body: dict[str, Any] = {
+        "name": entities["name"],
+        "projectManager": {"id": pm_id},
+        "isInternal": entities.get("isInternal", False),
+        "startDate": entities.get("startDate", _today()),
+    }
+
+    # Link to customer if specified
+    cust_name = entities.get("customerName")
+    cust_org = entities.get("customerOrganizationNumber")
+    if cust_name or cust_org:
+        cust_data: dict[str, Any] = {}
+        if cust_name:
+            cust_data["name"] = cust_name
+        if cust_org:
+            cust_data["organizationNumber"] = cust_org
+        customer_id = _find_or_create_customer(cust_data, client, context)
+        body["customer"] = {"id": customer_id}
+
+    optional_fields = [
+        "number", "description", "endDate",
+        "projectCategory", "department",
+    ]
+    for field in optional_fields:
+        if entities.get(field) is not None:
+            body[field] = entities[field]
+
+    result = client.post("/project", body)
+    _check_response(result, "POST /project")
+    value = result.get("value", {})
+    return f"Created project {value.get('name', '')} (id={value.get('id', '?')})"
+
+
+def _handle_create_department(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+
+    # Resolve manager once (shared across all departments if multi-create)
+    mgr_ref = None
+    if entities.get("departmentManagerId"):
+        mgr_ref = {"id": entities["departmentManagerId"]}
+    elif entities.get("departmentManagerName"):
+        mgr_id = _find_or_create_employee_by_name(entities["departmentManagerName"], client, context)
+        mgr_ref = {"id": mgr_id}
+
+    # Support multi-department creation via "names" array
+    names = entities.get("names", [])
+    if not names and entities.get("name"):
+        names = [entities["name"]]
+
+    if not names:
+        raise RuntimeError("create_department: no name or names provided")
+
+    created = []
+    for dept_name in names:
+        body: dict[str, Any] = {"name": dept_name}
+        if entities.get("departmentNumber") is not None and len(names) == 1:
+            body["departmentNumber"] = entities["departmentNumber"]
+        if mgr_ref:
+            body["departmentManager"] = mgr_ref
+
+        result = client.post("/department", body)
+        _check_response(result, f"POST /department ({dept_name})")
+        value = result.get("value", {})
+        created.append(f"{value.get('name', '')} (id={value.get('id', '?')})")
+
+    return f"Created {len(created)} department(s): {', '.join(created)}"
+
+
+def _handle_create_travel_expense(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+
+    # Determine employee — by ID, by name, or default
+    emp_id = entities.get("employeeId")
+    if not emp_id and entities.get("employeeName"):
+        emp_id = _find_or_create_employee_by_name(entities["employeeName"], client, context)
+    if not emp_id:
+        emp_id = _ensure_employee(client, context)
+
+    body: dict[str, Any] = {
+        "employee": {"id": emp_id},
+        "title": entities.get("title", "Travel Expense"),
+    }
+    optional_fields = [
+        "departureDate", "returnDate", "project", "department",
+        "isCompleted",
+    ]
+    for field in optional_fields:
+        if entities.get(field) is not None:
+            body[field] = entities[field]
+
+    result = client.post("/travelExpense", body)
+    _check_response(result, "POST /travelExpense")
+    value = result.get("value", {})
+    return (
+        f"Created travel expense '{value.get('title', '')}' "
+        f"(id={value.get('id', '?')})"
+    )
+
+
+def _handle_delete_travel_expense(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+    # Parser may wrap in "search" object
+    search = entities.get("search", entities)
+
+    te_id = entities.get("id") or search.get("id")
+    if not te_id:
+        # Search for it
+        search_params: dict[str, Any] = {"count": 1}
+        title = search.get("title") or entities.get("title")
+        emp_name = search.get("employeeName") or entities.get("employeeName")
+        emp_id = search.get("employeeId") or entities.get("employeeId")
+        if title:
+            search_params["title"] = title
+        if emp_id:
+            search_params["employeeId"] = emp_id
+
+        search_resp = client.get("/travelExpense", search_params)
+        logger.info("delete_travel_expense search: %s", search_resp)
+        values = search_resp.get("values", [])
+        if not values:
+            raise RuntimeError(
+                f"Travel expense not found with params: {search_params}"
+            )
+        te_id = values[0]["id"]
+
+    result = client.delete(f"/travelExpense/{te_id}")
+    logger.info("delete_travel_expense result: %s", result)
+    return f"Deleted travel expense (id={te_id})"
+
+
+def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+    today = entities.get("today", _today())
+
+    # Phase 1: Resolve all account numbers to IDs and collect account metadata
+    resolved = []
+    for posting in entities.get("postings", []):
+        account_number = posting.get("accountNumber")
+        account_id = posting.get("accountId")
+        account_data = None
+
+        if account_number and not account_id:
+            acc_resp = client.get(
+                "/ledger/account",
+                {"number": account_number, "count": 1},
+            )
+            acc_values = acc_resp.get("values", [])
+            if acc_values:
+                account_id = acc_values[0]["id"]
+                account_data = acc_values[0]
+            else:
+                raise RuntimeError(f"Account not found: {account_number}")
+
+        amount = posting.get("amount") or posting.get("amountGross") or 0
+        resolved.append({
+            "posting": posting,
+            "account_id": account_id,
+            "account_number": int(account_number or 0),
+            "account_data": account_data,
+            "amount": amount,
+        })
+
+    # Phase 2: Detect manual VAT splits — parser sometimes creates separate VAT postings
+    # (accounts 27xx) that Tripletex auto-generates. Collapse them into the expense posting.
+    vat_entries = [r for r in resolved if 2700 <= r["account_number"] <= 2799]
+    non_vat_entries = [r for r in resolved if not (2700 <= r["account_number"] <= 2799)]
+
+    if vat_entries and non_vat_entries:
+        total_vat = sum(r["amount"] for r in vat_entries)
+        logger.info("Detected %d manual VAT postings (total=%s), collapsing into expense postings",
+                     len(vat_entries), total_vat)
+        # Add VAT back to expense postings to get gross amounts
+        for r in non_vat_entries:
+            acct_type = (r.get("account_data") or {}).get("type", "")
+            if acct_type == "OPERATING_EXPENSES" and r["amount"] > 0:
+                r["amount"] += total_vat  # Net + VAT = Gross
+                # Set vatType from account's default (usually id=1 for 25% input VAT)
+                r["vat_type_id"] = (r.get("account_data") or {}).get("vatType", {}).get("id")
+                logger.info("Adjusted expense posting to gross=%s with vatType=%s",
+                            r["amount"], r.get("vat_type_id"))
+
+    # Phase 3: Build final postings
+    postings = []
+    for r in non_vat_entries:
+        p: dict[str, Any] = {
+            "account": {"id": r["account_id"]},
+            "date": r["posting"].get("date", today),
+            "amountGross": r["amount"],
+            "amountGrossCurrency": r["amount"],
+        }
+        if r.get("vat_type_id") is not None:
+            p["vatType"] = {"id": r["vat_type_id"]}
+        if r["posting"].get("description"):
+            p["description"] = r["posting"]["description"]
+        postings.append(p)
+
+    body: dict[str, Any] = {
+        "date": entities.get("date", today),
+        "description": entities.get("description", "Voucher"),
+        "postings": postings,
+    }
+
+    result = client.post("/ledger/voucher", body)
+    logger.info("create_voucher result: %s", result)
+    value = result.get("value", {})
+    return f"Created voucher (id={value.get('id', '?')})"
+
+
+def _handle_delete_voucher(task: dict, client: TripletexClient, context: dict) -> str:
+    entities = task["entities"]
+    # Parser may wrap in "search" object
+    search = entities.get("search", entities)
+
+    v_id = entities.get("id") or search.get("id")
+    if not v_id:
+        search_params: dict[str, Any] = {"count": 1}
+        desc = search.get("description") or entities.get("description")
+        dt = search.get("date") or entities.get("date")
+        if desc:
+            search_params["description"] = desc
+        if dt:
+            search_params["dateFrom"] = dt
+            search_params["dateTo"] = dt
+
+        search_resp = client.get("/ledger/voucher", search_params)
+        logger.info("delete_voucher search: %s", search_resp)
+        values = search_resp.get("values", [])
+        if not values:
+            raise RuntimeError(
+                f"Voucher not found with params: {search_params}"
+            )
+        v_id = values[0]["id"]
+
+    result = client.delete(f"/ledger/voucher/{v_id}")
+    logger.info("delete_voucher result: %s", result)
+    return f"Deleted voucher (id={v_id})"
+
+
+# ---------------------------------------------------------------------------
+# Handler registry
+# ---------------------------------------------------------------------------
+
+def _handle_update_employee_role(task: dict, client: TripletexClient, context: dict) -> str:
+    """Alias: update role is just an employee update with userType change."""
+    entities = task["entities"]
+    # Ensure updates includes the role
+    if "updates" not in entities:
+        entities["updates"] = {}
+    if entities.get("userType"):
+        entities["updates"]["userType"] = entities["userType"]
+    if entities.get("isAdministrator"):
+        entities["updates"]["isAdministrator"] = True
+    return _handle_update_employee(task, client, context)
+
+
+def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: dict) -> str:
+    """Log hours on a project activity for an employee via /timesheet/entry."""
+    entities = task["entities"]
+    today = _today()
+
+    # Step 1: Find or create employee
+    emp_name = entities.get("employeeName", "")
+    emp_email = entities.get("employeeEmail", "")
+    emp_id = None
+
+    if emp_email:
+        # Search by email first (most reliable)
+        resp = client.get("/employee", {"email": emp_email, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            emp_id = values[0]["id"]
+    if not emp_id and emp_name:
+        emp_id = _find_or_create_employee_by_name(emp_name, client, context)
+    if not emp_id:
+        emp_id = _ensure_employee(client, context)
+
+    # Step 2: Find or create customer
+    cust_name = entities.get("customerName", "")
+    cust_org = entities.get("customerOrganizationNumber", "")
+    customer_id = None
+    if cust_name or cust_org:
+        cust_data = {"name": cust_name}
+        if cust_org:
+            cust_data["organizationNumber"] = cust_org
+        customer_id = _find_or_create_customer(cust_data, client, context)
+
+    # Step 3: Find or create project
+    project_name = entities.get("projectName", "")
+    project_id = None
+
+    if project_name:
+        # Search for existing project
+        resp = client.get("/project", {"name": project_name, "count": 5})
+        for p in resp.get("values", []):
+            if p.get("name", "").strip().lower() == project_name.strip().lower():
+                project_id = p["id"]
+                break
+        if not project_id and resp.get("values"):
+            # Accept first result if it's close enough
+            project_id = resp["values"][0]["id"]
+
+    if not project_id:
+        # Create project
+        proj_body: dict[str, Any] = {
+            "name": project_name or "Project",
+            "projectManager": {"id": emp_id},
+            "isInternal": False,
+            "startDate": today,
+        }
+        if customer_id:
+            proj_body["customer"] = {"id": customer_id}
+        proj = client.post("/project", proj_body)
+        _check_response(proj, "POST /project (for timesheet)")
+        project_id = proj["value"]["id"]
+
+    # Step 4: Find activity for the project
+    activity_name = entities.get("activityName", "")
+    activity_id = None
+
+    act_resp = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+    activities = act_resp.get("values", [])
+    logger.info("Activities for project %d: %s", project_id,
+                [(a.get("id"), a.get("name")) for a in activities[:10]])
+
+    if activity_name:
+        for a in activities:
+            if a.get("name", "").strip().lower() == activity_name.strip().lower():
+                activity_id = a["id"]
+                break
+    if not activity_id and activities:
+        # Use first available activity
+        activity_id = activities[0]["id"]
+        logger.info("Using first available activity: id=%d name=%s",
+                    activity_id, activities[0].get("name"))
+
+    if not activity_id:
+        raise RuntimeError(f"No activities found for project {project_id}")
+
+    # Step 5: Create timesheet entry
+    hours = entities.get("hours", 0)
+    entry_date = entities.get("date", today)
+
+    entry_body: dict[str, Any] = {
+        "employee": {"id": emp_id},
+        "project": {"id": project_id},
+        "activity": {"id": activity_id},
+        "date": entry_date,
+        "hours": hours,
+    }
+    if entities.get("comment"):
+        entry_body["comment"] = entities["comment"]
+
+    result = client.post("/timesheet/entry", entry_body)
+    _check_response(result, "POST /timesheet/entry")
+    value = result.get("value", {})
+    return (
+        f"Logged {hours} hours for employee {emp_name or emp_id} "
+        f"on project '{project_name}' activity '{activity_name}' "
+        f"(entry id={value.get('id', '?')})"
+    )
+
+
+def _handle_create_dimension_voucher(task: dict, client: TripletexClient, context: dict) -> str:
+    """Create a custom accounting dimension with values, then post a voucher linked to a value."""
+    e = task["entities"]
+    today = e.get("today", _today())
+
+    # Step 1: Create the accounting dimension
+    dim_name = e.get("dimensionName", "Dimension")
+    dim_body: dict[str, Any] = {
+        "dimensionName": dim_name,
+        "description": e.get("dimensionDescription", f"Custom dimension: {dim_name}"),
+        "active": True,
+    }
+    dim_result = client.post("/ledger/accountingDimensionName", dim_body)
+    _check_response(dim_result, "POST /ledger/accountingDimensionName")
+    dim_data = dim_result["value"]
+    dim_index = dim_data.get("dimensionIndex", 1)
+    logger.info("Created dimension '%s' with index=%d, id=%d", dim_name, dim_index, dim_data["id"])
+
+    # Step 2: Create dimension values
+    dim_values = e.get("dimensionValues", [])
+    value_id_map: dict[str, int] = {}
+    for i, val_name in enumerate(dim_values):
+        # Generate a short code from the value name
+        code = val_name[:4].upper().replace(" ", "")
+        if code in value_id_map:
+            code = f"{code}{i}"
+        val_body: dict[str, Any] = {
+            "displayName": val_name,
+            "dimensionIndex": dim_index,
+            "active": True,
+            "number": code,
+            "showInVoucherRegistration": True,
+        }
+        val_result = client.post("/ledger/accountingDimensionValue", val_body)
+        _check_response(val_result, f"POST /ledger/accountingDimensionValue ({val_name})")
+        value_id_map[val_name] = val_result["value"]["id"]
+        logger.info("Created dimension value '%s' -> id=%d", val_name, val_result["value"]["id"])
+
+    # Step 3: Look up the account
+    account_number = e.get("accountNumber")
+    if not account_number:
+        raise RuntimeError("No account number specified for voucher posting")
+
+    acct_resp = client.get("/ledger/account", {"number": account_number, "count": 1})
+    acct_values = acct_resp.get("values", [])
+    if not acct_values:
+        raise RuntimeError(f"Account {account_number} not found")
+    account_id = acct_values[0]["id"]
+    # Use the account's default VAT type, or id=0 (no VAT) if it's a balance account
+    acct_vat_id = acct_values[0].get("vatType", {}).get("id", 0)
+    acct_legal_vats = [v.get("id") for v in acct_values[0].get("legalVatTypes", [])]
+
+    # Step 4: Determine which dimension value to link
+    linked_value_name = e.get("linkedDimensionValue", "")
+    linked_value_id = value_id_map.get(linked_value_name)
+    if not linked_value_id and value_id_map:
+        # Try case-insensitive match
+        for name, vid in value_id_map.items():
+            if name.lower() == linked_value_name.lower():
+                linked_value_id = vid
+                break
+        if not linked_value_id:
+            # Default to the last created value
+            linked_value_id = list(value_id_map.values())[-1]
+
+    # Step 5: Build voucher with balanced postings
+    amount = e.get("amount", 0)
+    dim_field = f"freeAccountingDimension{dim_index}"
+
+    # Choose a VAT type that's legal for the account
+    posting_vat_id = 0  # Default: no VAT treatment
+    if acct_vat_id in acct_legal_vats:
+        posting_vat_id = acct_vat_id
+    elif 0 in acct_legal_vats:
+        posting_vat_id = 0
+
+    # Find bank account (1920) for the counter-posting
+    bank_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
+    bank_values = bank_resp.get("values", [])
+    bank_id = bank_values[0]["id"] if bank_values else None
+
+    if not bank_id:
+        raise RuntimeError("Bank account 1920 not found for counter-posting")
+
+    postings = [
+        {
+            "account": {"id": account_id},
+            "amountGross": amount,
+            "amountGrossCurrency": amount,
+            "date": e.get("voucherDate", today),
+            dim_field: {"id": linked_value_id},
+        },
+        {
+            "account": {"id": bank_id},
+            "amountGross": -amount,
+            "amountGrossCurrency": -amount,
+            "date": e.get("voucherDate", today),
+        },
+    ]
+
+    voucher_body: dict[str, Any] = {
+        "date": e.get("voucherDate", today),
+        "description": e.get("voucherDescription", f"Posting with dimension {dim_name}"),
+        "postings": postings,
+    }
+
+    result = client.post("/ledger/voucher", voucher_body)
+    _check_response(result, "POST /ledger/voucher")
+    voucher_id = result["value"]["id"]
+
+    created_values = ", ".join(f"{k}={v}" for k, v in value_id_map.items())
+    return (
+        f"Created dimension '{dim_name}' (index={dim_index}) with values [{created_values}]. "
+        f"Posted voucher {voucher_id} for {amount} on account {account_number} "
+        f"linked to dimension value '{linked_value_name}' (id={linked_value_id})."
+    )
+
+
+def _handle_reverse_invoice_payment(task: dict, client: TripletexClient, context: dict) -> str:
+    """Find an existing invoice and reverse its payment so amountOutstanding = amount again."""
+    entities = task["entities"]
+    today = _today()
+
+    # Step 1: Find the customer
+    org_number = entities.get("customerOrganizationNumber", "")
+    cust_name = entities.get("customerName", "")
+    customer_id = None
+
+    if org_number:
+        resp = client.get("/customer", {"organizationNumber": org_number, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            customer_id = values[0]["id"]
+
+    if not customer_id and cust_name:
+        resp = client.get("/customer", {"name": cust_name, "count": 5})
+        for v in resp.get("values", []):
+            if v.get("name", "").strip().lower() == cust_name.strip().lower():
+                customer_id = v["id"]
+                break
+        if not customer_id and resp.get("values"):
+            customer_id = resp["values"][0]["id"]
+
+    if not customer_id:
+        raise RuntimeError(f"Customer not found: {cust_name} / {org_number}")
+
+    # Step 2: Find the invoice
+    inv_resp = client.get("/invoice", {
+        "customerId": customer_id,
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": "2030-12-31",
+        "count": 100,
+    })
+    invoices = inv_resp.get("values", [])
+    if not invoices:
+        raise RuntimeError(f"No invoices found for customer {customer_id}")
+
+    # Match by amount (excl. VAT) or description
+    target_amount = entities.get("amount")
+    target_desc = (entities.get("invoiceDescription") or "").lower()
+    matched_invoice = None
+
+    for inv in invoices:
+        # Only consider invoices with outstanding < total (i.e., has payment)
+        outstanding = inv.get("amountOutstanding", 0)
+        total = inv.get("amount", 0)
+        if outstanding >= total:
+            continue  # No payment to reverse
+
+        # Match by excl. VAT amount
+        excl = inv.get("amountExcludingVat") or inv.get("amountExcludingVatCurrency")
+        if target_amount and excl and abs(excl - target_amount) < 1:
+            matched_invoice = inv
+            break
+
+        # Match by gross amount
+        if target_amount and total and abs(total - target_amount * 1.25) < 1:
+            matched_invoice = inv
+            break
+
+    if not matched_invoice:
+        # Fall back to first invoice that has a payment
+        for inv in invoices:
+            if inv.get("amountOutstanding", 0) < inv.get("amount", 0):
+                matched_invoice = inv
+                break
+
+    if not matched_invoice:
+        raise RuntimeError("No paid invoice found to reverse")
+
+    inv_id = matched_invoice["id"]
+    inv_amount = matched_invoice.get("amount", 0)
+    paid_amount = inv_amount - matched_invoice.get("amountOutstanding", 0)
+    inv_voucher_id = matched_invoice.get("voucher", {}).get("id")
+
+    logger.info("Found invoice %d (amount=%s, outstanding=%s, paid=%s) — reversing payment",
+                inv_id, inv_amount, matched_invoice.get("amountOutstanding"), paid_amount)
+
+    # Step 3: Find payment type (for the reversal)
+    pt_resp = client.get("/invoice/paymentType", {"count": 100})
+    payment_types = pt_resp.get("values", [])
+    payment_type_id = payment_types[0]["id"] if payment_types else None
+
+    if payment_type_id is None:
+        raise RuntimeError("No payment types found")
+
+    # Step 4: Reverse the payment by registering a negative payment
+    pay_params: dict[str, Any] = {
+        "paymentDate": entities.get("date", today),
+        "paymentTypeId": payment_type_id,
+        "paidAmount": -paid_amount,
+        "paidAmountCurrency": -paid_amount,
+    }
+    pay_result = client.put(f"/invoice/{inv_id}/:payment", params=pay_params)
+    logger.info("Payment reversal result: %s", pay_result)
+
+    if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+        # Negative payment didn't work — try reversing the payment voucher instead
+        logger.warning("Negative payment failed, trying voucher reversal...")
+        # Find payment voucher by looking at postings
+        postings_refs = matched_invoice.get("postings", [])
+        payment_voucher_id = None
+
+        for p_ref in postings_refs:
+            p_id = p_ref.get("id") if isinstance(p_ref, dict) else p_ref
+            try:
+                p_detail = client.get(f"/ledger/posting/{p_id}")
+                p_data = p_detail.get("value", p_detail)
+                p_voucher = p_data.get("voucher", {}).get("id")
+                if p_voucher and p_voucher != inv_voucher_id:
+                    payment_voucher_id = p_voucher
+                    break
+            except Exception:
+                continue
+
+        if payment_voucher_id:
+            rev_result = client.put(
+                f"/ledger/voucher/{payment_voucher_id}/:reverse",
+                params={"date": entities.get("date", today)},
+            )
+            _check_response(rev_result, "PUT /ledger/voucher/:reverse")
+            return (
+                f"Reversed payment voucher {payment_voucher_id} for invoice {inv_id}. "
+                f"Outstanding amount restored to {inv_amount}."
+            )
+        else:
+            raise RuntimeError(f"Payment reversal failed and no separate payment voucher found: {pay_result}")
+
+    return (
+        f"Reversed payment of {paid_amount} on invoice {inv_id}. "
+        f"Outstanding amount restored to {inv_amount}."
+    )
+
+
+def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> str:
+    """Run payroll for an employee: ensure employment, set salary, create payroll transaction."""
+    entities = task["entities"]
+    today = _today()
+    from datetime import date as _date_mod
+    current_date = _date_mod.today()
+
+    # Step 1: Find the employee
+    emp_name = entities.get("employeeName", "")
+    emp_email = entities.get("employeeEmail", "")
+    emp_id = None
+
+    if emp_email:
+        resp = client.get("/employee", {"email": emp_email, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            emp_id = values[0]["id"]
+    if not emp_id and emp_name:
+        emp_id = _find_or_create_employee_by_name(emp_name, client, context)
+    if not emp_id:
+        emp_id = _ensure_employee(client, context)
+
+    # Step 2: Ensure employment exists
+    emp_resp = client.get("/employee/employment", {"employeeId": emp_id, "count": 10})
+    employments = emp_resp.get("values", [])
+
+    employment_id = None
+    if employments:
+        employment_id = employments[0]["id"]
+        logger.info("Found existing employment %d for employee %d", employment_id, emp_id)
+    else:
+        # Create employment
+        emp_body: dict[str, Any] = {
+            "employee": {"id": emp_id},
+            "startDate": f"{current_date.year}-01-01",
+            "isMainEmployer": True,
+            "taxDeductionCode": "loennFraHovedarbeidsgiver",
+        }
+        emp_result = client.post("/employee/employment", emp_body)
+        _check_response(emp_result, "POST /employee/employment")
+        employment_id = emp_result["value"]["id"]
+        logger.info("Created employment %d for employee %d", employment_id, emp_id)
+
+    # Step 3: Set salary via employment details
+    monthly_salary = entities.get("monthlySalary", 0)
+    if monthly_salary:
+        annual_salary = monthly_salary * 12
+        details_body: dict[str, Any] = {
+            "employment": {"id": employment_id},
+            "date": f"{current_date.year}-01-01",
+            "employmentType": "ORDINARY",
+            "employmentForm": "PERMANENT",
+            "remunerationType": "MONTHLY_WAGE",
+            "workingHoursScheme": "NOT_SHIFT",
+            "percentageOfFullTimeEquivalent": 100.0,
+            "annualSalary": annual_salary,
+        }
+        det_result = client.post("/employee/employment/details", details_body)
+        if isinstance(det_result, dict) and det_result.get("status", 0) >= 400:
+            # Details might already exist — try updating via PUT on the latest
+            logger.warning("POST employment/details failed, trying to update existing...")
+            existing_details = client.get("/employee/employment/details",
+                                          {"employmentId": employment_id, "count": 1})
+            det_values = existing_details.get("values", [])
+            if det_values:
+                det_id = det_values[0]["id"]
+                det_version = det_values[0].get("version", 0)
+                details_body["id"] = det_id
+                details_body["version"] = det_version
+                det_result = client.put(f"/employee/employment/details/{det_id}", details_body)
+                _check_response(det_result, "PUT /employee/employment/details")
+            else:
+                _check_response(det_result, "POST /employee/employment/details")
+        logger.info("Set salary: annual=%d, monthly=%d", annual_salary, monthly_salary)
+
+    # Step 4: Create salary transaction (payroll run) for the month
+    payroll_month = entities.get("month", current_date.month)
+    payroll_year = entities.get("year", current_date.year)
+
+    # Use last day of month as the payroll date
+    if payroll_month == 12:
+        payroll_date = f"{payroll_year}-12-31"
+    else:
+        from datetime import timedelta
+        next_month_first = _date_mod(payroll_year, payroll_month + 1, 1)
+        last_day = next_month_first - timedelta(days=1)
+        payroll_date = last_day.isoformat()
+
+    sal_body: dict[str, Any] = {
+        "date": payroll_date,
+        "year": payroll_year,
+        "month": payroll_month,
+    }
+    sal_result = client.post("/salary/transaction", sal_body)
+    _check_response(sal_result, "POST /salary/transaction")
+    sal_id = sal_result["value"]["id"]
+    logger.info("Created salary transaction %d for %d-%02d", sal_id, payroll_year, payroll_month)
+
+    # Step 5: If bonus specified, find the payslip and add bonus specification
+    bonus = entities.get("bonus", 0)
+    if bonus:
+        # Find salary types to get the bonus type ID
+        type_resp = client.get("/salary/type", {"count": 1000})
+        salary_types = type_resp.get("values", [])
+
+        bonus_type_id = None
+        for st in salary_types:
+            st_name = st.get("name", "").lower()
+            st_number = str(st.get("number", ""))
+            # Common bonus salary type numbers/names in Norwegian Tripletex
+            if "bonus" in st_name or "tillegg" in st_name or "engangstillegg" in st_name:
+                bonus_type_id = st["id"]
+                break
+            # Salary type 130 is commonly "Bonus/tillegg" in Tripletex
+            if st_number in ("130", "131", "132", "133"):
+                bonus_type_id = st["id"]
+                break
+
+        if not bonus_type_id:
+            # Fall back to first available salary type that looks like a supplement
+            for st in salary_types:
+                if st.get("number") and not st.get("isInactive"):
+                    bonus_type_id = st["id"]
+                    break
+
+        # Find the payslip for this employee in this salary transaction
+        payslip_resp = client.get("/salary/payslip", {
+            "wageTransactionId": sal_id,
+            "employeeId": emp_id,
+            "count": 10,
+        })
+        payslips = payslip_resp.get("values", [])
+
+        if payslips and bonus_type_id:
+            payslip_id = payslips[0]["id"]
+            # Add bonus as a salary specification on the payslip
+            spec_body: dict[str, Any] = {
+                "payslip": {"id": payslip_id},
+                "salaryType": {"id": bonus_type_id},
+                "rate": bonus,
+                "count": 1,
+            }
+            spec_result = client.post("/salary/specification", spec_body)
+            if isinstance(spec_result, dict) and spec_result.get("status", 0) >= 400:
+                logger.warning("POST /salary/specification failed: %s, trying alternative...",
+                             spec_result.get("message", ""))
+                # Try alternative field names
+                spec_body2: dict[str, Any] = {
+                    "payslip": {"id": payslip_id},
+                    "salaryType": {"id": bonus_type_id},
+                    "amount": bonus,
+                    "count": 1,
+                }
+                spec_result = client.post("/salary/specification", spec_body2)
+                logger.info("Retry salary specification result: %s", spec_result)
+            else:
+                logger.info("Added bonus specification to payslip %d", payslip_id)
+        else:
+            logger.warning("Could not add bonus: payslips=%d, bonus_type_id=%s",
+                         len(payslips), bonus_type_id)
+
+    result_parts = [
+        f"Ran payroll for employee {emp_name or emp_id} ({payroll_year}-{payroll_month:02d})",
+        f"salary transaction id={sal_id}",
+    ]
+    if monthly_salary:
+        result_parts.append(f"monthly salary={monthly_salary}")
+    if bonus:
+        result_parts.append(f"bonus={bonus}")
+
+    return ". ".join(result_parts)
+
+
+_HANDLERS = {
+    "create_employee": _handle_create_employee,
+    "update_employee": _handle_update_employee,
+    "update_employee_role": _handle_update_employee_role,
+    "create_customer": _handle_create_customer,
+    "update_customer": _handle_update_customer,
+    "create_product": _handle_create_product,
+    "create_invoice": _handle_create_invoice,
+    "create_invoice_with_payment": _handle_create_invoice_with_payment,
+    "create_credit_note": _handle_create_credit_note,
+    "create_project": _handle_create_project,
+    "create_department": _handle_create_department,
+    "create_travel_expense": _handle_create_travel_expense,
+    "delete_travel_expense": _handle_delete_travel_expense,
+    "create_voucher": _handle_create_voucher,
+    "delete_voucher": _handle_delete_voucher,
+    "log_timesheet_hours": _handle_log_timesheet_hours,
+    "create_dimension_voucher": _handle_create_dimension_voucher,
+    "reverse_invoice_payment": _handle_reverse_invoice_payment,
+    "run_payroll": _handle_run_payroll,
+}

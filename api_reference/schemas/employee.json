@@ -1,0 +1,48 @@
+{
+    "source": "GET /v2/employee?fields=*",
+    "note": "Employee created by our agent test run",
+    "example": {
+        "id": 18563046,
+        "version": 1,
+        "firstName": "Ola",
+        "lastName": "Nordmann",
+        "displayName": "Ola Nordmann",
+        "employeeNumber": "",
+        "dateOfBirth": null,
+        "email": "ola@example.org",
+        "phoneNumberMobileCountry": {"id": 161},
+        "phoneNumberMobile": "",
+        "phoneNumberHome": "",
+        "phoneNumberWork": "",
+        "nationalIdentityNumber": "",
+        "dnumber": "",
+        "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+        },
+        "bankAccountNumber": "",
+        "iban": "",
+        "bic": "",
+        "creditorBankCountryId": 0,
+        "usesAbroadPayment": false,
+        "userType": null,
+        "allowInformationRegistration": true,
+        "isContact": false,
+        "isProxy": false,
+        "comments": "",
+        "address": null,
+        "department": {"id": 900850},
+        "employments": [{"id": 2795929}],
+        "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0.0,
+            "basis": 0.0,
+            "amountExtraHolidayWeek": 0.0
+        },
+        "employeeCategory": null,
+        "isAuthProjectOverviewURL": true,
+        "pictureId": 0,
+        "companyId": 108241464
+    }
+}

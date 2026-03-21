@@ -1,0 +1,154 @@
+{
+  "timestamp": "2026-03-21T12:03:14.949464",
+  "prompt_fingerprint": "3c7f5b86056b",
+  "prompt": "Du har mottatt en arbeidskontrakt (se vedlagt PDF). Opprett den ansatte i Tripletex med alle detaljer fra kontrakten: personnummer, fodselsdato, avdeling, stillingskode, lonn, stillingsprosent og startdato.",
+  "prompt_language": "nb",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Hilde",
+      "lastName": "Bakken",
+      "email": "hilde.bakken@example.org",
+      "dateOfBirth": "1987-02-08",
+      "nationalIdentityNumber": "08028777990",
+      "bankAccountNumber": "66545294738",
+      "comments": "Avdeling: Innkjøp, Stillingskode: 3313, Stillingsprosent: 80%, Årslønn: 570000 kr, Tiltredelse: 22.07.2026, Ansettelsesform: Fast stilling, Lønntype: Fastlønn (månedlig)"
+    }
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Hilde Bakken (id=18620649)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 10.87,
+  "phase_times": {
+    "parse": 1.6,
+    "prefetch": 4.64,
+    "handler": 4.56
+  },
+  "total_api_calls": 2,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 2
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18620649
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T12:03:10.385882",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 707035,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/707035",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T12:03:14.948805",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Hilde",
+        "lastName": "Bakken",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 707035
+        },
+        "allowInformationRegistration": true,
+        "email": "hilde.bakken@example.org",
+        "dateOfBirth": "1987-02-08",
+        "nationalIdentityNumber": "08028777990",
+        "bankAccountNumber": "66545294738",
+        "comments": "Avdeling: Innkjøp, Stillingskode: 3313, Stillingsprosent: 80%, Årslønn: 570000 kr, Tiltredelse: 22.07.2026, Ansettelsesform: Fast stilling, Lønntype: Fastlønn (månedlig)"
+      },
+      "response_body": {
+        "value": {
+          "id": 18620649,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18620649",
+          "firstName": "Hilde",
+          "lastName": "Bakken",
+          "displayName": "Hilde Bakken",
+          "employeeNumber": "",
+          "dateOfBirth": "1987-02-08",
+          "email": "hilde.bakken@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "08028777990",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "66545294738",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "Avdeling: Innkjøp, Stillingskode: 3313, Stillingsprosent: 80%, Årslønn: 570000 kr, Tiltredelse: 22.07.2026, Ansettelsesform: Fast stilling, Lønntype: Fastlønn (månedlig)",
+          "address": null,
+          "department": {
+            "id": 707035,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/707035"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107853516,
+          "vismaConnect2FAactive": false
+        }
+      }
+    }
+  ]
+}

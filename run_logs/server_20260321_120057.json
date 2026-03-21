@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T12:00:57.775724",
+  "prompt": "Crie o produto \"Manutenção\" com número de produto 9664. O preço é 5500 NOK sem IVA, utilizando a taxa padrão de 25 %.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created product Manutenção (id=84415006)",
+  "error": null,
+  "elapsed_seconds": 12.61
+}

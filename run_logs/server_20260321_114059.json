@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T11:40:59.418329",
+  "prompt": "O cliente Cascata Lda (org. nº 899582454) reclamou sobre a fatura referente a \"Serviço de rede\" (29150 NOK sem IVA). Emita uma nota de crédito completa que reverta toda a fatura.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created credit note for invoice 2147565684",
+  "error": null,
+  "elapsed_seconds": 22.1
+}

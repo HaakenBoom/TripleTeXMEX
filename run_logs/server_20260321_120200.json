@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T12:02:00.567120",
+  "prompt": "Fixez un prix forfaitaire de 365350 NOK sur le projet \"Intégration CRM\" pour Colline SARL (nº org. 894562234). Le chef de projet est Adam Thomas (adam.thomas@example.org). Facturez au client 75 % du prix fixe comme paiement d'étape.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147585292 for customer Colline SARL",
+  "error": null,
+  "elapsed_seconds": 36.4
+}

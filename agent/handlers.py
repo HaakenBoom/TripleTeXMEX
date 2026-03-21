@@ -2993,6 +2993,343 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
     )
 
 
+def _handle_error_correction(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle error_correction tasks: find and correct errors in the general ledger.
+
+    The parser extracts structured error descriptions with wrongAccount, correctAccount,
+    amount, etc. We search for matching vouchers/postings and create correction vouchers.
+    """
+    e = task.get("entities", {})
+    errors = e.get("errors", [])
+    today = e.get("today", _today())
+
+    if not errors:
+        raise RuntimeError("No errors specified in error_correction task")
+
+    # Cache account number → ID lookups
+    acct_cache: dict[str, int] = {}
+
+    # Fetch all vouchers and postings for the date range (Jan-Feb of current year)
+    year = today[:4]
+    date_from = f"{year}-01-01"
+    date_to = f"{year}-12-31"
+
+    # Get all postings in one call
+    all_postings_resp = client.get("/ledger/posting", {
+        "dateFrom": date_from, "dateTo": date_to, "count": 1000,
+    })
+    all_postings = all_postings_resp.get("values", [])
+
+    # Build lookup: account_id → account_number (from postings we've seen)
+    # We'll resolve account numbers as needed
+    def _get_account_id(acct_num: str) -> int:
+        if acct_num in acct_cache:
+            return acct_cache[acct_num]
+        return _get_or_create_account(client, acct_num, cache=acct_cache)
+
+    corrections_made: list[str] = []
+
+    for error in errors:
+        desc = error.get("description", "")
+        wrong_acct = str(error.get("wrongAccount", ""))
+        correct_acct = error.get("correctAccount")
+        amount = error.get("amount", 0)
+        desc_lower = desc.lower()
+
+        if not wrong_acct or not amount:
+            logger.warning("Skipping error with missing data: %s", error)
+            continue
+
+        wrong_acct_id = _get_account_id(wrong_acct)
+
+        # Find matching posting(s) by account ID and amount
+        matching = [
+            p for p in all_postings
+            if p.get("account", {}).get("id") == wrong_acct_id
+            and abs(abs(p.get("amount", 0)) - abs(amount)) < 0.01
+            and not p.get("systemGenerated", False)
+        ]
+        # Also check amountGross
+        if not matching:
+            matching = [
+                p for p in all_postings
+                if p.get("account", {}).get("id") == wrong_acct_id
+                and abs(abs(p.get("amountGross", 0)) - abs(amount)) < 0.01
+                and not p.get("systemGenerated", False)
+            ]
+
+        if "feil konto" in desc_lower or "wrong account" in desc_lower or (
+            correct_acct and correct_acct != wrong_acct
+        ):
+            # ERROR TYPE 1: Wrong account — reverse from wrong, post to correct
+            if not correct_acct:
+                logger.warning("Wrong account error but no correctAccount specified")
+                continue
+            correct_acct_id = _get_account_id(str(correct_acct))
+
+            if matching:
+                orig = matching[0]
+                orig_amount = orig.get("amountGross", orig.get("amount", amount))
+                voucher_date = orig.get("date", today)
+            else:
+                orig_amount = amount
+                voucher_date = today
+
+            # Correction voucher: reverse wrong, post correct
+            postings = [
+                {
+                    "row": 1,
+                    "account": {"id": wrong_acct_id},
+                    "date": voucher_date,
+                    "amountGross": -abs(orig_amount),
+                    "amountGrossCurrency": -abs(orig_amount),
+                    "description": f"Korreksjon: feil konto {wrong_acct} → {correct_acct}",
+                },
+                {
+                    "row": 2,
+                    "account": {"id": correct_acct_id},
+                    "date": voucher_date,
+                    "amountGross": abs(orig_amount),
+                    "amountGrossCurrency": abs(orig_amount),
+                    "description": f"Korreksjon: feil konto {wrong_acct} → {correct_acct}",
+                },
+            ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: feil konto {wrong_acct} → {correct_acct}, {amount} kr",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (wrong account correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Wrong account {wrong_acct}→{correct_acct}: voucher {vid}")
+
+        elif "dupliser" in desc_lower or "duplikat" in desc_lower or "duplicate" in desc_lower:
+            # ERROR TYPE 2: Duplicate voucher — create reversal
+            if not matching:
+                logger.warning("Could not find duplicate posting for account %s amount %s", wrong_acct, amount)
+                continue
+
+            orig = matching[-1]  # Take last match (likely the duplicate)
+            voucher_id = orig.get("voucher", {}).get("id")
+            voucher_date = orig.get("date", today)
+
+            # Get full voucher to reverse all its postings
+            if voucher_id:
+                voucher_resp = client.get(f"/ledger/voucher/{voucher_id}")
+                voucher_data = voucher_resp.get("value", {})
+                voucher_posting_refs = voucher_data.get("postings", [])
+
+                # Get all postings of this voucher
+                reversal_postings = []
+                for p in all_postings:
+                    if p.get("voucher", {}).get("id") == voucher_id and not p.get("systemGenerated", False):
+                        reversal_postings.append(p)
+
+                if not reversal_postings:
+                    reversal_postings = [orig]
+
+                postings = []
+                for idx, rp in enumerate(reversal_postings):
+                    postings.append({
+                        "row": idx + 1,
+                        "account": {"id": rp["account"]["id"]},
+                        "date": voucher_date,
+                        "amountGross": -rp.get("amountGross", rp["amount"]),
+                        "amountGrossCurrency": -rp.get("amountGrossCurrency", rp["amountCurrency"]),
+                        "description": f"Reversering av duplikat bilag {voucher_data.get('number', '')}",
+                    })
+            else:
+                # Simple reversal of the matching posting
+                postings = [
+                    {
+                        "row": 1,
+                        "account": {"id": wrong_acct_id},
+                        "date": voucher_date,
+                        "amountGross": -abs(amount),
+                        "amountGrossCurrency": -abs(amount),
+                        "description": "Reversering av duplikat",
+                    },
+                    {
+                        "row": 2,
+                        "account": {"id": _get_account_id("1920")},
+                        "date": voucher_date,
+                        "amountGross": abs(amount),
+                        "amountGrossCurrency": abs(amount),
+                        "description": "Reversering av duplikat",
+                    },
+                ]
+
+            body = {
+                "date": voucher_date,
+                "description": f"Reversering: duplikat bilag konto {wrong_acct}, {amount} kr",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (duplicate reversal)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Duplicate reversed on {wrong_acct}: voucher {vid}")
+
+        elif "mva" in desc_lower or "manglende" in desc_lower or "missing" in desc_lower:
+            # ERROR TYPE 3: Missing VAT line — add MVA posting
+            if not correct_acct:
+                correct_acct = "2710"  # Default MVA account
+            correct_acct_id = _get_account_id(str(correct_acct))
+
+            # Calculate MVA amount (25% of excl. amount)
+            mva_amount = round(amount * 0.25, 2)
+
+            if matching:
+                voucher_date = matching[0].get("date", today)
+            else:
+                voucher_date = today
+
+            # Create voucher that adds the missing MVA line
+            postings = [
+                {
+                    "row": 1,
+                    "account": {"id": correct_acct_id},
+                    "date": voucher_date,
+                    "amountGross": mva_amount,
+                    "amountGrossCurrency": mva_amount,
+                    "description": f"Manglende MVA-linje for konto {wrong_acct}, {amount} kr ekskl.",
+                },
+                {
+                    "row": 2,
+                    "account": {"id": _get_account_id("1920")},
+                    "date": voucher_date,
+                    "amountGross": -mva_amount,
+                    "amountGrossCurrency": -mva_amount,
+                    "description": f"Manglende MVA-linje for konto {wrong_acct}",
+                },
+            ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: manglende MVA for konto {wrong_acct}, {amount} kr ekskl.",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (missing VAT correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Missing VAT added for {wrong_acct}: voucher {vid}")
+
+        elif "feil beløp" in desc_lower or "wrong amount" in desc_lower:
+            # ERROR TYPE 4: Wrong amount — correct the difference
+            # Parse correct amount from description
+            correct_amount = None
+            voucher_desc = error.get("voucherDescription", "")
+            import re
+            m = re.search(r"korrekt beløp[:\s]*(\d+)", voucher_desc)
+            if m:
+                correct_amount = float(m.group(1))
+            if correct_amount is None:
+                m = re.search(r"(\d+)\s*kr", voucher_desc)
+                if m:
+                    correct_amount = float(m.group(1))
+
+            if correct_amount is None:
+                logger.warning("Could not determine correct amount for wrong-amount error")
+                continue
+
+            diff = amount - correct_amount  # e.g. 14600 - 11050 = 3550
+
+            if matching:
+                voucher_date = matching[0].get("date", today)
+            else:
+                voucher_date = today
+
+            # Correction: reverse the excess amount
+            postings = [
+                {
+                    "row": 1,
+                    "account": {"id": wrong_acct_id},
+                    "date": voucher_date,
+                    "amountGross": -abs(diff),
+                    "amountGrossCurrency": -abs(diff),
+                    "description": f"Korreksjon: feil beløp {amount} → {correct_amount} kr",
+                },
+                {
+                    "row": 2,
+                    "account": {"id": _get_account_id("1920")},
+                    "date": voucher_date,
+                    "amountGross": abs(diff),
+                    "amountGrossCurrency": abs(diff),
+                    "description": f"Korreksjon: feil beløp {amount} → {correct_amount} kr",
+                },
+            ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: feil beløp konto {wrong_acct}, {amount} → {correct_amount} kr",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (wrong amount correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Wrong amount corrected on {wrong_acct}: {amount}→{correct_amount}, voucher {vid}")
+
+        else:
+            # Generic correction: try to reverse and re-post
+            logger.warning("Unknown error type '%s', attempting generic reversal", desc)
+            if matching:
+                voucher_date = matching[0].get("date", today)
+            else:
+                voucher_date = today
+
+            if correct_acct and correct_acct != wrong_acct:
+                correct_acct_id = _get_account_id(str(correct_acct))
+                postings = [
+                    {
+                        "row": 1,
+                        "account": {"id": wrong_acct_id},
+                        "date": voucher_date,
+                        "amountGross": -abs(amount),
+                        "amountGrossCurrency": -abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                    {
+                        "row": 2,
+                        "account": {"id": correct_acct_id},
+                        "date": voucher_date,
+                        "amountGross": abs(amount),
+                        "amountGrossCurrency": abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                ]
+            else:
+                postings = [
+                    {
+                        "row": 1,
+                        "account": {"id": wrong_acct_id},
+                        "date": voucher_date,
+                        "amountGross": -abs(amount),
+                        "amountGrossCurrency": -abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                    {
+                        "row": 2,
+                        "account": {"id": _get_account_id("1920")},
+                        "date": voucher_date,
+                        "amountGross": abs(amount),
+                        "amountGrossCurrency": abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: {desc}",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (generic correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Generic correction for {desc}: voucher {vid}")
+
+    if not corrections_made:
+        raise RuntimeError("No corrections could be made — no matching postings found")
+
+    return f"Error correction completed: {len(corrections_made)} corrections. " + "; ".join(corrections_made)
+
+
 _HANDLERS = {
     "create_employee": _handle_create_employee,
     "update_employee": _handle_update_employee,
@@ -3015,4 +3352,5 @@ _HANDLERS = {
     "run_payroll": _handle_run_payroll,
     "bank_reconciliation": _handle_bank_reconciliation,
     "annual_closure": _handle_annual_closure,
+    "error_correction": _handle_error_correction,
 }

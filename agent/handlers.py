@@ -810,8 +810,28 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
     # Step 2: Create order with lines (resolving products and VAT types)
+    raw_lines = e.get("orderLines", e.get("lines", []))
+    # Fallback: if LLM put amount/description at top level instead of in orderLines array
+    if not raw_lines:
+        top_price = e.get("amount") or e.get("unitPrice") or e.get("totalAmount") or e.get("priceExcludingVat")
+        top_desc = e.get("description") or e.get("productName") or e.get("productDescription") or ""
+        if top_price:
+            fallback_line: dict[str, Any] = {"count": e.get("count", 1)}
+            if e.get("isPrioritizeAmountsIncludingVat"):
+                fallback_line["unitPriceIncludingVat"] = top_price
+            else:
+                fallback_line["unitPrice"] = top_price
+            if top_desc:
+                fallback_line["description"] = top_desc
+            if e.get("vatType"):
+                fallback_line["vatType"] = e["vatType"]
+            if e.get("product"):
+                fallback_line["product"] = e["product"]
+            raw_lines = [fallback_line]
+            logger.info("Constructed orderLine from top-level fields: %s", fallback_line)
+
     order_lines = []
-    for line in e.get("orderLines", e.get("lines", [])):
+    for line in raw_lines:
         ol = _resolve_product_in_order_line(line, client, context)
         order_lines.append(ol)
 
@@ -887,8 +907,26 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
     # Step 2: Create order with lines (resolving products and VAT types)
+    raw_lines = e.get("orderLines", e.get("lines", []))
+    # Fallback: if LLM put amount/description at top level instead of in orderLines array
+    if not raw_lines:
+        top_price = e.get("amount") or e.get("unitPrice") or e.get("totalAmount") or e.get("priceExcludingVat")
+        top_desc = e.get("description") or e.get("productName") or e.get("productDescription") or ""
+        if top_price:
+            fallback_line: dict[str, Any] = {"count": e.get("count", 1)}
+            if e.get("isPrioritizeAmountsIncludingVat"):
+                fallback_line["unitPriceIncludingVat"] = top_price
+            else:
+                fallback_line["unitPrice"] = top_price
+            if top_desc:
+                fallback_line["description"] = top_desc
+            if e.get("vatType"):
+                fallback_line["vatType"] = e["vatType"]
+            raw_lines = [fallback_line]
+            logger.info("Constructed orderLine from top-level fields: %s", fallback_line)
+
     order_lines = []
-    for line in e.get("orderLines", e.get("lines", [])):
+    for line in raw_lines:
         ol = _resolve_product_in_order_line(line, client, context)
         order_lines.append(ol)
 
@@ -1813,8 +1851,34 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
             # Accept first result if it's close enough
             project_id = resp["values"][0]["id"]
 
+    # Helper: create a global activity and link it to a project
+    def _create_and_link_activity(act_name: str, proj_id: int) -> int | None:
+        """Create a global activity, link to project, return timesheet activity id."""
+        try:
+            act_create = client.post("/activity", {"name": act_name, "isProjectActivity": True})
+            if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
+                global_act_id = act_create["value"]["id"]
+                logger.info("Created global activity '%s' id=%d", act_name, global_act_id)
+                # Link to project
+                link = client.post("/project/projectActivity", {
+                    "project": {"id": proj_id},
+                    "activity": {"id": global_act_id},
+                })
+                logger.info("Linked activity to project: %s", link)
+                # Re-fetch timesheet activities
+                act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": proj_id, "count": 100})
+                for a in act_resp2.get("values", []):
+                    if a.get("name", "").strip().lower() == act_name.strip().lower():
+                        return a["id"]
+                if act_resp2.get("values"):
+                    return act_resp2["values"][0]["id"]
+        except Exception as e:
+            logger.warning("Failed to create+link activity '%s': %s", act_name, e)
+        return None
+
     if not project_id:
-        # Create project
+        # Create project — try including generalProjectActivitiesPerProjectOnly=True
+        # to allow adding project-specific activities
         proj_body: dict[str, Any] = {
             "name": project_name or "Project",
             "projectManager": {"id": emp_id},
@@ -1842,7 +1906,6 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
                 activity_id = a["id"]
                 break
     if not activity_id and activities:
-        # Use first available activity
         activity_id = activities[0]["id"]
         logger.info("Using first available activity: id=%d name=%s",
                     activity_id, activities[0].get("name"))
@@ -1850,59 +1913,53 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
     if not activity_id:
         act_name = activity_name or "Generell"
 
-        # Approach 1: Create a global activity, then link to project
-        try:
-            act_create = client.post("/activity", {"name": act_name})
-            if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
-                global_act_id = act_create["value"]["id"]
-                # Link activity to project
-                client.post("/project/projectActivity", {
-                    "project": {"id": project_id},
-                    "activity": {"id": global_act_id},
-                })
-                # Re-fetch timesheet activities
-                act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
-                activities2 = act_resp2.get("values", [])
-                for a in activities2:
-                    if a.get("name", "").strip().lower() == act_name.strip().lower():
-                        activity_id = a["id"]
-                        break
-                if not activity_id and activities2:
-                    activity_id = activities2[0]["id"]
-        except Exception as e:
-            logger.warning("Failed to create activity via /activity: %s", e)
+        # Approach 1: Create global activity and link to our project
+        activity_id = _create_and_link_activity(act_name, project_id)
 
-        # Approach 2: Try legacy project activity endpoint
+        # Approach 2: Enable general activities on the project, then retry
         if not activity_id:
             try:
-                act_result = client.post("/project/projectActivity", {
-                    "name": act_name,
-                    "project": {"id": project_id},
-                })
-                if isinstance(act_result, dict) and act_result.get("value"):
+                # Fetch project and enable general activities
+                proj_data = client.get(f"/project/{project_id}")
+                if isinstance(proj_data, dict) and proj_data.get("value"):
+                    pv = proj_data["value"]
+                    pv["generalProjectActivitiesPerProjectOnly"] = False
+                    client.put(f"/project/{project_id}", pv)
+                    logger.info("Enabled general activities on project %d", project_id)
+                    # Re-fetch timesheet activities
                     act_resp3 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
                     activities3 = act_resp3.get("values", [])
                     if activities3:
-                        activity_id = activities3[0]["id"]
+                        if activity_name:
+                            for a in activities3:
+                                if a.get("name", "").strip().lower() == act_name.strip().lower():
+                                    activity_id = a["id"]
+                                    break
+                        if not activity_id:
+                            activity_id = activities3[0]["id"]
+                    # Still no activities? Create one and link
+                    if not activity_id:
+                        activity_id = _create_and_link_activity(act_name, project_id)
             except Exception as e:
-                logger.warning("Failed to create project activity: %s", e)
+                logger.warning("Failed to enable general activities: %s", e)
 
-        # Approach 3: Find ANY activity in the system
+        # Approach 3: Find ANY existing activity and link it
         if not activity_id:
             try:
-                all_acts = client.get("/activity", {"count": 10})
+                all_acts = client.get("/activity", {"count": 50})
                 all_values = all_acts.get("values", [])
-                if all_values:
-                    # Link first available activity to our project
-                    any_act_id = all_values[0]["id"]
-                    client.post("/project/projectActivity", {
-                        "project": {"id": project_id},
-                        "activity": {"id": any_act_id},
-                    })
-                    act_resp4 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
-                    activities4 = act_resp4.get("values", [])
-                    if activities4:
-                        activity_id = activities4[0]["id"]
+                for a in all_values:
+                    try:
+                        client.post("/project/projectActivity", {
+                            "project": {"id": project_id},
+                            "activity": {"id": a["id"]},
+                        })
+                        act_resp4 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                        if act_resp4.get("values"):
+                            activity_id = act_resp4["values"][0]["id"]
+                            break
+                    except Exception:
+                        continue
             except Exception as e:
                 logger.warning("Failed to find any activity: %s", e)
 

@@ -624,6 +624,46 @@ def _extract_entities_llm(task_type: str, prompt: str, file_contents: list[str] 
         return {}
 
 
+def _llm_classify_fallback(prompt: str, file_contents: list[str] | None = None) -> str:
+    """LLM fallback when keyword classifier returns unknown."""
+    user_message = prompt
+    if file_contents:
+        attachments = "\n\n---\n\n".join(
+            f"[Attached file {i + 1}]\n{content}"
+            for i, content in enumerate(file_contents)
+        )
+        user_message = f"{prompt}\n\n{attachments}"
+
+    type_list = ", ".join(t for t in KNOWN_TASK_TYPES if t != "unknown")
+    system = f"""You are a task classifier for a Norwegian accounting system (Tripletex).
+Given a user request, output ONLY the task type as a single string. No explanation.
+
+Valid task types: {type_list}
+
+If none match, output: unknown"""
+
+    client = Anthropic()
+    try:
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=50,
+            system=system,
+            messages=[{"role": "user", "content": user_message}],
+        )
+        result = response.content[0].text.strip().lower().replace('"', '').replace("'", "")
+        if result in KNOWN_TASK_TYPES:
+            return result
+        # Fuzzy match: check if the response contains a known type
+        for tt in KNOWN_TASK_TYPES:
+            if tt in result:
+                return tt
+        logger.warning("LLM fallback returned unrecognized type: %s", result)
+        return "unknown"
+    except Exception as e:
+        logger.warning("LLM classify fallback failed: %s", e)
+        return "unknown"
+
+
 # ---------------------------------------------------------------------------
 # Main entry point (same interface as v1)
 # ---------------------------------------------------------------------------
@@ -639,9 +679,15 @@ def parse_task(prompt: str, file_contents: list[str] | None = None) -> dict:
     """
     logger.info("Parsing task from prompt: %s", prompt[:120])
 
-    # Stage 1: Classify
+    # Stage 1: Classify (keywords first, LLM fallback if unknown)
     task_type = classify_task(prompt)
     logger.info("Keyword classifier: %s", task_type)
+
+    if task_type == "unknown":
+        # LLM fallback — keywords missed, ask the LLM to classify
+        logger.warning("Keyword classifier returned unknown, trying LLM fallback...")
+        task_type = _llm_classify_fallback(prompt, file_contents)
+        logger.info("LLM fallback classifier: %s", task_type)
 
     # Stage 2: Extract entities
     if task_type in _REGEX_EXTRACTABLE:

@@ -1,0 +1,199 @@
+{
+  "timestamp": "2026-03-21T21:59:28.755105",
+  "prompt_fingerprint": "ff3b2b3b5b32",
+  "prompt": "We have a new employee named Charles Taylor, born 21. October 1994. Please create them as an employee with email charles.taylor@example.org and start date 3. June 2026.",
+  "prompt_language": "en",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Charles",
+      "lastName": "Taylor",
+      "dateOfBirth": "1994-10-21",
+      "email": "charles.taylor@example.org",
+      "isAdministrator": false,
+      "employment": {
+        "startDate": "2026-06-03"
+      },
+      "startDate": "2026-06-03"
+    },
+    "raw_prompt": "We have a new employee named Charles Taylor, born 21. October 1994. Please create them as an employee with email charles.taylor@example.org and start date 3. June 2026.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Charles Taylor (id=18676999)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 11.61,
+  "phase_times": {
+    "parse": 1.75,
+    "prefetch": 2.95,
+    "handler": 6.91
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 3
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 2,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18676999
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2841088
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T21:59:21.847539",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 742495,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/742495",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:59:25.322299",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Charles",
+        "lastName": "Taylor",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 742495
+        },
+        "allowInformationRegistration": true,
+        "email": "charles.taylor@example.org",
+        "dateOfBirth": "1994-10-21"
+      },
+      "response_body": {
+        "value": {
+          "id": 18676999,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18676999",
+          "firstName": "Charles",
+          "lastName": "Taylor",
+          "displayName": "Charles Taylor",
+          "employeeNumber": "",
+          "dateOfBirth": "1994-10-21",
+          "email": "charles.taylor@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 742495,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/742495"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107922860,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:59:28.754274",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18676999
+        },
+        "startDate": "2026-06-03",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2841088,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2841088",
+          "employee": {
+            "id": 18676999,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18676999"
+          },
+          "employmentId": "",
+          "startDate": "2026-06-03",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    }
+  ]
+}

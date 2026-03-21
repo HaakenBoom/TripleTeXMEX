@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:25:31.296981",
+  "prompt": "Registre el proveedor Estrella SL con número de organización 899246829. Correo electrónico: faktura@estrellasl.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147645222 for customer Estrella SL",
+  "error": null,
+  "elapsed_seconds": 29.62
+}

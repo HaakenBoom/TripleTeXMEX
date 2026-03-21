@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:01:58.135533",
+  "prompt": "Du har mottatt et tilbudsbrev (se vedlagt PDF) for en ny ansatt. Utfor komplett onboarding: opprett den ansatte, tilknytt riktig avdeling, sett opp ansettelsesforhold med stillingsprosent og arslonn, og konfigurer standard arbeidstid.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Lars Bakken (id=18677352)",
+  "error": null,
+  "elapsed_seconds": 6.76
+}

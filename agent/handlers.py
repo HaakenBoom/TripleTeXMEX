@@ -58,21 +58,22 @@ def _check_response(result: dict, operation: str) -> dict:
 # Task types that need specific prefetch categories
 _NEEDS_DEPARTMENT = {
     "create_employee", "update_employee", "update_employee_role",
-    "create_project", "create_travel_expense",
 }
+# Removed: create_project, create_travel_expense
+# — these resolve department inline only when needed
 _NEEDS_EMPLOYEES = {
     "update_employee", "update_employee_role",
-    "create_project", "create_travel_expense", "delete_travel_expense",
-    "log_timesheet_hours", "run_payroll",
+    "delete_travel_expense",
+    "run_payroll",
 }
-_NEEDS_VAT_TYPES = {
-    "create_product", "create_invoice", "create_invoice_with_payment",
-    "create_credit_note",
-}
-_NEEDS_BANK_ACCOUNT = {
-    "create_invoice", "create_invoice_with_payment",
-    "create_credit_note", "bank_reconciliation",
-}
+# Removed: create_project, create_travel_expense, log_timesheet_hours
+# — these do their own employee lookup by email/name inline
+# VAT type prefetch REMOVED — _resolve_vat_type has hardcoded fallback for
+# standard Norwegian rates (25%=3, 15%=31, 12%=32, 0%=6). Saves 1 GET call.
+_NEEDS_VAT_TYPES: set[str] = set()
+# Bank account setup is now LAZY — only triggered on invoice creation failure.
+# This saves 2-3 GET/PUT calls when bank account is already set up.
+_NEEDS_BANK_ACCOUNT: set[str] = set()
 
 
 def prefetch_context(client: TripletexClient, task_type: str = "unknown") -> dict:
@@ -221,32 +222,21 @@ def _resolve_vat_type(vat_str: str | None, context: dict) -> dict | None:
         return None
 
     target_pct = float(match.group(1))
-    vat_types = context.get("vat_types", [])
 
-    # First pass: match percentage with OUTGOING type (sales/output VAT)
+    # Fast path: hardcoded standard Norwegian VAT type IDs (no API call needed)
+    _HARDCODED_VAT = {25.0: 3, 15.0: 31, 12.0: 32, 0.0: 6}
+    if target_pct in _HARDCODED_VAT:
+        return {"id": _HARDCODED_VAT[target_pct]}
+
+    # Slow path: search prefetched VAT types (only if list was fetched)
+    vat_types = context.get("vat_types", [])
     for vt in vat_types:
         if (vt.get("percentage") == target_pct and
                 "utgående" in vt.get("name", "").lower()):
             return {"id": vt["id"]}
-
-    # Special case for 0%: prefer "utenfor mva-loven" (id=6) which is "avgiftsfri"
-    # over "innenfor mva-loven" (id=5) — the more common intent for invoices
-    if target_pct == 0.0:
-        for vt in vat_types:
-            if vt.get("percentage") == 0.0 and "utenfor" in vt.get("name", "").lower():
-                return {"id": vt["id"]}
-
-    # Second pass: match any VAT type with this percentage
     for vt in vat_types:
         if vt.get("percentage") == target_pct:
             return {"id": vt["id"]}
-
-    # Third pass: hardcoded fallback for standard Norwegian VAT types
-    # These IDs are standard across all Tripletex accounts
-    _HARDCODED_VAT = {25.0: 3, 15.0: 31, 12.0: 32, 0.0: 6}  # 0% → id=6 (avgiftsfri/utenfor mva-loven)
-    if target_pct in _HARDCODED_VAT:
-        logger.info("Using hardcoded VAT type for %.0f%%: id=%d", target_pct, _HARDCODED_VAT[target_pct])
-        return {"id": _HARDCODED_VAT[target_pct]}
 
     logger.warning("Could not resolve VAT type '%s' (target %.1f%%)", vat_str, target_pct)
     return None
@@ -407,7 +397,39 @@ def _resolve_product_in_order_line(line: dict, client: TripletexClient, context:
 def _handle_create_employee(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
     emp = entities.get("employee", entities)
-    dept_id = _ensure_department(client, context)
+
+    # Flatten nested "employment" sub-dict into emp (LLM sometimes nests these)
+    if isinstance(emp.get("employment"), dict):
+        for k, v in emp["employment"].items():
+            if k not in emp or emp[k] is None:
+                emp[k] = v
+
+    # Resolve department: use specific department name if provided, else default
+    dept_name = emp.get("department") or emp.get("departmentName")
+    # Also check comments for "Department: X" pattern
+    if not dept_name and emp.get("comments"):
+        import re
+        dept_match = re.search(r'(?:Department|Avdeling|Abteilung|Departamento|Département):\s*([^.!\n,;]+)', emp.get("comments", ""))
+        if dept_match:
+            dept_name = dept_match.group(1).strip()
+
+    if dept_name:
+        # Look for existing department or create it
+        dept_resp = client.get("/department", {"name": dept_name, "count": 5})
+        dept_values = dept_resp.get("values", [])
+        dept_id = None
+        for dv in dept_values:
+            if dv.get("name", "").strip().lower() == dept_name.strip().lower():
+                dept_id = dv["id"]
+                break
+        if not dept_id:
+            dept_result = client.post("/department", {"name": dept_name})
+            if isinstance(dept_result, dict) and dept_result.get("value", {}).get("id"):
+                dept_id = dept_result["value"]["id"]
+            else:
+                dept_id = _ensure_department(client, context)
+    else:
+        dept_id = _ensure_department(client, context)
 
     body: dict[str, Any] = {
         "firstName": emp["firstName"],
@@ -599,8 +621,33 @@ def _sanitize_address(addr: Any) -> dict | None:
 
 def _handle_create_customer(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
+    is_supplier = entities.get("isSupplier", False)
 
-    body: dict[str, Any] = {"name": entities["name"], "isCustomer": True}
+    # If this is a supplier registration, use POST /supplier instead of POST /customer
+    # The scoring system checks GET /supplier for supplier tasks
+    if is_supplier:
+        body: dict[str, Any] = {"name": entities["name"]}
+        optional_fields = [
+            "email", "phoneNumber", "organizationNumber",
+            "invoiceEmail", "description",
+            "isPrivateIndividual", "language",
+        ]
+        for field in optional_fields:
+            if entities.get(field) is not None:
+                body[field] = entities[field]
+
+        for addr_field in ("postalAddress", "physicalAddress"):
+            if entities.get(addr_field):
+                sanitized = _sanitize_address(entities[addr_field])
+                if sanitized:
+                    body[addr_field] = sanitized
+
+        result = client.post("/supplier", body)
+        _check_response(result, "POST /supplier")
+        value = result.get("value", {})
+        return f"Created supplier {value.get('name', '')} (id={value.get('id', '?')})"
+
+    body = {"name": entities["name"], "isCustomer": True}
     optional_fields = [
         "email", "phoneNumber", "organizationNumber",
         "invoiceEmail", "description", "isCustomer", "isSupplier",
@@ -752,23 +799,19 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
     e = task["entities"]
     today = e.get("today", _today())
 
-    # Ensure bank account is set up (may have been skipped in prefetch)
-    if not context.get("_bank_account_checked"):
-        if not context.get("company_id"):
-            try:
-                who = client.get("/token/session/>whoAmI")
-                context["company_id"] = who.get("value", {}).get("companyId")
-            except Exception:
-                pass
-        _ensure_company_bank_account(client, context)
+    # Proactively ensure bank account is set up (GET is free, avoids wasted POST on failure)
+    _ensure_company_bank_account(client, context)
 
     # Step 1: Find or create customer (avoids duplicates)
-    customer_id = _find_or_create_customer(e["customer"], client, context)
+    customer_data = e.get("customer")
+    if not customer_data:
+        raise RuntimeError("create_invoice: no customer data in entities")
+    customer_id = _find_or_create_customer(customer_data, client, context)
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
     # Step 2: Create order with lines (resolving products and VAT types)
     order_lines = []
-    for line in e.get("orderLines", []):
+    for line in e.get("orderLines", e.get("lines", [])):
         ol = _resolve_product_in_order_line(line, client, context)
         order_lines.append(ol)
 
@@ -821,15 +864,8 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
     e = task["entities"]
     today = e.get("today", _today())
 
-    # Ensure bank account is set up
-    if not context.get("_bank_account_checked"):
-        if not context.get("company_id"):
-            try:
-                who = client.get("/token/session/>whoAmI")
-                context["company_id"] = who.get("value", {}).get("companyId")
-            except Exception:
-                pass
-        _ensure_company_bank_account(client, context)
+    # Proactively ensure bank account is set up (GET is free, avoids wasted POST on failure)
+    _ensure_company_bank_account(client, context)
 
     # Step 0b: Find payment type via /invoice/paymentType (NOT /ledger/paymentTypeOut!)
     # /invoice/paymentType = incoming payments (customer → us)
@@ -848,12 +884,15 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
         payment_type_id = payment_types[0]["id"]
 
     # Step 1: Find or create customer (avoids duplicates)
-    customer_id = _find_or_create_customer(e["customer"], client, context)
+    customer_data = e.get("customer")
+    if not customer_data:
+        raise RuntimeError("create_invoice_with_payment: no customer data in entities")
+    customer_id = _find_or_create_customer(customer_data, client, context)
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
     # Step 2: Create order with lines (resolving products and VAT types)
     order_lines = []
-    for line in e.get("orderLines", []):
+    for line in e.get("orderLines", e.get("lines", [])):
         ol = _resolve_product_in_order_line(line, client, context)
         order_lines.append(ol)
 
@@ -1238,18 +1277,28 @@ def _handle_create_department(task: dict, client: TripletexClient, context: dict
     if not names:
         raise RuntimeError("create_department: no name or names provided")
 
-    created = []
+    # Build department bodies
+    bodies = []
     for dept_name in names:
         body: dict[str, Any] = {"name": dept_name}
         if entities.get("departmentNumber") is not None and len(names) == 1:
             body["departmentNumber"] = entities["departmentNumber"]
         if mgr_ref:
             body["departmentManager"] = mgr_ref
+        bodies.append(body)
 
-        result = client.post("/department", body)
-        _check_response(result, f"POST /department ({dept_name})")
+    # Use batch endpoint for multiple departments, single for one
+    created = []
+    if len(bodies) == 1:
+        result = client.post("/department", bodies[0])
+        _check_response(result, "POST /department")
         value = result.get("value", {})
         created.append(f"{value.get('name', '')} (id={value.get('id', '?')})")
+    else:
+        result = client.post("/department/list", bodies)
+        _check_response(result, "POST /department/list")
+        for value in result.get("values", []):
+            created.append(f"{value.get('name', '')} (id={value.get('id', '?')})")
 
     return f"Created {len(created)} department(s): {', '.join(created)}"
 
@@ -1304,33 +1353,92 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
 
     # Add cost items if specified
     costs = entities.get("costs", [])
-    for cost in costs:
-        cost_body: dict[str, Any] = {
-            "travelExpense": {"id": te_id},
-        }
-        if cost.get("date"):
-            cost_body["date"] = cost["date"]
-        if cost.get("amount") is not None:
-            cost_body["amountCurrencyIncVat"] = cost["amount"]
-            cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
-        if cost.get("description"):
-            cost_body["comments"] = cost["description"]
-        if cost.get("category"):
-            cost_body["category"] = cost["category"]
-        if cost.get("paymentType"):
-            pt = cost["paymentType"]
-            cost_body["paymentType"] = pt if isinstance(pt, dict) else {"id": pt}
-        if cost.get("rate") is not None:
-            cost_body["rate"] = cost["rate"]
-        if cost.get("isPaidByEmployee") is not None:
-            cost_body["isPaidByEmployee"] = cost["isPaidByEmployee"]
+    if costs:
+        # Fetch a default payment type for travel expenses (REQUIRED by API)
+        # Try multiple approaches to ensure we always have a payment type
+        default_payment_type_id = None
 
+        # Approach 1: dedicated travel payment type endpoint
         try:
-            cost_result = client.post("/travelExpense/cost", cost_body)
-            _check_response(cost_result, "POST /travelExpense/cost")
-            logger.info("Added cost to travel expense %d: %s", te_id, cost.get("description", ""))
+            pt_resp = client.get("/travelExpense/paymentType", {"count": 100})
+            pt_values = pt_resp.get("values", [])
+            if pt_values:
+                # Prefer active payment types shown on employee expenses
+                for pt in pt_values:
+                    if not pt.get("isInactive", False) and pt.get("showOnEmployeeExpenses", True):
+                        default_payment_type_id = pt["id"]
+                        break
+                if not default_payment_type_id:
+                    default_payment_type_id = pt_values[0]["id"]
+                logger.info("Travel payment type from /travelExpense/paymentType: id=%s", default_payment_type_id)
         except Exception as e:
-            logger.warning("Failed to add cost to travel expense: %s", e)
+            logger.warning("Failed to fetch travel payment types: %s", e)
+
+        # Approach 2: try outgoing payment types as fallback
+        if not default_payment_type_id:
+            try:
+                pt_resp2 = client.get("/ledger/paymentTypeOut", {"count": 100})
+                pt_values2 = pt_resp2.get("values", [])
+                if pt_values2:
+                    default_payment_type_id = pt_values2[0]["id"]
+                    logger.info("Travel payment type from /ledger/paymentTypeOut: id=%s", default_payment_type_id)
+            except Exception as e:
+                logger.warning("Fallback payment type fetch failed: %s", e)
+
+        # Approach 3: try incoming payment types
+        if not default_payment_type_id:
+            try:
+                pt_resp3 = client.get("/invoice/paymentType", {"count": 10})
+                pt_values3 = pt_resp3.get("values", [])
+                if pt_values3:
+                    default_payment_type_id = pt_values3[0]["id"]
+                    logger.info("Travel payment type from /invoice/paymentType: id=%s", default_payment_type_id)
+            except Exception as e:
+                logger.warning("Invoice payment type fallback failed: %s", e)
+
+        # If we STILL don't have a payment type, skip cost creation to avoid
+        # wasted 422 errors (paymentType is REQUIRED). At least we get the
+        # travel expense record created.
+        if not default_payment_type_id:
+            logger.warning("No payment type found after all fallbacks — skipping cost creation to avoid 422s")
+            costs = []  # Clear costs to skip the loop
+
+        for cost in costs:
+            cost_body: dict[str, Any] = {
+                "travelExpense": {"id": te_id},
+            }
+            if cost.get("date"):
+                cost_body["date"] = cost["date"]
+            if cost.get("amount") is not None:
+                cost_body["amountCurrencyIncVat"] = cost["amount"]
+                cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
+            if cost.get("description"):
+                cost_body["comments"] = cost["description"]
+            if cost.get("category"):
+                cost_body["category"] = cost["category"]
+            if cost.get("paymentType"):
+                pt = cost["paymentType"]
+                cost_body["paymentType"] = pt if isinstance(pt, dict) else {"id": pt}
+            elif default_payment_type_id:
+                cost_body["paymentType"] = {"id": default_payment_type_id}
+            if cost.get("rate") is not None:
+                cost_body["rate"] = cost["rate"]
+            if cost.get("isPaidByEmployee") is not None:
+                cost_body["isPaidByEmployee"] = cost["isPaidByEmployee"]
+
+            try:
+                cost_result = client.post("/travelExpense/cost", cost_body)
+                _check_response(cost_result, "POST /travelExpense/cost")
+                logger.info("Added cost to travel expense %d: %s", te_id, cost.get("description", ""))
+            except Exception as e:
+                logger.warning("Failed to add cost to travel expense: %s", e)
+
+    # Deliver the travel expense (mark as completed)
+    try:
+        deliver_result = client.put(f"/travelExpense/{te_id}/:deliver")
+        logger.info("Delivered travel expense %d: %s", te_id, deliver_result)
+    except Exception as e:
+        logger.warning("Failed to deliver travel expense %d: %s", te_id, e)
 
     return (
         f"Created travel expense '{value.get('title', '')}' "
@@ -1372,13 +1480,39 @@ def _handle_delete_travel_expense(task: dict, client: TripletexClient, context: 
 def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
     today = entities.get("today", _today())
+    voucher_date = entities.get("date", today)
+    invoice_number = entities.get("invoiceNumber") or ""
+    due_date = entities.get("dueDate") or ""
+    supplier_bank_account = entities.get("supplierBankAccount") or ""
+
+    # Phase 0: Extract supplier info from ENTITIES first (parser already extracted these)
+    supplier_name = entities.get("supplierName") or ""
+    supplier_org = str(entities.get("supplierOrganizationNumber") or "").strip()
 
     # Phase 1: Resolve all account numbers to IDs and collect account metadata
+    # Skip resolving VAT accounts (27xx) upfront — they'll be collapsed and removed
     resolved = []
     for posting in entities.get("postings", []):
         account_number = posting.get("accountNumber")
         account_id = posting.get("accountId")
         account_data = None
+        try:
+            acct_num_int = int(account_number or 0)
+        except (ValueError, TypeError):
+            acct_num_int = 0
+
+        # Don't waste an API call resolving VAT accounts (27xx) —
+        # we'll collapse them into the expense posting instead
+        if 2700 <= acct_num_int <= 2799:
+            amount = posting.get("amount") or posting.get("amountGross") or 0
+            resolved.append({
+                "posting": posting,
+                "account_id": None,
+                "account_number": acct_num_int,
+                "account_data": None,
+                "amount": amount,
+            })
+            continue
 
         if account_number and not account_id:
             acc_resp = client.get(
@@ -1400,88 +1534,136 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         resolved.append({
             "posting": posting,
             "account_id": account_id,
-            "account_number": int(account_number or 0),
+            "account_number": acct_num_int,
             "account_data": account_data,
             "amount": amount,
         })
 
     # Phase 2: Detect manual VAT splits — parser sometimes creates separate VAT postings
     # (accounts 27xx) that Tripletex auto-generates. Collapse them into the expense posting.
+    # Tripletex handles VAT automatically when you set vatType on the expense posting
+    # and send the GROSS amount. We must NOT send manual VAT postings.
     vat_entries = [r for r in resolved if 2700 <= r["account_number"] <= 2799]
     non_vat_entries = [r for r in resolved if not (2700 <= r["account_number"] <= 2799)]
 
     if vat_entries and non_vat_entries:
-        total_vat = sum(r["amount"] for r in vat_entries)
-        logger.info("Detected %d manual VAT postings (total=%s), collapsing into expense postings",
-                     len(vat_entries), total_vat)
-        # Add VAT back to expense postings to get gross amounts.
-        # Identify expense postings by account metadata or by account number range (4xxx-7xxx).
+        # Use absolute VAT value (parser may give positive or negative sign)
+        total_vat_abs = sum(abs(r["amount"]) for r in vat_entries)
+        logger.info("Detected %d manual VAT postings (abs total=%s), collapsing into expense postings",
+                     len(vat_entries), total_vat_abs)
+
+        # Determine VAT rate from the amounts (e.g., 3312/13250 ≈ 0.25 → 25%)
+        # Default to 25% input VAT (vatType id=1 in Norwegian Tripletex)
+        detected_vat_type_id = 1  # 25% is the default for Norwegian supplier invoices
+
+        # Adjust expense postings: set amount to GROSS and set correct vatType
         adjusted = False
         for r in non_vat_entries:
             acct_type = (r.get("account_data") or {}).get("type", "")
             is_expense = (acct_type == "OPERATING_EXPENSES"
                           or 4000 <= r["account_number"] <= 7999)
             if is_expense and r["amount"] > 0:
-                r["amount"] += total_vat  # Net + VAT = Gross
-                # Set vatType from account's default, or 25% input VAT (id=1) as fallback
-                vat_id = (r.get("account_data") or {}).get("vatType", {}).get("id")
-                r["vat_type_id"] = vat_id if vat_id is not None else 1
+                # Expense amount should be GROSS (net + VAT)
+                # Parser gave us net amount, add VAT to make it gross
+                r["amount"] = r["amount"] + total_vat_abs
+                # Always use input VAT type (id=1 for 25%), NOT the account default
+                # Account defaults are often 0 (no VAT) which is wrong for supplier invoices
+                r["vat_type_id"] = detected_vat_type_id
                 logger.info("Adjusted expense posting to gross=%s with vatType=%s",
                             r["amount"], r.get("vat_type_id"))
                 adjusted = True
         if not adjusted:
-            # Fallback: no expense posting identified, keep VAT postings as-is
             logger.warning("Could not identify expense posting for VAT collapse, keeping VAT postings")
-            non_vat_entries = [r for r in resolved]  # Restore all entries
+            non_vat_entries = list(resolved)  # Restore all entries
 
-    # Phase 3: Build final postings
-    # IMPORTANT: row must be >= 1 (Tripletex reserves row 0 for system-generated).
-    # All postings sharing the same row must balance to zero.
-
-    # Detect if any posting is on an AP account (2400-2499) — needs supplier reference
+    # Phase 3: Resolve supplier — use entities first, then fall back to description regex
     supplier_id = None
-    for r in non_vat_entries:
-        if 2400 <= r["account_number"] <= 2499:
-            # Extract supplier info from description or voucher description
-            import re
-            desc = entities.get("description", "") + " " + (r["posting"].get("description") or "")
-            org_match = re.search(r'(?:Org\.?\s*(?:nr\.?|nummer)?:?\s*)(\d{6,9})', desc)
-            name_match = re.search(r'(?:fra|from|de|von)\s+(.+?)(?:\s*\(|\s*-\s*Org|\s*$)', desc, re.IGNORECASE)
-            if not name_match:
-                # Try "Leverandørgjeld - SupplierName"
-                name_match = re.search(r'(?:Leverandørgjeld|gjeld)\s*-\s*(.+?)(?:\s*\(|$)', desc, re.IGNORECASE)
+    has_ap_posting = any(2400 <= r["account_number"] <= 2499 for r in non_vat_entries)
 
-            supplier_name = name_match.group(1).strip() if name_match else None
-            org_number = org_match.group(1) if org_match else None
+    if not supplier_name and has_ap_posting:
+        # Fall back to extracting from description text AND raw prompt
+        import re
+        # Combine all available text sources for extraction
+        desc_parts = [entities.get("description", "")]
+        for r in non_vat_entries:
+            if 2400 <= r["account_number"] <= 2499:
+                desc_parts.append(r["posting"].get("description") or "")
+        # Also search the raw prompt for supplier info
+        raw_prompt = task.get("raw_prompt", "")
+        desc_parts.append(raw_prompt)
+        desc = " ".join(desc_parts)
 
-            if supplier_name or org_number:
-                # Look up supplier
-                search_params: dict[str, Any] = {"count": 1}
-                if org_number:
-                    search_params["organizationNumber"] = org_number
-                elif supplier_name:
-                    search_params["name"] = supplier_name
-                supp_resp = client.get("/supplier", search_params)
-                supp_values = supp_resp.get("values", [])
-                if supp_values:
-                    supplier_id = supp_values[0]["id"]
-                else:
-                    # Create supplier
-                    supp_body: dict[str, Any] = {"name": supplier_name or f"Supplier {org_number}"}
-                    if org_number:
-                        supp_body["organizationNumber"] = org_number
-                    supp_result = client.post("/supplier", supp_body)
-                    if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
-                        supplier_id = supp_result["value"]["id"]
-                        logger.info("Created supplier '%s' (id=%d)", supp_body["name"], supplier_id)
-            break
+        org_match = re.search(r'(?:[Oo]rg\.?\s*(?:nr\.?|n[uú]m(?:ero|mer)?|nº)?\.?:?\s*)(\d{6,9})', desc)
+        # Try multiple name patterns, stopping at first match
+        name_patterns = [
+            r'(?:fra|from|de|von|du|de la|dal)\s+(.+?)(?:\s*\(|\s*-\s*(?:Org|org)|,|\s*$)',
+            r'(?:Leverand[øo]rgjeld|gjeld|fournisseur|proveedor|fornecedor|Lieferant)\s*[-:]\s*(.+?)(?:\s*\(|\s*$)',
+            # Extract "Company Name" from patterns like "facture de Company Name"
+            r'(?:facture?\s+(?:de|du|fournisseur))\s+(.+?)(?:\s*\(|\s*-|\s*$)',
+        ]
+        for pat in name_patterns:
+            name_match = re.search(pat, desc, re.IGNORECASE)
+            if name_match:
+                candidate = name_match.group(1).strip().rstrip('.,;:')
+                # Reject if too long (likely captured too much)
+                if len(candidate) <= 60 and candidate:
+                    supplier_name = candidate
+                    break
 
+        if org_match and not supplier_org:
+            supplier_org = org_match.group(1)
+
+    if supplier_name or supplier_org:
+        # Look up existing supplier
+        search_params: dict[str, Any] = {"count": 1}
+        if supplier_org:
+            search_params["organizationNumber"] = supplier_org
+        else:
+            search_params["name"] = supplier_name
+        supp_resp = client.get("/supplier", search_params)
+        supp_values = supp_resp.get("values", [])
+        if supp_values:
+            supplier_id = supp_values[0]["id"]
+        else:
+            # Create supplier with BOTH name and org number
+            supp_body: dict[str, Any] = {"name": supplier_name or f"Supplier {supplier_org}"}
+            if supplier_org:
+                supp_body["organizationNumber"] = supplier_org
+            if supplier_bank_account:
+                supp_body["bankAccountPresentation"] = [{"number": supplier_bank_account}]
+            supp_result = client.post("/supplier", supp_body)
+            if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
+                supplier_id = supp_result["value"]["id"]
+                logger.info("Created supplier '%s' org=%s (id=%d)",
+                            supp_body["name"], supplier_org, supplier_id)
+
+    # If AP posting exists but no supplier was resolved, create a fallback supplier
+    # to avoid "Leverandør mangler" 422 errors
+    if has_ap_posting and not supplier_id:
+        fallback_name = supplier_name or entities.get("description", "Leverandør")[:50]
+        logger.info("Creating fallback supplier for AP posting: '%s'", fallback_name)
+        supp_body: dict[str, Any] = {"name": fallback_name}
+        if supplier_org:
+            supp_body["organizationNumber"] = supplier_org
+        if supplier_bank_account:
+            supp_body["bankAccountPresentation"] = [{"number": supplier_bank_account}]
+        supp_result = client.post("/supplier", supp_body)
+        if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
+            supplier_id = supp_result["value"]["id"]
+            logger.info("Created fallback supplier (id=%d)", supplier_id)
+
+    # Phase 4: Build final postings (skip entries with unresolved account_id)
     postings = []
-    for idx, r in enumerate(non_vat_entries):
+    row_num = 0
+    for r in non_vat_entries:
+        if r["account_id"] is None:
+            logger.warning("Skipping posting with unresolved account_id for account %s", r["account_number"])
+            continue
+        row_num += 1
         p: dict[str, Any] = {
-            "row": idx + 1,
+            "row": row_num,
             "account": {"id": r["account_id"]},
-            "date": r["posting"].get("date", today),
+            "date": r["posting"].get("date", voucher_date),
             "amountGross": r["amount"],
             "amountGrossCurrency": r["amount"],
         }
@@ -1492,24 +1674,32 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         # Add supplier reference to AP postings
         if supplier_id and 2400 <= r["account_number"] <= 2499:
             p["supplier"] = {"id": supplier_id}
+            if invoice_number:
+                p["invoiceNumber"] = invoice_number
+            if due_date:
+                p["termOfPayment"] = due_date
         postings.append(p)
 
-    # If postings don't balance (e.g. receipt with expense+VAT but no bank counter),
-    # add a counter-posting on bank account 1920 to balance the voucher.
+    # Only add bank counter-posting if postings genuinely don't balance
+    # (e.g. receipt/expense vouchers without an AP posting).
+    # Supplier invoices with AP posting should already balance.
     posting_sum = sum(r["amount"] for r in non_vat_entries)
-    if abs(posting_sum) > 0.01 and postings:
+    if abs(posting_sum) > 0.01 and postings and not has_ap_posting:
         bank_acc_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
         bank_values = bank_acc_resp.get("values", [])
         if bank_values:
             bank_id = bank_values[0]["id"]
             postings.append({
-                "row": len(postings) + 1,
+                "row": row_num + 1,
                 "account": {"id": bank_id},
                 "date": postings[0].get("date", today),
                 "amountGross": -posting_sum,
                 "amountGrossCurrency": -posting_sum,
             })
             logger.info("Added bank counter-posting on 1920 for %.2f to balance voucher", -posting_sum)
+
+    if not postings:
+        raise RuntimeError("No postings could be resolved for voucher creation")
 
     body: dict[str, Any] = {
         "date": entities.get("date", today),
@@ -1651,7 +1841,66 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
                     activity_id, activities[0].get("name"))
 
     if not activity_id:
-        raise RuntimeError(f"No activities found for project {project_id}")
+        act_name = activity_name or "Generell"
+
+        # Approach 1: Create a global activity, then link to project
+        try:
+            act_create = client.post("/activity", {"name": act_name})
+            if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
+                global_act_id = act_create["value"]["id"]
+                # Link activity to project
+                client.post("/project/projectActivity", {
+                    "project": {"id": project_id},
+                    "activity": {"id": global_act_id},
+                })
+                # Re-fetch timesheet activities
+                act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                activities2 = act_resp2.get("values", [])
+                for a in activities2:
+                    if a.get("name", "").strip().lower() == act_name.strip().lower():
+                        activity_id = a["id"]
+                        break
+                if not activity_id and activities2:
+                    activity_id = activities2[0]["id"]
+        except Exception as e:
+            logger.warning("Failed to create activity via /activity: %s", e)
+
+        # Approach 2: Try legacy project activity endpoint
+        if not activity_id:
+            try:
+                act_result = client.post("/project/projectActivity", {
+                    "name": act_name,
+                    "project": {"id": project_id},
+                })
+                if isinstance(act_result, dict) and act_result.get("value"):
+                    act_resp3 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                    activities3 = act_resp3.get("values", [])
+                    if activities3:
+                        activity_id = activities3[0]["id"]
+            except Exception as e:
+                logger.warning("Failed to create project activity: %s", e)
+
+        # Approach 3: Find ANY activity in the system
+        if not activity_id:
+            try:
+                all_acts = client.get("/activity", {"count": 10})
+                all_values = all_acts.get("values", [])
+                if all_values:
+                    # Link first available activity to our project
+                    any_act_id = all_values[0]["id"]
+                    client.post("/project/projectActivity", {
+                        "project": {"id": project_id},
+                        "activity": {"id": any_act_id},
+                    })
+                    act_resp4 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                    activities4 = act_resp4.get("values", [])
+                    if activities4:
+                        activity_id = activities4[0]["id"]
+            except Exception as e:
+                logger.warning("Failed to find any activity: %s", e)
+
+        if not activity_id:
+            raise RuntimeError(f"No activities found for project {project_id}")
 
     # Step 5: Create timesheet entry
     hours = entities.get("hours", 0)
@@ -1664,6 +1913,9 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
         "date": entry_date,
         "hours": hours,
     }
+    # Set hourly rate on the entry if provided (some Tripletex setups support this)
+    if entities.get("hourlyRate"):
+        entry_body["hourlyCharge"] = entities["hourlyRate"]
     if entities.get("comment"):
         entry_body["comment"] = entities["comment"]
 
@@ -1698,11 +1950,13 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
     # Step 2: Create dimension values
     dim_values = e.get("dimensionValues", [])
     value_id_map: dict[str, int] = {}
+    seen_codes: set[str] = set()
     for i, val_name in enumerate(dim_values):
         # Generate a short code from the value name
         code = val_name[:4].upper().replace(" ", "")
-        if code in value_id_map:
+        if code in seen_codes:
             code = f"{code}{i}"
+        seen_codes.add(code)
         val_body: dict[str, Any] = {
             "displayName": val_name,
             "dimensionIndex": dim_index,
@@ -1732,15 +1986,18 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
     # Step 4: Determine which dimension value to link
     linked_value_name = e.get("linkedDimensionValue", "")
     linked_value_id = value_id_map.get(linked_value_name)
-    if not linked_value_id and value_id_map:
-        # Try case-insensitive match
-        for name, vid in value_id_map.items():
-            if name.lower() == linked_value_name.lower():
-                linked_value_id = vid
-                break
-        if not linked_value_id:
-            # Default to the last created value
-            linked_value_id = list(value_id_map.values())[-1]
+    if not linked_value_id:
+        if value_id_map:
+            # Try case-insensitive match
+            for name, vid in value_id_map.items():
+                if name.lower() == linked_value_name.lower():
+                    linked_value_id = vid
+                    break
+            if not linked_value_id:
+                # Default to the last created value
+                linked_value_id = list(value_id_map.values())[-1]
+        else:
+            raise RuntimeError("No dimension values created — cannot link voucher posting")
 
     # Step 5: Build voucher with balanced postings
     amount = e.get("amount", 0)
@@ -1816,15 +2073,20 @@ def _handle_reverse_invoice_payment(task: dict, client: TripletexClient, context
     is_reversal = entities.get("isReversal", False)
     if not is_reversal and prompt_lower:
         _REVERSE_KEYWORDS = [
-            "reverse", "reverter", "tilbakefør", "annuler", "stornieren",
-            "revertir", "returned by the bank", "returnert av banken",
-            "retournée par la banque", "devuelto por el banco",
-            "devolvido pelo banco", "angre",
+            "reverse", "cancel the payment", "cancel payment",
+            "reverter", "cancelar o pagamento",
+            "tilbakefør", "angre",
+            "annuler", "annulez",
+            "stornieren", "storniere",
+            "revertir", "revierta", "cancelar el pago",
+            "returned by the bank", "returnert av banken",
+            "retournée par la banque", "retourné par la banque",
+            "devuelto por el banco", "devolvido pelo banco",
         ]
         is_reversal = any(kw in prompt_lower for kw in _REVERSE_KEYWORDS)
 
     # Step 1: Find the customer
-    org_number = entities.get("customerOrganizationNumber", "")
+    org_number = str(entities.get("customerOrganizationNumber") or "").strip()
     cust_name = entities.get("customerName", "")
     customer_id = None
 
@@ -2079,8 +2341,8 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
             logger.info("Set placeholder dateOfBirth on employee %d for payroll", emp_id)
 
     # Extract payroll period early — needed for employment startDate
-    payroll_month = entities.get("month", current_date.month)
-    payroll_year = entities.get("year", current_date.year)
+    payroll_month = int(entities.get("month", current_date.month))
+    payroll_year = int(entities.get("year", current_date.year))
 
     # Step 2: Ensure employment exists
     emp_resp = client.get("/employee/employment", {"employeeId": emp_id, "count": 10})
@@ -2089,7 +2351,20 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
     employment_id = None
     if employments:
         employment_id = employments[0]["id"]
-        logger.info("Found existing employment %d for employee %d", employment_id, emp_id)
+        # Ensure existing employment covers the payroll period — update startDate if needed
+        emp_start = employments[0].get("startDate", "")
+        payroll_first_day = f"{payroll_year}-{payroll_month:02d}-01"
+        if emp_start and emp_start > payroll_first_day:
+            logger.info("Employment startDate %s is after payroll month %s, updating...",
+                        emp_start, payroll_first_day)
+            emp_version = employments[0].get("version", 0)
+            new_start = f"{min(payroll_year, int(emp_start[:4]))}-01-01"
+            client.put(f"/employee/employment/{employment_id}", {
+                "id": employment_id,
+                "version": emp_version,
+                "startDate": new_start,
+            })
+        logger.info("Using existing employment %d for employee %d", employment_id, emp_id)
     else:
         # Create employment — startDate must be before the payroll month
         emp_start_year = min(payroll_year, current_date.year)
@@ -2105,7 +2380,7 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         logger.info("Created employment %d for employee %d", employment_id, emp_id)
 
     # Step 3: Set salary via employment details
-    monthly_salary = entities.get("monthlySalary", 0)
+    monthly_salary = float(entities.get("monthlySalary", 0) or 0)
     if monthly_salary:
         annual_salary = monthly_salary * 12
         details_body: dict[str, Any] = {
@@ -2156,12 +2431,16 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
     }
     sal_result = client.post("/salary/transaction", sal_body)
     _check_response(sal_result, "POST /salary/transaction")
-    sal_id = sal_result["value"]["id"]
+    sal_value = sal_result["value"]
+    sal_id = sal_value["id"]
     logger.info("Created salary transaction %d for %d-%02d", sal_id, payroll_year, payroll_month)
 
-    # Step 5: If bonus specified, find the payslip and add bonus specification
+    # Extract payslip IDs directly from the transaction response (GET query often returns empty)
+    transaction_payslips = sal_value.get("payslips", [])
+
+    # Step 5: If bonus specified, add bonus specification to the payslip
     bonus = entities.get("bonus", 0)
-    if bonus:
+    if bonus and transaction_payslips:
         # Find salary types to get the bonus type ID
         type_resp = client.get("/salary/type", {"count": 1000})
         salary_types = type_resp.get("values", [])
@@ -2170,33 +2449,24 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         for st in salary_types:
             st_name = st.get("name", "").lower()
             st_number = str(st.get("number", ""))
-            # Common bonus salary type numbers/names in Norwegian Tripletex
-            if "bonus" in st_name or "tillegg" in st_name or "engangstillegg" in st_name:
+            # Salary type 2002 = "Bonus" in Norwegian Tripletex
+            if st_number == "2002":
                 bonus_type_id = st["id"]
                 break
-            # Salary type 130 is commonly "Bonus/tillegg" in Tripletex
-            if st_number in ("130", "131", "132", "133"):
-                bonus_type_id = st["id"]
-                break
-
         if not bonus_type_id:
-            # Fall back to first available salary type that looks like a supplement
             for st in salary_types:
-                if st.get("number") and not st.get("isInactive"):
+                st_name = st.get("name", "").lower()
+                if st_name == "bonus" or "bonus" in st_name:
                     bonus_type_id = st["id"]
                     break
 
-        # Find the payslip for this employee in this salary transaction
-        payslip_resp = client.get("/salary/payslip", {
-            "wageTransactionId": sal_id,
-            "employeeId": emp_id,
-            "count": 10,
-        })
-        payslips = payslip_resp.get("values", [])
+        # Use payslip ID from the transaction creation response
+        payslip_id = transaction_payslips[0]["id"]
+        logger.info("Using payslip %d from transaction response", payslip_id)
 
-        if payslips and bonus_type_id:
-            payslip_id = payslips[0]["id"]
+        if bonus_type_id:
             # Add bonus as a salary specification on the payslip
+            # API requires: rate (amount per unit), count (number of units)
             spec_body: dict[str, Any] = {
                 "payslip": {"id": payslip_id},
                 "salaryType": {"id": bonus_type_id},
@@ -2205,22 +2475,12 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
             }
             spec_result = client.post("/salary/specification", spec_body)
             if isinstance(spec_result, dict) and spec_result.get("status", 0) >= 400:
-                logger.warning("POST /salary/specification failed: %s, trying alternative...",
+                logger.warning("POST /salary/specification failed: %s",
                              spec_result.get("message", ""))
-                # Try alternative field names
-                spec_body2: dict[str, Any] = {
-                    "payslip": {"id": payslip_id},
-                    "salaryType": {"id": bonus_type_id},
-                    "amount": bonus,
-                    "count": 1,
-                }
-                spec_result = client.post("/salary/specification", spec_body2)
-                logger.info("Retry salary specification result: %s", spec_result)
             else:
                 logger.info("Added bonus specification to payslip %d", payslip_id)
         else:
-            logger.warning("Could not add bonus: payslips=%d, bonus_type_id=%s",
-                         len(payslips), bonus_type_id)
+            logger.warning("Could not find bonus salary type")
 
     result_parts = [
         f"Ran payroll for employee {emp_name or emp_id} ({payroll_year}-{payroll_month:02d})",
@@ -2593,21 +2853,38 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         if prepaid:
             amount = prepaid.get("amount", 0)
             acct = str(prepaid.get("accountNumber", 1700))
-            # Determine the expense account for the reversal
-            # Typically charges go to a general expense account (e.g. 6300)
-            # But the prompt may specify — use 6300 as default for prepaid reversals
-            expense_acct = "6300"
-            # Check if the prompt specifies a "charges" / "kostnad" account
-            p_lower = raw_prompt.lower()
-            charge_match = re.search(r'(?:charges?|kostnad|utgift).*?(?:konto|account|compte)\s*(\d{4})', p_lower)
-            if not charge_match:
-                charge_match = re.search(r'(?:konto|account|compte)\s*(\d{4}).*?(?:charges?|kostnad|utgift)', p_lower)
-            if charge_match:
-                expense_acct = charge_match.group(1)
+            # Determine the expense account for the reversal.
+            # Strategy: check parser entries for a prepaid-related entry that has
+            # two postings (one on the prepaid account, one on an expense account).
+            # Fall back to the depreciation expense account or 6300.
+            expense_acct = None
+            parsed_entries = entities.get("entries", [])
+            for entry in parsed_entries:
+                entry_postings = entry.get("postings", [])
+                if len(entry_postings) >= 2:
+                    acct_numbers = [str(p.get("accountNumber", "")) for p in entry_postings]
+                    if acct in acct_numbers:
+                        # This entry involves our prepaid account — find the other account
+                        for p in entry_postings:
+                            p_acct = str(p.get("accountNumber", ""))
+                            if p_acct != acct:
+                                expense_acct = p_acct
+                                break
+                        if expense_acct:
+                            break
+            if not expense_acct:
+                # Fall back: use depreciation expense account if available, else 6300
+                if dep_items:
+                    expense_acct = str(dep_items[0].get("depreciationExpenseAccountNumber", 6300))
+                else:
+                    expense_acct = "6300"
+            # Ensure expense_acct is different from the prepaid account
+            if expense_acct == acct:
+                expense_acct = "6300"
 
             prepaid_id = _get_or_create_account(client, acct, cache=account_cache)
             expense_id = _get_or_create_account(client, expense_acct,
-                                                 name="Forskuddsbetalt kostnad",
+                                                 name="Driftskostnad",
                                                  cache=account_cache)
 
             voucher_body = {
@@ -2629,10 +2906,41 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
             tax_exp_acct = str(tax_info.get("expenseAccountNumber", 8700))
             tax_liab_acct = str(tax_info.get("liabilityAccountNumber", 2920))
 
-            # Taxable income = total depreciation + prepaid reversal
-            prepaid_amount = (prepaid.get("amount", 0) if prepaid else 0)
-            taxable_income = total_depreciation_expense + prepaid_amount
-            tax_amount = round(taxable_income * tax_rate, 2)
+            # Calculate taxable income from the actual P&L in the ledger.
+            # Query balanceSheet for all P&L accounts (3000-8699) up to closure date.
+            # Revenue accounts (3xxx) have credit (negative) balances,
+            # expense accounts (4xxx-8xxx) have debit (positive) balances.
+            # Taxable income = -(sum of all P&L account balance changes)
+            taxable_income = 0.0
+            try:
+                # dateTo is exclusive in the API, so use day after closure_date
+                date_to_parts = closure_date.split("-")
+                dt_year, dt_month, dt_day = int(date_to_parts[0]), int(date_to_parts[1]), int(date_to_parts[2])
+                from datetime import timedelta
+                dt_obj = date(dt_year, dt_month, dt_day) + timedelta(days=1)
+                date_to_exclusive = dt_obj.isoformat()
+
+                bs_resp = client.get("/balanceSheet", {
+                    "dateFrom": f"{dt_year}-01-01",
+                    "dateTo": date_to_exclusive,
+                    "accountNumberFrom": 3000,
+                    "accountNumberTo": 8699,
+                    "count": 10000,
+                })
+                bs_values = bs_resp.get("values", [])
+                pl_sum = sum(v.get("balanceChange", 0) for v in bs_values)
+                # Revenue is negative (credit), expenses are positive (debit)
+                # Taxable income = -(sum) → positive if profitable
+                taxable_income = round(-pl_sum, 2)
+                logger.info("Taxable income from P&L (accounts 3000-8699): %.2f", taxable_income)
+            except Exception as e:
+                logger.warning("Failed to query P&L for tax calculation, "
+                               "falling back to estimated: %s", e)
+                # Fallback: use the expenses we just posted (less accurate)
+                prepaid_amount = (prepaid.get("amount", 0) if prepaid else 0)
+                taxable_income = total_depreciation_expense + prepaid_amount
+
+            tax_amount = round(max(taxable_income, 0) * tax_rate, 2)
 
             if tax_amount > 0:
                 tax_exp_id = _get_or_create_account(client, tax_exp_acct, cache=account_cache)
@@ -2917,6 +3225,976 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
     )
 
 
+def _handle_error_correction(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle error_correction tasks: find and correct errors in the general ledger.
+
+    The parser extracts structured error descriptions with wrongAccount, correctAccount,
+    amount, etc. We search for matching vouchers/postings and create correction vouchers.
+    """
+    e = task.get("entities", {})
+    errors = e.get("errors", [])
+    today = e.get("today", _today())
+
+    if not errors:
+        raise RuntimeError("No errors specified in error_correction task")
+
+    # Cache account number → ID lookups
+    acct_cache: dict[str, int] = {}
+
+    # Fetch all vouchers and postings for the date range (Jan-Feb of current year)
+    year = today[:4]
+    date_from = f"{year}-01-01"
+    date_to = f"{year}-12-31"
+
+    # Get all postings in one call
+    all_postings_resp = client.get("/ledger/posting", {
+        "dateFrom": date_from, "dateTo": date_to, "count": 1000,
+    })
+    all_postings = all_postings_resp.get("values", [])
+
+    # Build lookup: account_id → account_number (from postings we've seen)
+    # We'll resolve account numbers as needed
+    def _get_account_id(acct_num: str) -> int:
+        if acct_num in acct_cache:
+            return acct_cache[acct_num]
+        return _get_or_create_account(client, acct_num, cache=acct_cache)
+
+    corrections_made: list[str] = []
+
+    for error in errors:
+        desc = error.get("description", "")
+        wrong_acct = str(error.get("wrongAccount", ""))
+        correct_acct = error.get("correctAccount")
+        amount = error.get("amount", 0)
+        desc_lower = desc.lower()
+
+        if not wrong_acct or not amount:
+            logger.warning("Skipping error with missing data: %s", error)
+            continue
+
+        wrong_acct_id = _get_account_id(wrong_acct)
+
+        # Find matching posting(s) by account ID and amount
+        matching = [
+            p for p in all_postings
+            if p.get("account", {}).get("id") == wrong_acct_id
+            and abs(abs(p.get("amount", 0)) - abs(amount)) < 0.01
+            and not p.get("systemGenerated", False)
+        ]
+        # Also check amountGross
+        if not matching:
+            matching = [
+                p for p in all_postings
+                if p.get("account", {}).get("id") == wrong_acct_id
+                and abs(abs(p.get("amountGross", 0)) - abs(amount)) < 0.01
+                and not p.get("systemGenerated", False)
+            ]
+
+        if "feil konto" in desc_lower or "wrong account" in desc_lower or (
+            correct_acct and correct_acct != wrong_acct
+        ):
+            # ERROR TYPE 1: Wrong account — reverse from wrong, post to correct
+            if not correct_acct:
+                logger.warning("Wrong account error but no correctAccount specified")
+                continue
+            correct_acct_id = _get_account_id(str(correct_acct))
+
+            if matching:
+                orig = matching[0]
+                orig_amount = orig.get("amountGross", orig.get("amount", amount))
+                voucher_date = orig.get("date", today)
+            else:
+                orig_amount = amount
+                voucher_date = today
+
+            # Correction voucher: reverse wrong, post correct
+            postings = [
+                {
+                    "row": 1,
+                    "account": {"id": wrong_acct_id},
+                    "date": voucher_date,
+                    "amountGross": -abs(orig_amount),
+                    "amountGrossCurrency": -abs(orig_amount),
+                    "description": f"Korreksjon: feil konto {wrong_acct} → {correct_acct}",
+                },
+                {
+                    "row": 2,
+                    "account": {"id": correct_acct_id},
+                    "date": voucher_date,
+                    "amountGross": abs(orig_amount),
+                    "amountGrossCurrency": abs(orig_amount),
+                    "description": f"Korreksjon: feil konto {wrong_acct} → {correct_acct}",
+                },
+            ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: feil konto {wrong_acct} → {correct_acct}, {amount} kr",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (wrong account correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Wrong account {wrong_acct}→{correct_acct}: voucher {vid}")
+
+        elif "dupliser" in desc_lower or "duplikat" in desc_lower or "duplicate" in desc_lower:
+            # ERROR TYPE 2: Duplicate voucher — create reversal
+            if not matching:
+                logger.warning("Could not find duplicate posting for account %s amount %s", wrong_acct, amount)
+                continue
+
+            orig = matching[-1]  # Take last match (likely the duplicate)
+            voucher_id = orig.get("voucher", {}).get("id")
+            voucher_date = orig.get("date", today)
+
+            # Get full voucher to reverse all its postings
+            if voucher_id:
+                voucher_resp = client.get(f"/ledger/voucher/{voucher_id}")
+                voucher_data = voucher_resp.get("value", {})
+                voucher_posting_refs = voucher_data.get("postings", [])
+
+                # Get all postings of this voucher
+                reversal_postings = []
+                for p in all_postings:
+                    if p.get("voucher", {}).get("id") == voucher_id and not p.get("systemGenerated", False):
+                        reversal_postings.append(p)
+
+                if not reversal_postings:
+                    reversal_postings = [orig]
+
+                postings = []
+                for idx, rp in enumerate(reversal_postings):
+                    postings.append({
+                        "row": idx + 1,
+                        "account": {"id": rp["account"]["id"]},
+                        "date": voucher_date,
+                        "amountGross": -rp.get("amountGross", rp["amount"]),
+                        "amountGrossCurrency": -rp.get("amountGrossCurrency", rp["amountCurrency"]),
+                        "description": f"Reversering av duplikat bilag {voucher_data.get('number', '')}",
+                    })
+            else:
+                # Simple reversal of the matching posting
+                postings = [
+                    {
+                        "row": 1,
+                        "account": {"id": wrong_acct_id},
+                        "date": voucher_date,
+                        "amountGross": -abs(amount),
+                        "amountGrossCurrency": -abs(amount),
+                        "description": "Reversering av duplikat",
+                    },
+                    {
+                        "row": 2,
+                        "account": {"id": _get_account_id("1920")},
+                        "date": voucher_date,
+                        "amountGross": abs(amount),
+                        "amountGrossCurrency": abs(amount),
+                        "description": "Reversering av duplikat",
+                    },
+                ]
+
+            body = {
+                "date": voucher_date,
+                "description": f"Reversering: duplikat bilag konto {wrong_acct}, {amount} kr",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (duplicate reversal)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Duplicate reversed on {wrong_acct}: voucher {vid}")
+
+        elif "mva" in desc_lower or "manglende" in desc_lower or "missing" in desc_lower:
+            # ERROR TYPE 3: Missing VAT line — add MVA posting
+            if not correct_acct:
+                correct_acct = "2710"  # Default MVA account
+            correct_acct_id = _get_account_id(str(correct_acct))
+
+            # Calculate MVA amount (25% of excl. amount)
+            mva_amount = round(amount * 0.25, 2)
+
+            if matching:
+                voucher_date = matching[0].get("date", today)
+            else:
+                voucher_date = today
+
+            # Create voucher that adds the missing MVA line
+            postings = [
+                {
+                    "row": 1,
+                    "account": {"id": correct_acct_id},
+                    "date": voucher_date,
+                    "amountGross": mva_amount,
+                    "amountGrossCurrency": mva_amount,
+                    "description": f"Manglende MVA-linje for konto {wrong_acct}, {amount} kr ekskl.",
+                },
+                {
+                    "row": 2,
+                    "account": {"id": _get_account_id("1920")},
+                    "date": voucher_date,
+                    "amountGross": -mva_amount,
+                    "amountGrossCurrency": -mva_amount,
+                    "description": f"Manglende MVA-linje for konto {wrong_acct}",
+                },
+            ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: manglende MVA for konto {wrong_acct}, {amount} kr ekskl.",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (missing VAT correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Missing VAT added for {wrong_acct}: voucher {vid}")
+
+        elif "feil beløp" in desc_lower or "wrong amount" in desc_lower:
+            # ERROR TYPE 4: Wrong amount — correct the difference
+            # Parse correct amount from description
+            correct_amount = None
+            voucher_desc = error.get("voucherDescription", "")
+            import re
+            m = re.search(r"korrekt beløp[:\s]*(\d+)", voucher_desc)
+            if m:
+                correct_amount = float(m.group(1))
+            if correct_amount is None:
+                m = re.search(r"(\d+)\s*kr", voucher_desc)
+                if m:
+                    correct_amount = float(m.group(1))
+
+            if correct_amount is None:
+                logger.warning("Could not determine correct amount for wrong-amount error")
+                continue
+
+            diff = amount - correct_amount  # e.g. 14600 - 11050 = 3550
+
+            if matching:
+                voucher_date = matching[0].get("date", today)
+            else:
+                voucher_date = today
+
+            # Correction: reverse the excess amount
+            postings = [
+                {
+                    "row": 1,
+                    "account": {"id": wrong_acct_id},
+                    "date": voucher_date,
+                    "amountGross": -abs(diff),
+                    "amountGrossCurrency": -abs(diff),
+                    "description": f"Korreksjon: feil beløp {amount} → {correct_amount} kr",
+                },
+                {
+                    "row": 2,
+                    "account": {"id": _get_account_id("1920")},
+                    "date": voucher_date,
+                    "amountGross": abs(diff),
+                    "amountGrossCurrency": abs(diff),
+                    "description": f"Korreksjon: feil beløp {amount} → {correct_amount} kr",
+                },
+            ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: feil beløp konto {wrong_acct}, {amount} → {correct_amount} kr",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (wrong amount correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Wrong amount corrected on {wrong_acct}: {amount}→{correct_amount}, voucher {vid}")
+
+        else:
+            # Generic correction: try to reverse and re-post
+            logger.warning("Unknown error type '%s', attempting generic reversal", desc)
+            if matching:
+                voucher_date = matching[0].get("date", today)
+            else:
+                voucher_date = today
+
+            if correct_acct and correct_acct != wrong_acct:
+                correct_acct_id = _get_account_id(str(correct_acct))
+                postings = [
+                    {
+                        "row": 1,
+                        "account": {"id": wrong_acct_id},
+                        "date": voucher_date,
+                        "amountGross": -abs(amount),
+                        "amountGrossCurrency": -abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                    {
+                        "row": 2,
+                        "account": {"id": correct_acct_id},
+                        "date": voucher_date,
+                        "amountGross": abs(amount),
+                        "amountGrossCurrency": abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                ]
+            else:
+                postings = [
+                    {
+                        "row": 1,
+                        "account": {"id": wrong_acct_id},
+                        "date": voucher_date,
+                        "amountGross": -abs(amount),
+                        "amountGrossCurrency": -abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                    {
+                        "row": 2,
+                        "account": {"id": _get_account_id("1920")},
+                        "date": voucher_date,
+                        "amountGross": abs(amount),
+                        "amountGrossCurrency": abs(amount),
+                        "description": f"Korreksjon: {desc}",
+                    },
+                ]
+            body = {
+                "date": voucher_date,
+                "description": f"Korreksjon: {desc}",
+                "postings": postings,
+            }
+            result = client.post("/ledger/voucher", body)
+            _check_response(result, "POST /ledger/voucher (generic correction)")
+            vid = result.get("value", {}).get("id", "?")
+            corrections_made.append(f"Generic correction for {desc}: voucher {vid}")
+
+    if not corrections_made:
+        raise RuntimeError("No corrections could be made — no matching postings found")
+
+    return f"Error correction completed: {len(corrections_made)} corrections. " + "; ".join(corrections_made)
+
+
+def _handle_overdue_invoice(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle overdue_invoice: find overdue invoice, post late fee, create fee invoice, register partial payment."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+    fee_amount = e.get("feeAmount", 70)
+    debit_acct = str(e.get("debitAccount", "1500"))
+    credit_acct = str(e.get("creditAccount", "3400"))
+    create_fee_invoice = e.get("invoiceFee", False)
+    send_invoice = e.get("sendInvoice", False)
+    partial_payment = e.get("partialPaymentAmount")
+
+    # Step 1: Find the overdue invoice
+    inv_resp = client.get("/invoice", {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": today,
+        "count": 100,
+    })
+    invoices = inv_resp.get("values", [])
+
+    # Find overdue: invoiceDueDate < today AND amountOutstanding > 0
+    overdue = None
+    for inv in invoices:
+        due = inv.get("invoiceDueDate", "")
+        outstanding = inv.get("amountOutstanding", 0)
+        if due and due < today and outstanding > 0:
+            if overdue is None or due < overdue.get("invoiceDueDate", ""):
+                overdue = inv  # Pick the most overdue one
+
+    if not overdue:
+        raise RuntimeError("No overdue invoice found")
+
+    overdue_id = overdue["id"]
+    customer_id = overdue.get("customer", {}).get("id")
+    overdue_amount = overdue.get("amount", 0)
+    logger.info("Found overdue invoice %d (due %s, outstanding %.2f) for customer %s",
+                overdue_id, overdue.get("invoiceDueDate"), overdue.get("amountOutstanding", 0), customer_id)
+
+    results: list[str] = []
+
+    # Step 2: Post late fee voucher (debit 1500 kundefordringer, credit 3400 purregebyr)
+    debit_id = _get_or_create_account(client, debit_acct)
+    credit_id = _get_or_create_account(client, credit_acct)
+
+    voucher_body = {
+        "date": today,
+        "description": f"Purregebyr faktura {overdue.get('invoiceNumber', overdue_id)}",
+        "postings": [
+            {
+                "row": 1,
+                "account": {"id": debit_id},
+                "customer": {"id": customer_id} if customer_id else None,
+                "amountGross": fee_amount,
+                "amountGrossCurrency": fee_amount,
+                "date": today,
+            },
+            {
+                "row": 2,
+                "account": {"id": credit_id},
+                "amountGross": -fee_amount,
+                "amountGrossCurrency": -fee_amount,
+                "date": today,
+            },
+        ],
+    }
+    # Remove None customer references
+    for p in voucher_body["postings"]:
+        if p.get("customer") is None:
+            p.pop("customer", None)
+
+    v_result = client.post("/ledger/voucher", voucher_body)
+    _check_response(v_result, "POST /ledger/voucher (late fee)")
+    vid = v_result.get("value", {}).get("id", "?")
+    results.append(f"Late fee voucher {vid} ({fee_amount} kr)")
+
+    # Step 3: Create invoice for the fee (if requested)
+    if create_fee_invoice and customer_id:
+        # Create product for the fee
+        prod_resp = client.get("/product", {"name": "Purregebyr", "count": 1})
+        products = prod_resp.get("values", [])
+        if products:
+            product_id = products[0]["id"]
+        else:
+            prod = client.post("/product", {
+                "name": "Purregebyr",
+                "priceExcludingVatCurrency": fee_amount,
+                "vatType": {"id": 6},  # 0% VAT (utenfor mva-loven)
+            })
+            _check_response(prod, "POST /product (late fee)")
+            product_id = prod["value"]["id"]
+
+        # Create order
+        order_body: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "orderDate": today,
+            "deliveryDate": today,
+            "orderLines": [{
+                "product": {"id": product_id},
+                "count": 1,
+                "unitPriceExcludingVatCurrency": fee_amount,
+                "vatType": {"id": 6},
+            }],
+        }
+        order_result = client.post("/order", order_body)
+        _check_response(order_result, "POST /order (late fee)")
+        order_id = order_result["value"]["id"]
+
+        # Create and send invoice
+        inv_body: dict[str, Any] = {
+            "invoiceDate": today,
+            "invoiceDueDate": today,
+            "orders": [{"id": order_id}],
+        }
+        inv_params: dict[str, Any] = {"sendToCustomer": bool(send_invoice)}
+        inv_result = client.post("/invoice", inv_body, inv_params)
+
+        # Retry with bank account setup if needed
+        if isinstance(inv_result, dict) and inv_result.get("status", 0) >= 400:
+            error_msg = str(inv_result.get("message", "")) + str(inv_result.get("validationMessages", ""))
+            if "bank" in error_msg.lower():
+                context["_bank_account_checked"] = False
+                _ensure_company_bank_account(client, context)
+                inv_result = client.post("/invoice", inv_body, inv_params)
+
+        _check_response(inv_result, "POST /invoice (late fee)")
+        fee_inv_id = inv_result.get("value", {}).get("id", "?")
+        results.append(f"Fee invoice {fee_inv_id} created" + (" and sent" if send_invoice else ""))
+
+    # Step 4: Register partial payment on the overdue invoice (if requested)
+    if partial_payment and partial_payment > 0:
+        # Get payment type
+        pt_resp = client.get("/invoice/paymentType", {"count": 100})
+        payment_types = pt_resp.get("values", [])
+        payment_type_id = payment_types[0]["id"] if payment_types else None
+
+        if payment_type_id is not None:
+            pay_params: dict[str, Any] = {
+                "paymentDate": today,
+                "paymentTypeId": payment_type_id,
+                "paidAmount": partial_payment,
+                "paidAmountCurrency": partial_payment,
+            }
+            pay_result = client.put(f"/invoice/{overdue_id}/:payment", params=pay_params)
+
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                # Try JSON body approach
+                pay_result = client.put(
+                    f"/invoice/{overdue_id}/:payment",
+                    json_body={
+                        "paymentDate": today,
+                        "paymentTypeId": payment_type_id,
+                        "paidAmount": partial_payment,
+                        "paidAmountCurrency": partial_payment,
+                    },
+                )
+
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                logger.warning("Partial payment registration failed: %s", pay_result)
+                results.append(f"Partial payment {partial_payment} kr FAILED")
+            else:
+                results.append(f"Partial payment {partial_payment} kr registered on invoice {overdue_id}")
+        else:
+            logger.warning("No payment types found, cannot register partial payment")
+
+    return f"Overdue invoice handled: " + "; ".join(results)
+
+
+def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle full project lifecycle: create project, log hours, register supplier invoice, bill customer."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+    results: list[str] = []
+
+    # Step 1: Find or create customer
+    cust_name = e.get("customerName", "")
+    cust_org = e.get("customerOrganizationNumber", "")
+    customer_id = None
+    if cust_name or cust_org:
+        cust_data: dict[str, Any] = {}
+        if cust_name:
+            cust_data["name"] = cust_name
+        if cust_org:
+            cust_data["organizationNumber"] = cust_org
+        customer_id = _find_or_create_customer(cust_data, client, context)
+
+    # Step 2: Find or create project manager
+    pm_name = e.get("projectManagerName", "")
+    pm_email = e.get("projectManagerEmail", "")
+    pm_id = None
+    if pm_email:
+        resp = client.get("/employee", {"email": pm_email, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            pm_id = values[0]["id"]
+    if not pm_id and pm_name:
+        pm_id = _find_or_create_employee_by_name(pm_name, client, context)
+    if not pm_id:
+        pm_id = _ensure_employee(client, context)
+
+    # Step 3: Create project
+    proj_body: dict[str, Any] = {
+        "name": e.get("projectName", "Project"),
+        "projectManager": {"id": pm_id},
+        "isInternal": False,
+        "startDate": e.get("startDate", "2024-01-01"),
+    }
+    if customer_id:
+        proj_body["customer"] = {"id": customer_id}
+
+    proj = client.post("/project", proj_body)
+    _check_response(proj, "POST /project (lifecycle)")
+    project_id = proj["value"]["id"]
+    results.append(f"Project {project_id} created")
+
+    # Step 4: Log timesheet entries
+    timesheet_entries = e.get("timesheetEntries", [])
+    if timesheet_entries:
+        # Get activities for the project
+        act_resp = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+        activities = act_resp.get("values", [])
+
+        for ts in timesheet_entries:
+            # Find employee for this entry
+            ts_email = ts.get("employeeEmail", "")
+            ts_name = ts.get("employeeName", "")
+            ts_emp_id = None
+            if ts_email:
+                resp = client.get("/employee", {"email": ts_email, "count": 1})
+                vals = resp.get("values", [])
+                if vals:
+                    ts_emp_id = vals[0]["id"]
+            if not ts_emp_id and ts_name:
+                ts_emp_id = _find_or_create_employee_by_name(ts_name, client, context)
+            if not ts_emp_id:
+                ts_emp_id = pm_id
+
+            # Find activity
+            act_name = ts.get("activityName", "")
+            act_id = None
+            if act_name:
+                for a in activities:
+                    if a.get("name", "").strip().lower() == act_name.strip().lower():
+                        act_id = a["id"]
+                        break
+            if not act_id and activities:
+                act_id = activities[0]["id"]
+
+            if act_id:
+                entry_body: dict[str, Any] = {
+                    "employee": {"id": ts_emp_id},
+                    "project": {"id": project_id},
+                    "activity": {"id": act_id},
+                    "date": ts.get("date", today),
+                    "hours": ts.get("hours", 0),
+                }
+                if ts.get("hourlyRate"):
+                    entry_body["hourlyCharge"] = ts["hourlyRate"]
+                ts_result = client.post("/timesheet/entry", entry_body)
+                if isinstance(ts_result, dict) and ts_result.get("value"):
+                    results.append(f"Timesheet {ts.get('hours', 0)}h logged")
+
+    # Step 5: Register supplier invoice (if specified)
+    supplier_inv = e.get("supplierInvoice")
+    if supplier_inv:
+        supp_name = supplier_inv.get("supplierName", "")
+        supp_org = supplier_inv.get("supplierOrganizationNumber", "")
+        supp_amount = supplier_inv.get("amount", 0)
+        supp_desc = supplier_inv.get("description", "Supplier invoice")
+        expense_acct = str(supplier_inv.get("accountNumber", "4300"))
+
+        # Find or create supplier
+        supplier_id = None
+        if supp_name or supp_org:
+            search_params: dict[str, Any] = {"count": 1}
+            if supp_org:
+                search_params["organizationNumber"] = supp_org
+            elif supp_name:
+                search_params["name"] = supp_name
+            supp_resp = client.get("/supplier", search_params)
+            supp_values = supp_resp.get("values", [])
+            if supp_values:
+                supplier_id = supp_values[0]["id"]
+            else:
+                # Try customer endpoint (some suppliers are also customers)
+                cust_search: dict[str, Any] = {"count": 1}
+                if supp_org:
+                    cust_search["organizationNumber"] = supp_org
+                elif supp_name:
+                    cust_search["name"] = supp_name
+                cust_resp = client.get("/customer", cust_search)
+                cust_vals = cust_resp.get("values", [])
+                if cust_vals:
+                    # Create supplier from customer info
+                    supp_body: dict[str, Any] = {"name": cust_vals[0].get("name", supp_name)}
+                    if supp_org:
+                        supp_body["organizationNumber"] = supp_org
+                    supp_result = client.post("/supplier", supp_body)
+                    if isinstance(supp_result, dict) and supp_result.get("value"):
+                        supplier_id = supp_result["value"]["id"]
+                else:
+                    supp_body = {"name": supp_name or f"Supplier {supp_org}"}
+                    if supp_org:
+                        supp_body["organizationNumber"] = supp_org
+                    supp_result = client.post("/supplier", supp_body)
+                    if isinstance(supp_result, dict) and supp_result.get("value"):
+                        supplier_id = supp_result["value"]["id"]
+
+        expense_id = _get_or_create_account(client, expense_acct)
+        ap_id = _get_or_create_account(client, "2400")
+
+        postings = [
+            {
+                "row": 1,
+                "account": {"id": expense_id},
+                "amountGross": supp_amount,
+                "amountGrossCurrency": supp_amount,
+                "date": today,
+                "vatType": {"id": 1},  # 25% input VAT
+            },
+            {
+                "row": 2,
+                "account": {"id": ap_id},
+                "amountGross": -supp_amount,
+                "amountGrossCurrency": -supp_amount,
+                "date": today,
+            },
+        ]
+        if supplier_id:
+            postings[1]["supplier"] = {"id": supplier_id}
+
+        v_body: dict[str, Any] = {
+            "date": today,
+            "description": supp_desc,
+            "postings": postings,
+        }
+        v_result = client.post("/ledger/voucher", v_body)
+        if isinstance(v_result, dict) and v_result.get("value"):
+            results.append(f"Supplier invoice voucher created")
+
+    # Step 6: Create customer invoice for a percentage of budget
+    budget = e.get("budget", 0)
+    inv_pct = e.get("customerInvoicePercentage", 0)
+    if budget and inv_pct and customer_id:
+        inv_amount = round(budget * inv_pct / 100, 2)
+
+        # Create product for the invoice
+        prod_body: dict[str, Any] = {
+            "name": f"{e.get('projectName', 'Project')} - Delbetaling",
+            "priceExcludingVatCurrency": inv_amount,
+            "vatType": {"id": 3},  # 25% output VAT
+        }
+        prod = client.post("/product", prod_body)
+        _check_response(prod, "POST /product (lifecycle invoice)")
+        product_id = prod["value"]["id"]
+
+        # Create order
+        order_body: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "orderDate": today,
+            "deliveryDate": today,
+            "orderLines": [{
+                "product": {"id": product_id},
+                "count": 1,
+                "unitPriceExcludingVatCurrency": inv_amount,
+                "vatType": {"id": 3},
+            }],
+        }
+        order = client.post("/order", order_body)
+        _check_response(order, "POST /order (lifecycle invoice)")
+        order_id = order["value"]["id"]
+
+        # Create invoice
+        inv_body: dict[str, Any] = {
+            "invoiceDate": today,
+            "invoiceDueDate": today,
+            "orders": [{"id": order_id}],
+        }
+        inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+
+        # Retry with bank account if needed
+        if isinstance(inv, dict) and inv.get("status", 0) >= 400:
+            error_msg = str(inv.get("message", "")) + str(inv.get("validationMessages", ""))
+            if "bank" in error_msg.lower():
+                context["_bank_account_checked"] = False
+                _ensure_company_bank_account(client, context)
+                inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+
+        if isinstance(inv, dict) and inv.get("value"):
+            results.append(f"Customer invoice for {inv_pct}% ({inv_amount} kr) created")
+
+    return f"Project lifecycle completed: " + "; ".join(results)
+
+
+def _handle_cost_analysis(task: dict, client: TripletexClient, context: dict) -> str:
+    """Analyze ledger to find top cost accounts with largest increase, then create projects for them."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+
+    months = e.get("analysisMonths", [])
+    num_accounts = e.get("numberOfAccounts", 3)
+
+    # Default to Jan and Feb of current year if not specified
+    year = int(today[:4])
+    if len(months) >= 2:
+        month1 = months[0]
+        month2 = months[1]
+        y1 = month1.get("year", year)
+        m1 = month1.get("month", 1)
+        y2 = month2.get("year", year)
+        m2 = month2.get("month", 2)
+    else:
+        y1, m1 = year, 1
+        y2, m2 = year, 2
+
+    # Fetch postings for month 1
+    m1_start = f"{y1}-{m1:02d}-01"
+    m1_end = f"{y1}-{m1:02d}-28"  # Approximate end
+    resp1 = client.get("/ledger/posting", {
+        "dateFrom": m1_start, "dateTo": m1_end, "count": 10000,
+    })
+    postings1 = resp1.get("values", [])
+
+    # Fetch postings for month 2
+    m2_start = f"{y2}-{m2:02d}-01"
+    m2_end = f"{y2}-{m2:02d}-28"
+    resp2 = client.get("/ledger/posting", {
+        "dateFrom": m2_start, "dateTo": m2_end, "count": 10000,
+    })
+    postings2 = resp2.get("values", [])
+
+    # Sum amounts by account for cost accounts (4000-7999)
+    def sum_by_account(postings: list) -> dict[int, float]:
+        sums: dict[int, float] = {}
+        for p in postings:
+            acct_id = p.get("account", {}).get("id", 0)
+            amount = p.get("amount", 0)
+            # We need the account number — fetch it from posting or cache
+            sums[acct_id] = sums.get(acct_id, 0) + amount
+        return sums
+
+    sums1 = sum_by_account(postings1)
+    sums2 = sum_by_account(postings2)
+
+    # Get all accounts to map IDs to numbers/names
+    all_acct_ids = set(sums1.keys()) | set(sums2.keys())
+    acct_info: dict[int, dict] = {}
+
+    # Fetch account details for all unique accounts
+    acct_resp = client.get("/ledger/account", {"count": 1000})
+    for a in acct_resp.get("values", []):
+        acct_info[a["id"]] = a
+
+    # Calculate increases for cost accounts (4000-7999)
+    increases: list[tuple[int, str, str, float, float, float]] = []
+    for acct_id in all_acct_ids:
+        info = acct_info.get(acct_id, {})
+        acct_num = info.get("number", 0)
+        acct_name = info.get("name", "Unknown")
+        try:
+            acct_num_int = int(acct_num)
+        except (ValueError, TypeError):
+            continue
+
+        if 4000 <= acct_num_int <= 7999:
+            val1 = sums1.get(acct_id, 0)
+            val2 = sums2.get(acct_id, 0)
+            increase = val2 - val1
+            if increase > 0:
+                increases.append((acct_id, str(acct_num), acct_name, val1, val2, increase))
+
+    # Sort by increase (descending) and take top N
+    increases.sort(key=lambda x: x[5], reverse=True)
+    top = increases[:num_accounts]
+
+    if not top:
+        return "No cost account increases found between the analyzed periods."
+
+    # Create a project for each top account
+    pm_id = _ensure_employee(client, context)
+    results: list[str] = []
+
+    for acct_id, acct_num, acct_name, val1, val2, increase in top:
+        proj_body: dict[str, Any] = {
+            "name": acct_name,
+            "projectManager": {"id": pm_id},
+            "isInternal": True,
+            "startDate": today,
+        }
+        proj = client.post("/project", proj_body)
+        if isinstance(proj, dict) and proj.get("value"):
+            pid = proj["value"]["id"]
+            results.append(f"{acct_name} ({acct_num}): +{increase:.0f} kr (project {pid})")
+            # Also create a project activity
+            act_body: dict[str, Any] = {
+                "name": f"Analyse {acct_name}",
+                "project": {"id": pid},
+            }
+            client.post("/project/projectActivity", act_body)
+
+    return f"Cost analysis complete. Top {len(results)} accounts: " + "; ".join(results)
+
+
+def _handle_fx_correction(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle FX correction: find invoice in foreign currency, calculate and post exchange rate difference."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+
+    cust_name = e.get("customerName", "")
+    cust_org = e.get("customerOrganizationNumber", "")
+    inv_amount_eur = e.get("invoiceAmountEUR", 0)
+    original_rate = e.get("originalRate", 0)
+    current_rate = e.get("currentRate", 0)
+    inv_desc = e.get("invoiceDescription", "")
+
+    if not original_rate or not current_rate:
+        raise RuntimeError("FX correction requires both originalRate and currentRate")
+
+    # Calculate the FX difference
+    original_nok = inv_amount_eur * original_rate
+    current_nok = inv_amount_eur * current_rate
+    fx_diff = current_nok - original_nok  # Positive = loss (customer paid less), negative = gain
+
+    # Find customer
+    customer_id = None
+    if cust_name or cust_org:
+        cust_data: dict[str, Any] = {}
+        if cust_name:
+            cust_data["name"] = cust_name
+        if cust_org:
+            cust_data["organizationNumber"] = cust_org
+        customer_id = _find_or_create_customer(cust_data, client, context)
+
+    # Find the invoice
+    inv_resp = client.get("/invoice", {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": today,
+        "count": 100,
+    })
+    invoices = inv_resp.get("values", [])
+
+    target_inv = None
+    for inv in invoices:
+        inv_cust_id = inv.get("customer", {}).get("id")
+        if customer_id and inv_cust_id != customer_id:
+            continue
+        # Match by amount (original NOK amount)
+        inv_amount = inv.get("amountExcludingVat", 0)
+        if abs(inv_amount - original_nok) < 1:
+            target_inv = inv
+            break
+        # Also try matching by EUR amount * rate
+        if abs(inv.get("amount", 0) - original_nok) < 1:
+            target_inv = inv
+            break
+
+    # Determine accounts for FX gain/loss
+    # 8060 = Agiotap (currency loss), 8160 = Agiogevinst (currency gain)
+    if fx_diff < 0:
+        # Gain: we receive more NOK than expected
+        fx_account = "8160"  # Agiogevinst
+        fx_desc = "Agiogevinst"
+    else:
+        # Loss: we receive less NOK than expected
+        fx_account = "8060"  # Agiotap
+        fx_desc = "Agiotap"
+
+    fx_acct_id = _get_or_create_account(client, fx_account)
+    ar_acct_id = _get_or_create_account(client, "1500")  # Kundefordringer
+
+    # Post the FX correction voucher
+    # If loss (positive fx_diff): debit 8060 (expense), credit 1500 (reduce AR)
+    # If gain (negative fx_diff): debit 1500 (increase AR), credit 8160 (income)
+    abs_diff = abs(fx_diff)
+
+    postings = [
+        {
+            "row": 1,
+            "account": {"id": fx_acct_id},
+            "amountGross": abs_diff if fx_diff > 0 else -abs_diff,
+            "amountGrossCurrency": abs_diff if fx_diff > 0 else -abs_diff,
+            "date": today,
+        },
+        {
+            "row": 2,
+            "account": {"id": ar_acct_id},
+            "amountGross": -abs_diff if fx_diff > 0 else abs_diff,
+            "amountGrossCurrency": -abs_diff if fx_diff > 0 else abs_diff,
+            "date": today,
+        },
+    ]
+    if customer_id:
+        postings[1]["customer"] = {"id": customer_id}
+
+    v_body: dict[str, Any] = {
+        "date": today,
+        "description": f"{fx_desc} - {cust_name} ({inv_amount_eur} EUR, {original_rate}→{current_rate} NOK/EUR)",
+        "postings": postings,
+    }
+    result = client.post("/ledger/voucher", v_body)
+    _check_response(result, "POST /ledger/voucher (FX correction)")
+    vid = result.get("value", {}).get("id", "?")
+
+    # Register payment on the invoice at the new rate
+    if target_inv:
+        inv_id = target_inv["id"]
+        pt_resp = client.get("/invoice/paymentType", {"count": 100})
+        payment_types = pt_resp.get("values", [])
+        if payment_types:
+            payment_type_id = payment_types[0]["id"]
+            pay_params: dict[str, Any] = {
+                "paymentDate": today,
+                "paymentTypeId": payment_type_id,
+                "paidAmount": current_nok,
+                "paidAmountCurrency": current_nok,
+            }
+            pay_result = client.put(f"/invoice/{inv_id}/:payment", params=pay_params)
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                pay_result = client.put(
+                    f"/invoice/{inv_id}/:payment",
+                    json_body={
+                        "paymentDate": today,
+                        "paymentTypeId": payment_type_id,
+                        "paidAmount": current_nok,
+                        "paidAmountCurrency": current_nok,
+                    },
+                )
+
+    return (
+        f"FX correction posted: {fx_desc} {abs_diff:.2f} kr "
+        f"({inv_amount_eur} EUR × ({current_rate}-{original_rate}) NOK/EUR). "
+        f"Voucher {vid}."
+    )
+
+
 _HANDLERS = {
     "create_employee": _handle_create_employee,
     "update_employee": _handle_update_employee,
@@ -2939,4 +4217,9 @@ _HANDLERS = {
     "run_payroll": _handle_run_payroll,
     "bank_reconciliation": _handle_bank_reconciliation,
     "annual_closure": _handle_annual_closure,
+    "error_correction": _handle_error_correction,
+    "overdue_invoice": _handle_overdue_invoice,
+    "project_lifecycle": _handle_project_lifecycle,
+    "cost_analysis": _handle_cost_analysis,
+    "fx_correction": _handle_fx_correction,
 }

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:22:39.364021",
+  "prompt": "Vous avez recu une lettre d'offre (voir PDF ci-joint) pour un nouvel employe. Effectuez l'integration complete : creez l'employe, attribuez le bon departement, configurez les details d'emploi avec le pourcentage et le salaire annuel, et configurez les heures de travail standard.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Arthur Leroy (id=18680019)",
+  "error": null,
+  "elapsed_seconds": 4.45
+}

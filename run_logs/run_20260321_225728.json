@@ -1,0 +1,351 @@
+{
+  "timestamp": "2026-03-21T22:57:28.468240",
+  "prompt_fingerprint": "d23c937f0dc2",
+  "prompt": "Du har motteke ein arbeidskontrakt (sjaa vedlagt PDF). Opprett den tilsette i Tripletex med alle detaljar fraa kontrakten: personnummer, fodselsdato, avdeling, stillingskode, lonn, stillingsprosent og startdato.",
+  "prompt_language": "nb",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Liv",
+      "lastName": "Aasen",
+      "email": "liv.aasen@example.org",
+      "dateOfBirth": "1985-07-24",
+      "phoneNumberMobile": null,
+      "isAdministrator": false,
+      "address": null,
+      "employeeNumber": null,
+      "nationalIdentityNumber": "24078559566",
+      "bankAccountNumber": "30392987718",
+      "comments": "Avdeling: IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år.",
+      "employment": {
+        "startDate": "2026-12-10",
+        "annualSalary": 530000,
+        "employmentPercentage": 80.0,
+        "occupationCode": "4110",
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "startDate": "2026-12-10",
+      "annualSalary": 530000,
+      "employmentPercentage": 80.0,
+      "occupationCode": "4110",
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Du har motteke ein arbeidskontrakt (sjaa vedlagt PDF). Opprett den tilsette i Tripletex med alle detaljar fraa kontrakten: personnummer, fodselsdato, avdeling, stillingskode, lonn, stillingsprosent og startdato.",
+    "_file_contents": [
+      "[File: files/arbeidskontrakt_nn_06.pdf]\nARBEIDSKONTRAKT\nArbeidsgiver: Dalheim AS\nArbeidstaker: Liv Aasen\nFodselsdato: 24.07.1985\nPersonnummer: 24078559566\nE-post: liv.aasen@example.org\nBankkonto: 30392987718\nAnsettelsesdetaljer\nAvdeling: IT\nStillingskode (STYRK): 4110\nAnsettelsesform: Fast stilling\nLonnstype: Fastlonn (manedlig)\nStillingsprosent: 80.0%\nArslonn: 530000 kr\nTiltredelse: 10.12.2026\nArbeidsforholdet reguleres av gjeldende lover og regler, herunder arbeidsmiljoloven. Arbeidstaker er underlagt\nbedriftens personalhandbok og interne retningslinjer. Arbeidsstedet er ved bedriftens kontorer med mindre annet er\navtalt skriftlig.\nDet gjelder en gjensidig provetid pa 6 maneder. I provetiden er den gjensidige oppsigelsesfristen 14 dager. Etter\nprovetiden er oppsigelsesfristen 3 maneder regnet fra forste dag i maneden etter at oppsigelsen fant sted.\nFerie og feriepenger folger ferieloven. Arbeidstaker har rett til 25 virkedagers ferie per kalender ar. Feriepenger\nutbetales i henhold til gjeldende regelverk.\n___________________________ ___________________________\nArbeidsgiver Arbeidstaker"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/arbeidskontrakt_nn_06.pdf",
+        "content_base64": "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",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Liv Aasen (id=18685776)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 8.07,
+  "phase_times": {
+    "parse": 3.41,
+    "prefetch": 0.85,
+    "handler": 3.8
+  },
+  "total_api_calls": 7,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 7
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 4,
+    "wasted": 0,
+    "lookup": 1
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/department",
+      "status": 201,
+      "entity_id": 968179
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18685776
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2845431
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3743673
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:57:24.666409",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 967987,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/967987",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:57:25.152547",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "name": "IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år.",
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:57:25.643700",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år."
+      },
+      "response_body": {
+        "value": {
+          "id": 968179,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/department/968179",
+          "name": "IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år.",
+          "departmentNumber": "",
+          "departmentManager": null,
+          "displayName": "IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år.",
+          "isInactive": false,
+          "businessActivityTypeId": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:57:26.148081",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Liv",
+        "lastName": "Aasen",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 968179
+        },
+        "allowInformationRegistration": true,
+        "email": "liv.aasen@example.org",
+        "dateOfBirth": "1985-07-24",
+        "nationalIdentityNumber": "24078559566",
+        "bankAccountNumber": "30392987718",
+        "comments": "Avdeling: IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år."
+      },
+      "response_body": {
+        "value": {
+          "id": 18685776,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18685776",
+          "firstName": "Liv",
+          "lastName": "Aasen",
+          "displayName": "Liv Aasen",
+          "employeeNumber": "",
+          "dateOfBirth": "1985-07-24",
+          "email": "liv.aasen@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "24078559566",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "30392987718",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "Avdeling: IT. Provetid 6 måneder med oppsigelsesfrist 14 dager. Etter provetid 3 måneder oppsigelsesfrist. 25 virkedagers ferie per år.",
+          "address": null,
+          "department": {
+            "id": 968179,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/968179"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108449463,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:57:26.847028",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18685776
+        },
+        "startDate": "2026-12-10",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2845431,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2845431",
+          "employee": {
+            "id": 18685776,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18685776"
+          },
+          "employmentId": "",
+          "startDate": "2026-12-10",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:57:27.556554",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/occupationCode",
+      "status": 200,
+      "request_params": {
+        "code": "4110",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 9,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/occupationCode/9",
+            "nameNO": "ADJUNKT (YRKESFAG)",
+            "code": "3341103"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:57:28.467524",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2845431
+        },
+        "date": "2026-12-10",
+        "annualSalary": 530000,
+        "percentageOfFullTimeEquivalent": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE",
+        "occupationCode": {
+          "id": 9
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 3743673,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3743673",
+          "employment": {
+            "id": 2845431,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2845431"
+          },
+          "date": "2026-12-10",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": {
+            "id": 9,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/occupationCode/9"
+          },
+          "percentageOfFullTimeEquivalent": 80.0,
+          "annualSalary": 530000,
+          "hourlyWage": 272,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 44166.67
+        }
+      }
+    }
+  ]
+}

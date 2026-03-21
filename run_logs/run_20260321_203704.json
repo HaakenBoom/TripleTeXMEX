@@ -1,0 +1,1686 @@
+{
+  "timestamp": "2026-03-21T20:37:04.095216",
+  "prompt_fingerprint": "f6215a46c51e",
+  "prompt": "Realize o encerramento anual simplificado de 2025: 1) Calcule e registe a depreciação anual de três ativos: IT-utstyr (470650 NOK, 10 anos lineares, conta 1210), Kjøretøy (146700 NOK, 3 anos, conta 1230), Inventar (313500 NOK, 4 anos, conta 1240). Use conta 6010 para despesa de depreciação e 1209 para depreciação acumulada. 2) Reverta despesas antecipadas (total 63300 NOK na conta 1700). 3) Calcule e registe a provisão fiscal (22 % do resultado tributável) na conta 8700/2920. Registe cada depreciação como um lançamento separado.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "annual_closure",
+    "entities": {
+      "closureYear": 2025,
+      "depreciationItems": [
+        {
+          "assetName": "IT-utstyr",
+          "acquisitionCost": 470650,
+          "depreciationPeriodYears": 10,
+          "depreciationExpenseAccountNumber": 6010,
+          "accumulatedDepreciationAccountNumber": 1209,
+          "assetAccountNumber": 1210
+        },
+        {
+          "assetName": "Kjøretøy",
+          "acquisitionCost": 146700,
+          "depreciationPeriodYears": 3,
+          "depreciationExpenseAccountNumber": 6010,
+          "accumulatedDepreciationAccountNumber": 1209,
+          "assetAccountNumber": 1230
+        },
+        {
+          "assetName": "Inventar",
+          "acquisitionCost": 313500,
+          "depreciationPeriodYears": 4,
+          "depreciationExpenseAccountNumber": 6010,
+          "accumulatedDepreciationAccountNumber": 1209,
+          "assetAccountNumber": 1240
+        }
+      ],
+      "prepaidExpenseReversal": {
+        "amount": 63300,
+        "accountNumber": 1700
+      },
+      "taxCalculation": {
+        "taxRate": 0.22,
+        "expenseAccountNumber": 8700,
+        "liabilityAccountNumber": 2920
+      },
+      "entries": [
+        {
+          "description": "Depreciação anual IT-utstyr 2025",
+          "postings": [
+            {
+              "accountNumber": 6010,
+              "amount": 47065,
+              "description": "Despesa de depreciação IT-utstyr"
+            },
+            {
+              "accountNumber": 1209,
+              "amount": -47065,
+              "description": "Depreciação acumulada IT-utstyr"
+            }
+          ]
+        },
+        {
+          "description": "Depreciação anual Kjøretøy 2025",
+          "postings": [
+            {
+              "accountNumber": 6010,
+              "amount": 48900,
+              "description": "Despesa de depreciação Kjøretøy"
+            },
+            {
+              "accountNumber": 1209,
+              "amount": -48900,
+              "description": "Depreciação acumulada Kjøretøy"
+            }
+          ]
+        },
+        {
+          "description": "Depreciação anual Inventar 2025",
+          "postings": [
+            {
+              "accountNumber": 6010,
+              "amount": 78375,
+              "description": "Despesa de depreciação Inventar"
+            },
+            {
+              "accountNumber": 1209,
+              "amount": -78375,
+              "description": "Depreciação acumulada Inventar"
+            }
+          ]
+        },
+        {
+          "description": "Reversão de despesas antecipadas 2025",
+          "postings": [
+            {
+              "accountNumber": 1700,
+              "amount": -63300,
+              "description": "Reversão de despesas antecipadas"
+            },
+            {
+              "accountNumber": 6900,
+              "amount": 63300,
+              "description": "Receita de reversão de despesas antecipadas"
+            }
+          ]
+        },
+        {
+          "description": "Provisão fiscal 22% - 2025",
+          "postings": [
+            {
+              "accountNumber": 8700,
+              "amount": 0,
+              "description": "Provisão fiscal (a ser calculada com base no resultado tributável)"
+            },
+            {
+              "accountNumber": 2920,
+              "amount": 0,
+              "description": "Passivo fiscal (a ser calculado com base no resultado tributável)"
+            }
+          ]
+        }
+      ]
+    },
+    "raw_prompt": "Realize o encerramento anual simplificado de 2025: 1) Calcule e registe a depreciação anual de três ativos: IT-utstyr (470650 NOK, 10 anos lineares, conta 1210), Kjøretøy (146700 NOK, 3 anos, conta 1230), Inventar (313500 NOK, 4 anos, conta 1240). Use conta 6010 para despesa de depreciação e 1209 para depreciação acumulada. 2) Reverta despesas antecipadas (total 63300 NOK na conta 1700). 3) Calcule e registe a provisão fiscal (22 % do resultado tributável) na conta 8700/2920. Registe cada depreciação como um lançamento separado.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Annual closure completed: 5 vouchers created. Depreciation IT-utstyr: 47065.0 NOK; Depreciation Kjøretøy: 48900.0 NOK; Depreciation Inventar: 78375.0 NOK; Prepaid reversal: 63300 NOK; Tax provision (22%): 52280.8 NOK",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 9.21,
+  "phase_times": {
+    "parse": 4.59,
+    "prefetch": 0.0,
+    "handler": 4.61
+  },
+  "total_api_calls": 13,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 13
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 7,
+    "wasted": 0,
+    "lookup": 4
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/ledger/account",
+      "status": 201,
+      "entity_id": 471651070
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609140405
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609140412
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609140416
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609140428
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/account",
+      "status": 201,
+      "entity_id": 471652129
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609140439
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T20:36:59.764324",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "6010",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 471623931,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623931",
+            "number": 6010,
+            "numberPretty": "6010",
+            "name": "Avskriving på transportmidler",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "60",
+            "groupingCode": "6000",
+            "displayName": "6010 Avskriving på transportmidler",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:00.049379",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "1209",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:00.378675",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "number": 1209,
+        "name": "Akkumulerte avskrivninger"
+      },
+      "response_body": {
+        "value": {
+          "id": 471651070,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471651070",
+          "number": 1209,
+          "numberPretty": "1209",
+          "name": "Akkumulerte avskrivninger",
+          "description": "",
+          "type": "ASSETS",
+          "legalVatTypes": [
+            {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            },
+            {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            {
+              "id": 230,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+            },
+            {
+              "id": 13,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+            },
+            {
+              "id": 14,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+            },
+            {
+              "id": 34,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+            },
+            {
+              "id": 35,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+            },
+            {
+              "id": 559,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+            },
+            {
+              "id": 550,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+            },
+            {
+              "id": 551,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+            },
+            {
+              "id": 553,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+            },
+            {
+              "id": 560,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+            }
+          ],
+          "ledgerType": "GENERAL",
+          "balanceGroup": "Saldogruppe D: Personbiler, traktorer mv.",
+          "vatType": {
+            "id": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+          },
+          "vatLocked": false,
+          "currency": null,
+          "isCloseable": false,
+          "isApplicableForSupplierInvoice": false,
+          "requireReconciliation": false,
+          "isInactive": false,
+          "isBankAccount": false,
+          "isInvoiceAccount": false,
+          "bankAccountNumber": "",
+          "bankAccountCountry": null,
+          "bankName": "",
+          "bankAccountIBAN": "",
+          "bankAccountSWIFT": "",
+          "saftCode": "12",
+          "groupingCode": "1205",
+          "displayName": "1209 Akkumulerte avskrivninger",
+          "requiresDepartment": false,
+          "requiresProject": false,
+          "invoicingDepartment": null,
+          "isPostingsExist": false,
+          "quantityType1": null,
+          "quantityType2": null,
+          "department": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:00.791495",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2025-12-31",
+        "description": "Avskrivning IT-utstyr",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 471623931
+            },
+            "amountGross": 47065.0,
+            "amountGrossCurrency": 47065.0,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 471651070
+            },
+            "amountGross": -47065.0,
+            "amountGrossCurrency": -47065.0,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609140405,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140405",
+          "date": "2025-12-31",
+          "number": 80,
+          "tempNumber": 0,
+          "year": 2025,
+          "description": "Avskrivning IT-utstyr",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845776161,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776161",
+              "voucher": {
+                "id": 609140405,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140405"
+              },
+              "date": "2025-12-31",
+              "description": "Avskrivning IT-utstyr",
+              "account": {
+                "id": 471623931,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623931"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 47065.0,
+              "amountCurrency": 47065.0,
+              "amountGross": 47065.0,
+              "amountGrossCurrency": 47065.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845776162,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776162",
+              "voucher": {
+                "id": 609140405,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140405"
+              },
+              "date": "2025-12-31",
+              "description": "Avskrivning IT-utstyr",
+              "account": {
+                "id": 471651070,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471651070"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -47065.0,
+              "amountCurrency": -47065.0,
+              "amountGross": -47065.0,
+              "amountGrossCurrency": -47065.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "80-2025"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:01.284975",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2025-12-31",
+        "description": "Avskrivning Kjøretøy",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 471623931
+            },
+            "amountGross": 48900.0,
+            "amountGrossCurrency": 48900.0,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 471651070
+            },
+            "amountGross": -48900.0,
+            "amountGrossCurrency": -48900.0,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609140412,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140412",
+          "date": "2025-12-31",
+          "number": 81,
+          "tempNumber": 0,
+          "year": 2025,
+          "description": "Avskrivning Kjøretøy",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845776180,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776180",
+              "voucher": {
+                "id": 609140412,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140412"
+              },
+              "date": "2025-12-31",
+              "description": "Avskrivning Kjøretøy",
+              "account": {
+                "id": 471623931,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623931"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 48900.0,
+              "amountCurrency": 48900.0,
+              "amountGross": 48900.0,
+              "amountGrossCurrency": 48900.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845776182,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776182",
+              "voucher": {
+                "id": 609140412,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140412"
+              },
+              "date": "2025-12-31",
+              "description": "Avskrivning Kjøretøy",
+              "account": {
+                "id": 471651070,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471651070"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -48900.0,
+              "amountCurrency": -48900.0,
+              "amountGross": -48900.0,
+              "amountGrossCurrency": -48900.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "81-2025"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:01.742554",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2025-12-31",
+        "description": "Avskrivning Inventar",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 471623931
+            },
+            "amountGross": 78375.0,
+            "amountGrossCurrency": 78375.0,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 471651070
+            },
+            "amountGross": -78375.0,
+            "amountGrossCurrency": -78375.0,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609140416,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140416",
+          "date": "2025-12-31",
+          "number": 82,
+          "tempNumber": 0,
+          "year": 2025,
+          "description": "Avskrivning Inventar",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845776191,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776191",
+              "voucher": {
+                "id": 609140416,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140416"
+              },
+              "date": "2025-12-31",
+              "description": "Avskrivning Inventar",
+              "account": {
+                "id": 471623931,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623931"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 78375.0,
+              "amountCurrency": 78375.0,
+              "amountGross": 78375.0,
+              "amountGrossCurrency": 78375.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845776192,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776192",
+              "voucher": {
+                "id": 609140416,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140416"
+              },
+              "date": "2025-12-31",
+              "description": "Avskrivning Inventar",
+              "account": {
+                "id": 471651070,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471651070"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -78375.0,
+              "amountCurrency": -78375.0,
+              "amountGross": -78375.0,
+              "amountGrossCurrency": -78375.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "82-2025"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:02.073286",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "1700",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 471623668,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623668",
+            "number": 1700,
+            "numberPretty": "1700",
+            "name": "Forskuddsbetalt leiekostnad",
+            "description": "",
+            "type": "ASSETS",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "17",
+            "groupingCode": "1570",
+            "displayName": "1700 Forskuddsbetalt leiekostnad",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:02.333413",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "6300",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 471623947,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623947",
+            "number": 6300,
+            "numberPretty": "6300",
+            "name": "Leie lokale",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "63",
+            "groupingCode": "6300",
+            "displayName": "6300 Leie lokale",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": true,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:02.789109",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2025-12-31",
+        "description": "Reversering forskuddsbetalt kostnad",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 471623947
+            },
+            "amountGross": 63300,
+            "amountGrossCurrency": 63300,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 471623668
+            },
+            "amountGross": -63300,
+            "amountGrossCurrency": -63300,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609140428,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140428",
+          "date": "2025-12-31",
+          "number": 83,
+          "tempNumber": 0,
+          "year": 2025,
+          "description": "Reversering forskuddsbetalt kostnad",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845776220,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776220",
+              "voucher": {
+                "id": 609140428,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140428"
+              },
+              "date": "2025-12-31",
+              "description": "Reversering forskuddsbetalt kostnad",
+              "account": {
+                "id": 471623947,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623947"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 63300.0,
+              "amountCurrency": 63300.0,
+              "amountGross": 63300,
+              "amountGrossCurrency": 63300,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845776221,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776221",
+              "voucher": {
+                "id": 609140428,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140428"
+              },
+              "date": "2025-12-31",
+              "description": "Reversering forskuddsbetalt kostnad",
+              "account": {
+                "id": 471623668,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623668"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -63300.0,
+              "amountCurrency": -63300.0,
+              "amountGross": -63300.0,
+              "amountGrossCurrency": -63300.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "83-2025"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:03.062847",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "8700",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:03.384365",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "number": 8700,
+        "name": "Account 8700"
+      },
+      "response_body": {
+        "value": {
+          "id": 471652129,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471652129",
+          "number": 8700,
+          "numberPretty": "8700",
+          "name": "Account 8700",
+          "description": "",
+          "type": "TAX_ON_EXTRAORDINARY_ACTIVITIES",
+          "legalVatTypes": [
+            {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            },
+            {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            {
+              "id": 230,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+            },
+            {
+              "id": 13,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+            },
+            {
+              "id": 14,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+            },
+            {
+              "id": 34,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+            },
+            {
+              "id": 35,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+            },
+            {
+              "id": 559,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+            },
+            {
+              "id": 550,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+            },
+            {
+              "id": 551,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+            },
+            {
+              "id": 553,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+            },
+            {
+              "id": 560,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+            }
+          ],
+          "ledgerType": "GENERAL",
+          "balanceGroup": "Ikke i en saldogruppe.",
+          "vatType": {
+            "id": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+          },
+          "vatLocked": false,
+          "currency": null,
+          "isCloseable": false,
+          "isApplicableForSupplierInvoice": false,
+          "requireReconciliation": false,
+          "isInactive": false,
+          "isBankAccount": false,
+          "isInvoiceAccount": false,
+          "bankAccountNumber": "",
+          "bankAccountCountry": null,
+          "bankName": "",
+          "bankAccountIBAN": "",
+          "bankAccountSWIFT": "",
+          "saftCode": "86",
+          "groupingCode": "NA",
+          "displayName": "8700 Account 8700",
+          "requiresDepartment": false,
+          "requiresProject": false,
+          "invoicingDepartment": null,
+          "isPostingsExist": false,
+          "quantityType1": null,
+          "quantityType2": null,
+          "department": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:03.663740",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "2920",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 471623790,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623790",
+            "number": 2920,
+            "numberPretty": "2920",
+            "name": "Gjeld til selskap i samme konsern",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "29",
+            "groupingCode": "2920",
+            "displayName": "2920 Gjeld til selskap i samme konsern",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T20:37:04.094577",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2025-12-31",
+        "description": "Skatteavsetning",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 471652129
+            },
+            "amountGross": 52280.8,
+            "amountGrossCurrency": 52280.8,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 471623790
+            },
+            "amountGross": -52280.8,
+            "amountGrossCurrency": -52280.8,
+            "date": "2025-12-31",
+            "vatType": {
+              "id": 0
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609140439,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140439",
+          "date": "2025-12-31",
+          "number": 84,
+          "tempNumber": 0,
+          "year": 2025,
+          "description": "Skatteavsetning",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845776249,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776249",
+              "voucher": {
+                "id": 609140439,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140439"
+              },
+              "date": "2025-12-31",
+              "description": "Skatteavsetning",
+              "account": {
+                "id": 471652129,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471652129"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 52280.8,
+              "amountCurrency": 52280.8,
+              "amountGross": 52280.8,
+              "amountGrossCurrency": 52280.8,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845776250,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845776250",
+              "voucher": {
+                "id": 609140439,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609140439"
+              },
+              "date": "2025-12-31",
+              "description": "Skatteavsetning",
+              "account": {
+                "id": 471623790,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/471623790"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -52280.8,
+              "amountCurrency": -52280.8,
+              "amountGross": -52280.8,
+              "amountGrossCurrency": -52280.8,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "84-2025"
+        }
+      }
+    }
+  ]
+}

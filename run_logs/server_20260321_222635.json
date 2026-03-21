@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:26:35.478644",
+  "prompt": "Gjer månavslutninga for mars 2026. Periodiser forskotsbetalt kostnad (9750 kr per månad frå konto 1710 til kostnadskonto). Bokfør månadleg avskriving for eit driftsmiddel med innkjøpskost 191900 kr og levetid 6 år (lineær avskriving til konto 6030). Kontroller at saldobalansen går i null. Bokfør også ei lønnsavsetjing (debet lønnskostnad konto 5000, kredit påløpt lønn konto 2900).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 2 vouchers created. Depreciation Driftsmiddel: 31983.33 NOK; Prepaid reversal: 9750 NOK",
+  "error": null,
+  "elapsed_seconds": 10.8
+}

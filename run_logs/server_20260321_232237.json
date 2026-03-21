@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:22:37.235242",
+  "prompt": "Kunden Elvdal AS (org.nr 812449982) har reklamert på fakturaen for \"Datarådgjeving\" (45300 kr ekskl. MVA). Opprett ei fullstendig kreditnota som reverserer heile fakturaen.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created credit note for invoice 2147650894",
+  "error": null,
+  "elapsed_seconds": 2.11
+}

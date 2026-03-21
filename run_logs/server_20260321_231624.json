@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:16:24.551921",
+  "prompt": "Ejecute la nómina de Miguel Martínez (miguel.martinez@example.org) para este mes. El salario base es de 46800 NOK. Añada una bonificación única de 13350 NOK además del salario base.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Ran payroll for employee Miguel Martínez (2026-03). salary transaction id=6958410. monthly salary=46800.0. bonus=13350",
+  "error": null,
+  "elapsed_seconds": 4.23
+}

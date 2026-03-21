@@ -1,0 +1,154 @@
+{
+  "timestamp": "2026-03-21T22:58:00.964810",
+  "prompt_fingerprint": "caa11d81f6f5",
+  "prompt": "Erstellen Sie den Kunden Brückentor GmbH mit der Organisationsnummer 846392599. Die Adresse ist Industriveien 129, 4611 Kristiansand. E-Mail: post@bruckentor.no.",
+  "prompt_language": "de",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Brückentor GmbH",
+      "organizationNumber": "846392599",
+      "email": "post@bruckentor.no",
+      "invoiceEmail": "post@bruckentor.no",
+      "postalAddress": {
+        "addressLine1": "Industriveien 129",
+        "postalCode": "4611",
+        "city": "Kristiansand"
+      },
+      "isSupplier": false
+    },
+    "raw_prompt": "Erstellen Sie den Kunden Brückentor GmbH mit der Organisationsnummer 846392599. Die Adresse ist Industriveien 129, 4611 Kristiansand. E-Mail: post@bruckentor.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Brückentor GmbH (id=108450195)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 1.48,
+  "phase_times": {
+    "parse": 0.94,
+    "prefetch": 0.0,
+    "handler": 0.54
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108450195
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:58:00.964112",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Brückentor GmbH",
+        "isCustomer": true,
+        "email": "post@bruckentor.no",
+        "organizationNumber": "846392599",
+        "invoiceEmail": "post@bruckentor.no",
+        "isSupplier": false,
+        "postalAddress": {
+          "addressLine1": "Industriveien 129",
+          "postalCode": "4611",
+          "city": "Kristiansand"
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108450195,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108450195",
+          "name": "Brückentor GmbH",
+          "organizationNumber": "846392599",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@bruckentor.no",
+          "invoiceEmail": "post@bruckentor.no",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Brückentor GmbH (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405747862,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405747862",
+            "addressLine1": "Industriveien 129",
+            "addressLine2": "",
+            "postalCode": "4611",
+            "city": "Kristiansand",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Brückentor GmbH, Industriveien 129, 4611 Kristiansand, Norge",
+            "addressAsString": "Industriveien 129, 4611 Kristiansand, Norge",
+            "displayNameInklMatrikkel": "Brückentor GmbH, Industriveien 129, 4611 Kristiansand, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405747861,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405747861"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 476508105,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/476508105"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

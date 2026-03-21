@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:59:43.829167",
+  "prompt": "Le client Colline SARL (nº org. 850491941) a une facture impayée de 10550 NOK hors TVA pour \"Heures de conseil\". Enregistrez le paiement intégral de cette facture.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Perfect! I have successfully registered the payment for the invoice. The key details show:\n- `amountOutstanding`: 0.0 (was 13187.5, now 0)\n- `amountCurrencyOutstanding`: 0.0 \n- `amountOutstandingTotal`: 0.0\n\nThe payment of 13187.5 NOK (10550 NOK + 25% VAT) has been successfully registered on March 15, 2026, using the \"Betalt til bank\" payment type. The invoice is now fully paid with no outstanding balance.\n\n**Summary**: Successfully registered full payment of 13187.5 NOK for Colline SARL's invoi",
+  "error": null,
+  "elapsed_seconds": 42.47
+}

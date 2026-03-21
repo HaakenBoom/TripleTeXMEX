@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:16:29.250742",
+  "prompt": "Kjør lønn for Lars Berg (lars.berg@example.org) for denne måneden. Grunnlønn er 40850 kr. Legg til en engangsbonus på 14800 kr i tillegg til grunnlønnen. Dersom lønns-API-et ikke fungerer, kan du bruke manuelle bilag på lønnskontoer (5000-serien) for å registrere lønnskostnaden.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Ran payroll for employee Lars Berg (2026-03). salary transaction id=6958413. monthly salary=40850.0. bonus=14800",
+  "error": null,
+  "elapsed_seconds": 4.7
+}

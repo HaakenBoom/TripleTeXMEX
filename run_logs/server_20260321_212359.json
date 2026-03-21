@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:23:59.743427",
+  "prompt": "Opprett prosjektet \"Migrasjon Fossekraft\" knytt til kunden Fossekraft AS (org.nr 825091122). Prosjektleiar er Torbjørn Neset (torbjrn.neset@example.org).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created project Migrasjon Fossekraft (id=402037896)",
+  "error": null,
+  "elapsed_seconds": 9.34
+}

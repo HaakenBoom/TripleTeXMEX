@@ -54,7 +54,7 @@ KNOWN_TASK_TYPES = [
 
 # Compiled regex for timesheet: verb + number + hour-word
 _TIMESHEET_RE = re.compile(
-    r'(?:registrer|registe|log|logg|registre|erfasse|enregistre[rz]?)\s+\d+\s+'
+    r'(?:registrer|registe|log|logg|registre|erfasse[n]?|enregistre[rz]?)\s+(?:\S+\s+)?\d+\s+'
     r'(?:timer|timar|horas|hours|heures|stunden)',
     re.IGNORECASE,
 )
@@ -94,51 +94,80 @@ def classify_task(prompt: str) -> str:
         return "log_timesheet_hours"
 
     # 2. Custom accounting dimension
+    #    nb: regnskapsdimensjon, nn: rekneskapsdimensjon, en: accounting dimension,
+    #    es: dimensión contable, pt: dimensão contabilística/contábil, de: Buchungsdimension,
+    #    fr: dimension comptable
     if any(kw in p for kw in [
-        "regnskapsdimensjon", "dimensão contabilística", "dimensión contable",
-        "dimension comptable", "buchungsdimension", "accounting dimension",
-        "dimensão contabil",
+        "regnskapsdimensjon", "rekneskapsdimensjon",
+        "accounting dimension", "custom dimension",
+        "dimensión contable", "dimensión personalizada",
+        "dimensão contabilística", "dimensão contabil", "dimensão contábil", "dimensão personalizada",
+        "buchungsdimension", "benutzerdefinierte dimension",
+        "dimension comptable", "dimension personnalisée",
     ]):
         return "create_dimension_voucher"
 
     # 3. Project lifecycle (full cycle)
+    #    nb: prosjektsyklusen, nn: prosjektsyklusen, en: project lifecycle/full project cycle,
+    #    es: ciclo de vida del proyecto, pt: ciclo de vida do projeto, de: Projektzyklus,
+    #    fr: cycle de vie du projet
     if any(kw in p for kw in [
-        "prosjektsyklusen", "projektzyklus", "cycle de vie complet",
-        "project lifecycle", "ciclo de vida completo", "ciclo de vida do projeto",
-        "vollständigen projektzyklus",
+        "prosjektsyklusen", "prosjektsyklus",
+        "project lifecycle", "full project cycle", "complete project cycle",
+        "ciclo de vida del proyecto", "ciclo de vida completo", "ciclo completo del proyecto",
+        "ciclo de vida do projeto", "ciclo completo do projeto",
+        "projektzyklus", "vollständigen projektzyklus", "gesamten projektzyklus",
+        "cycle de vie complet", "cycle de vie du projet", "cycle complet du projet",
     ]):
         return "project_lifecycle"
 
     # 4. Bank reconciliation
+    #    nb: bankavstemming/avstem, nn: bankavstemming, en: reconcile/bank reconciliation,
+    #    es: conciliación bancaria, pt: reconciliação bancária, de: Bankabstimmung,
+    #    fr: rapprochement bancaire
     if any(kw in p for kw in [
-        "reconcil", "avstem", "rapprocher", "bankabstimmung",
-        "bankavstemming", "bank reconciliation", "bank statement",
-        "extrato bancario", "extracto bancario", "relevé bancaire",
+        "reconcil", "avstem", "bankavstemming",
+        "bank reconciliation", "bank statement",
+        "conciliación bancaria", "conciliar el extracto",
+        "reconciliação bancária", "extrato bancario", "extracto bancario",
+        "bankabstimmung", "kontoauszug",
+        "rapproch", "relevé bancaire", "releve bancaire",
     ]):
         return "bank_reconciliation"
 
     # 5. Run payroll
+    #    nb: kjør lønn, nn: køyr løn, en: run payroll, es: ejecutar nómina,
+    #    pt: processar folha/salário, de: Gehaltsabrechnung, fr: exécuter la paie
     if any(kw in p for kw in [
-        "kjør lønn", "køyr løn", "run payroll", "ejecutar nómina",
-        "processar folha", "processar salário", "processe o salário",
-        "exécuter la paie", "gehaltsabrechnung",
-        "lønnskjøring", "lønskøyrsel", "grunnløn", "grunnlønn",
-        "grundgehalt", "salaire de base", "base salary",
-        "salário base",
+        "kjør lønn", "køyr løn", "lønnskjøring", "lønskøyrsel",
+        "run payroll", "process payroll", "base salary", "monthly salary",
+        "ejecutar nómina", "procesar nómina", "salario base", "nómina de",
+        "processar folha", "processar salário", "processe o salário", "salário base",
+        "gehaltsabrechnung", "lohnabrechnung", "grundgehalt", "monatsgehalt",
+        "exécuter la paie", "traiter la paie", "salaire de base", "salaire mensuel",
+        "grunnløn", "grunnlønn",
     ]):
         return "run_payroll"
 
     # 6. Annual/monthly closure
+    #    nb: årsavslutning/årsoppgjør, nn: årsoppgjer/årsrekneskap, en: annual closing,
+    #    es: cierre anual/mensual, pt: encerramento anual/mensal, de: Jahresabschluss,
+    #    fr: clôture annuelle/mensuelle
     if any(kw in p for kw in [
         "årsavslutning", "årsoppgjør", "årsoppgjer", "årsrekneskap",
-        "annual closing", "annual closure", "year-end closing",
-        "cierre anual", "encerramento anual", "clôture annuelle", "jahresabschluss",
-        "clôture mensuelle", "encerramento mensal", "cierre mensual",
-        "monthly closing", "månedsavslutning", "månadsavslutning", "månavslutninga",
-        "monatsabschluss",
+        "månedsavslutning", "månadsavslutning", "månavslutninga",
+        "annual closing", "annual closure", "year-end closing", "monthly closing",
+        "simplified annual accounts", "annual depreciation",
+        "cierre anual", "cierre mensual", "cierre simplificado",
+        "depreciación anual", "depreciación mensual",
+        "encerramento anual", "encerramento mensal", "encerramento simplificado",
+        "depreciação anual",
+        "jahresabschluss", "monatsabschluss", "vereinfachten jahresabschluss",
+        "abschreibung", "jährliche abschreibung",
+        "clôture annuelle", "clôture mensuelle", "clôture simplifiée",
+        "amortissement annuel", "amortissement mensuel",
         "forenklet årsoppgjør", "forenkla årsoppgjer",
-        "annual depreciation", "avskrivning", "depreciación anual",
-        "amortissement annuel", "abschreibung",
+        "avskrivning",
     ]):
         return "annual_closure"
 
@@ -149,76 +178,151 @@ def classify_task(prompt: str) -> str:
         return "reverse_invoice_payment"
 
     # 8. Cost analysis (ledger analysis + project creation)
+    #    nb/nn: totalkostnadene auka, en: total costs increased, es: costos totales,
+    #    pt: custos totais, de: Gesamtkosten, fr: coûts totaux
     if any(kw in p for kw in [
-        "totalkostnadene auka", "gesamtkosten", "total costs",
-        "analyser hovudboka og finn", "analysieren sie das hauptbuch",
-        "analyze the general ledger", "analysez le grand livre",
+        "totalkostnadene auka", "totalkostnadene økt", "kostnadskontoane",
+        "total costs", "cost accounts", "analyze the general ledger",
+        "costos totales", "cuentas de gastos", "analice el libro mayor",
+        "custos totais", "contas de custos", "analise o razão",
+        "gesamtkosten", "aufwandskonten", "analysieren sie das hauptbuch",
+        "coûts totaux", "comptes de charges", "analysez le grand livre",
     ]):
         return "cost_analysis"
 
     # 9. Error correction (find and fix ledger errors)
+    #    nb: feil i hovedboka, nn: feil i hovudboka, en: errors in the general ledger,
+    #    es: errores en el libro mayor, pt: erros no livro razão, de: Fehler im Hauptbuch,
+    #    fr: erreurs dans le grand livre
     if any(kw in p for kw in [
-        "feil i hovudboka", "errors in the general ledger",
-        "errores en el libro mayor", "erros no razão geral",
-        "erreurs dans le grand livre", "fehler im hauptbuch",
-        "oppdaga feil", "discovered errors",
+        "feil i hovudboka", "feil i hovedboka", "feil i hovedboken",
+        "oppdaga feil", "oppdaget feil", "oppdaga ein feil", "oppdaga 4 feil",
+        "finn dei 4 feila", "finn de 4 feilene", "find the 4 errors",
+        "errors in the general ledger", "discovered errors", "find the errors",
+        "errores en el libro mayor", "errores en el mayor", "descubierto errores",
+        "hemos descubierto errores", "encontrar los errores",
+        "erros no livro razão", "erros no livro-razão", "erros no razão",
+        "descobrimos erros", "encontrar os erros", "encontre os 4 erros",
+        "fehler im hauptbuch", "fehler entdeckt", "fehler gefunden",
+        "erreurs dans le grand livre", "erreurs découvertes",
+        "we have discovered errors", "gå gjennom alle bilag og finn",
     ]):
         return "error_correction"
 
     # 10. Overdue invoice / late fee
+    #    nb/nn: forfallen faktura/purregebyr, en: overdue invoice/late fee,
+    #    es: factura vencida/cargo por mora, pt: fatura vencida/taxa de atraso,
+    #    de: überfällige Rechnung/Mahngebühr, fr: facture en retard/frais de retard
     if any(kw in p for kw in [
-        "forfallen faktura", "forfalne fakturaen", "overdue invoice",
-        "factura vencida", "fatura vencida", "facture en retard",
-        "überfällige rechnung", "purregebyr", "late fee", "reminder fee",
+        "forfallen faktura", "forfalne fakturaen", "forfalt faktura", "forfalte fakturaen",
+        "purregebyr", "inkassogebyr",
+        "overdue invoice", "late fee", "reminder fee", "past due",
+        "factura vencida", "cargo por mora", "recargo por retraso",
+        "fatura vencida", "taxa de atraso", "multa por atraso",
+        "überfällige rechnung", "mahngebühr", "säumnisgebühr",
+        "facture en retard", "facture échue", "frais de retard", "pénalité de retard",
     ]):
         return "overdue_invoice"
 
     # 11. FX correction (exchange rate difference)
+    #    All languages: EUR + exchange rate keywords + NOK/EUR pattern
     if any(kw in p for kw in [
         "valutakurs", "exchange rate", "taxa de câmbio", "taux de change",
-        "tipo de cambio", "wechselkurs",
+        "tipo de cambio", "wechselkurs", "kursdifferanse", "currency difference",
+        "différence de change", "diferencia de cambio", "diferença cambial",
     ]) and "EUR" in prompt:
+        return "fx_correction"
+    if "EUR" in prompt and "NOK/EUR" in prompt and any(kw in p for kw in [
+        "kursen", "the rate", "la tasa", "a taxa", "le taux", "der kurs",
+        "la cotización", "o câmbio",
+    ]):
+        return "fx_correction"
+    # Scenario: sent invoice in EUR, customer paid at different rate
+    if "EUR" in prompt and any(kw in p for kw in [
+        "nok/eur", "eur/nok", "kursen var", "the rate was", "le taux était",
+        "la tasa era", "a taxa era", "der kurs war", "kurs var",
+    ]):
         return "fx_correction"
 
     # 12. Supplier invoice → create_voucher
+    #    nb: leverandørfaktura, nn: leverandorfaktura, en: supplier invoice,
+    #    es: factura de proveedor, pt: fatura do fornecedor, de: Lieferantenrechnung,
+    #    fr: facture fournisseur
     if any(kw in p for kw in [
-        "leverandørfaktura", "leverandorfaktura", "supplier invoice",
-        "factura de proveedor", "fatura do fornecedor",
-        "facture fournisseur", "facture du fournisseur",
+        "leverandørfaktura", "leverandorfaktura",
+        "supplier invoice", "vendor invoice",
+        "factura de proveedor", "factura del proveedor",
+        "fatura do fornecedor", "fatura de fornecedor",
         "lieferantenrechnung", "eingangsrechnung",
+        "facture fournisseur", "facture du fournisseur",
     ]):
         return "create_voucher"
 
     # 13. Credit note
+    #    nb/nn: kreditnota, en: credit note, es: nota de crédito, pt: nota de crédito,
+    #    de: Gutschrift, fr: note de crédit/avoir
     if any(kw in p for kw in [
-        "kreditnota", "credit note", "nota de crédito", "note de crédit",
-        "gutschrift", "nota de credito",
+        "kreditnota", "kreditnotaen",
+        "credit note",
+        "nota de crédito", "nota de credito",
+        "gutschrift", "stornorechnung",
+        "note de crédit", "note de credit", "avoir",
     ]):
         return "create_credit_note"
 
     # 14. Delete travel expense
+    #    nb: slett reiseregning, nn: slett reiserekning, en: delete travel expense,
+    #    es: eliminar gasto de viaje, pt: excluir despesa de viagem,
+    #    de: Reisekostenabrechnung löschen, fr: supprimer la note de frais
     if any(kw in p for kw in [
-        "slett reiserekning", "slett reiseregning", "delete travel expense",
-        "eliminar gasto de viaje", "excluir despesa de viagem",
-        "supprimer la note de frais", "reisekostenabrechnung löschen",
+        "slett reiserekning", "slett reiseregning", "slett reiserekningar",
+        "delete travel expense", "remove travel expense",
+        "eliminar gasto de viaje", "borrar gasto de viaje",
+        "excluir despesa de viagem", "eliminar despesa de viagem",
+        "reisekostenabrechnung löschen", "reisekosten löschen",
+        "supprimer la note de frais", "supprimer le frais de voyage",
     ]):
         return "delete_travel_expense"
 
     # 15. Delete voucher
+    #    nb: slett bilag, nn: slett bilag, en: delete voucher, es: eliminar comprobante,
+    #    pt: excluir comprovante, de: Beleg löschen, fr: supprimer le bon
     if any(kw in p for kw in [
-        "slett bilag", "delete voucher", "eliminar comprobante",
-        "excluir comprovante", "supprimer le bon", "beleg löschen",
+        "slett bilag", "slett bilaget",
+        "delete voucher", "remove voucher",
+        "eliminar comprobante", "borrar comprobante",
+        "excluir comprovante", "eliminar comprovante", "excluir voucher",
+        "beleg löschen", "buchungsbeleg löschen",
+        "supprimer le bon", "supprimer le voucher", "supprimer l'écriture",
     ]):
         return "delete_voucher"
 
     # 16. Travel expense (must come after delete_travel_expense)
+    #    nb: reiseregning, nn: reiserekning, en: travel expense, es: gasto de viaje,
+    #    pt: despesa de viagem, de: Reisekostenabrechnung, fr: note de frais
     if any(kw in p for kw in [
-        "reiserekning", "reiseregning", "travel expense",
-        "gasto de viaje", "despesa de viagem",
-        "note de frais", "reisekostenabrechnung",
-        "reiserekning", "reiseutlegg",
+        "reiserekning", "reiseregning", "reiseutlegg",
+        "travel expense", "business trip expense",
+        "gasto de viaje", "gastos de viaje",
+        "despesa de viagem", "despesas de viagem",
+        "reisekostenabrechnung", "reisekosten",
+        "note de frais", "frais de déplacement",
     ]):
         return "create_travel_expense"
+
+    # 16b. Outstanding/unpaid invoice + register payment → reverse_invoice_payment
+    #       This catches "facture impayée"/"fatura pendente"/"unbezahlte Rechnung" etc.
+    #       Must come BEFORE generic invoice rules to avoid misclassification.
+    _invoice_kw_early = any(kw in p for kw in [
+        "faktura", "invoice", "factura", "fatura", "rechnung", "facture",
+    ])
+    _has_outstanding_early = any(kw in p for kw in _OUTSTANDING_KW)
+    _has_register = any(kw in p for kw in [
+        "registrer", "register", "registre", "registrar", "enregistre",
+        "registrieren", "bokfør", "bokfor",
+    ])
+    if _invoice_kw_early and _has_outstanding_early and _has_register:
+        return "reverse_invoice_payment"
 
     # 17. Project fixed-price invoice (must come BEFORE generic invoice+payment)
     #     These mention "payment" loosely but are really project invoices
@@ -233,20 +337,27 @@ def classify_task(prompt: str) -> str:
     #     NOTE: actual payment REVERSALS are already caught by rule 7 (reverse verbs).
     #     If we get here, it's about creating/registering payment, not reversing.
     _invoice_kw = any(kw in p for kw in [
-        "faktura", "invoice", "factura", "fatura", "rechnung",
+        "faktura", "invoice", "factura", "fatura", "rechnung", "facture",
     ])
     _payment_kw = any(kw in p for kw in [
         "registrer full betaling", "register full payment", "registre full",
         "registrer betaling", "registrar pago", "registrar pagamento",
-        "enregistrer le paiement", "zahlung registrieren",
+        "registrar o pagamento", "registe o pagamento", "registre o pagamento",
+        "enregistrer le paiement", "enregistrez le paiement",
+        "zahlung registrieren", "registrieren sie die zahlung",
         "full betaling", "full payment",
+        "registrer betalingen", "registre betalinga",
     ])
     if _invoice_kw and _payment_kw:
+        # "has an outstanding/unpaid invoice" + "register payment" → find existing & pay
+        _has_outstanding = any(kw in p for kw in _OUTSTANDING_KW)
+        if _has_outstanding:
+            return "reverse_invoice_payment"
         return "create_invoice_with_payment"
     # Order + invoice + payment
     if _invoice_kw and any(kw in p for kw in [
-        "ordre", "orden", "order", "pedido", "commande", "bestellung",
-    ]) and any(kw in p for kw in ["betaling", "payment", "pago", "pagamento"]):
+        "ordre", "orden", "order", "pedido", "commande", "bestellung", "auftrag",
+    ]) and any(kw in p for kw in ["betaling", "payment", "pago", "pagamento", "zahlung"]):
         return "create_invoice_with_payment"
 
     # 19. Regular invoice
@@ -262,49 +373,72 @@ def classify_task(prompt: str) -> str:
 
     # 20. Create product
     if any(kw in p for kw in [
-        "opprett produktet", "create the product", "erstellen sie das produkt",
-        "crie o produto", "crea el producto", "créez le produit",
-        "produktnummer", "product number", "número de producto",
+        "opprett produktet", "opprett produkt",
+        "create the product", "create product",
+        "crea el producto", "crear el producto",
+        "crie o produto", "criar o produto",
+        "erstellen sie das produkt", "produkt erstellen",
+        "créez le produit", "créer le produit",
+        "produktnummer", "product number",
+        "número de producto", "número de produto", "numéro de produit", "produktnummer",
     ]):
         return "create_product"
 
     # 21. Create project
     if any(kw in p for kw in [
-        "opprett prosjektet", "create the project", "erstellen sie das projekt",
-        "crie o projeto", "crea el proyecto", "créez le projet",
+        "opprett prosjektet", "opprett prosjekt",
+        "create the project", "create project",
+        "crea el proyecto", "crear el proyecto",
+        "crie o projeto", "criar o projeto",
+        "erstellen sie das projekt", "projekt erstellen",
+        "créez le projet", "créer le projet",
     ]):
         return "create_project"
 
     # 22. Create employee (from PDF, from prompt, etc.) — must come BEFORE department
     #     because employee prompts often mention "avdeling"/"department"
     if any(kw in p for kw in [
-        "opprett den ansatte", "opprett vedkomande", "ny tilsett",
-        "ny ansatt", "new employee", "nuevo empleado", "novo funcionário",
+        "opprett den ansatte", "opprett vedkomande", "ny tilsett", "ny ansatt",
+        "new employee", "nuevo empleado", "novo funcionário", "novo funcionario",
         "nouvel employé", "neuen mitarbeiter", "neue mitarbeiterin",
         "arbeidskontrakt", "employment contract", "contrato de trabajo",
         "contrato de trabalho", "contrat de travail", "arbeitsvertrag",
-        "offer letter", "carta de oferta",
+        "offer letter", "carta de oferta", "lettre d'offre",
         "crie o funcionario", "crea el empleado", "créez l'employé",
         "complete the onboarding", "completa la incorporacion",
+        "completa a integração", "complétez l'intégration",
+        "tilsett som heiter", "ansatt som heter",
     ]):
         return "create_employee"
 
     # 23. Create department
+    #    nb: opprett avdelinger, nn: opprett avdelingar, en: create departments,
+    #    es: cree departamentos, pt: crie departamentos, de: Abteilungen erstellen,
+    #    fr: créez départements
     if any(kw in p for kw in [
-        "opprett tre avdelinger", "opprett avdeling",
+        "opprett tre avdelinger", "opprett avdeling", "opprett avdelingar",
         "create three departments", "create departments",
-        "crie três departamentos", "cree tres departamentos",
-        "créez trois départements",
-        "erstellen sie drei abteilungen",
+        "cree tres departamentos", "cree departamentos", "crear departamentos",
+        "crie três departamentos", "crie departamentos", "criar departamentos",
+        "erstellen sie drei abteilungen", "abteilungen erstellen",
+        "créez trois départements", "créez des départements",
     ]):
         return "create_department"
 
     # 24. Create/register customer or supplier
     if any(kw in p for kw in [
-        "opprett kunden", "registrer kunden", "create the customer",
-        "register the customer", "cree el cliente", "registre o cliente",
-        "créez le client", "registrieren sie den",
-        "opprett leverandøren", "register the supplier",
+        "opprett kunden", "registrer kunden", "opprett leverandøren",
+        "registrer leverandøren", "registrer leverandören",
+        "create the customer", "register the customer", "create customer",
+        "register the supplier", "create the supplier",
+        "cree el cliente", "registre el cliente", "cree el proveedor",
+        "registre el proveedor",
+        "crie o cliente", "registre o cliente", "crie o fornecedor",
+        "registre o fornecedor", "registe o fornecedor", "registe o cliente",
+        "erstellen sie den kunden", "registrieren sie den",
+        "erstellen sie den lieferanten", "registrieren sie den lieferanten",
+        "créez le client", "enregistrez le client", "créez le fournisseur",
+        "enregistrez le fournisseur",
     ]):
         return "create_customer"
 
@@ -327,11 +461,13 @@ def classify_task(prompt: str) -> str:
 
     # 28. Generic voucher (receipt, expense registration)
     if any(kw in p for kw in [
-        "bilag", "voucher", "reçu", "recibo", "receipt",
+        "bilag", "voucher", "reçu", "recibo", "receipt", "quittung",
         "registree au departement", "registrado en el departamento",
         "depense de ce recu", "gasto de este recibo", "despesa deste recibo",
         "faktura inv-", "invoice inv-",
         "enregistree au departement",
+        "ausgabe aus dieser quittung", "in der abteilung",
+        "depense", "cette quittance",
     ]):
         return "create_voucher"
 
@@ -384,7 +520,8 @@ Extract: name, number (product number), priceExcludingVat (number), priceIncludi
         "create_invoice": base + """
 Extract: customer ({name, organizationNumber, email}), orderLines (array of {description, product (product number string), count (default 1), unitPrice (excl VAT), unitPriceIncludingVat, vatType, discount}), invoiceDate, invoiceDueDate, comment.
 For project invoices: also extract projectName, projectManagerName, projectManagerEmail, fixedPrice (total project price), invoicePercentage (% to bill).
-isPrioritizeAmountsIncludingVat: true only if prices are stated INCLUDING VAT.""",
+isPrioritizeAmountsIncludingVat: true only if prices are stated INCLUDING VAT.
+sendToCustomer: true if the prompt says to "send" the invoice to the customer ("send", "envie", "enviar", "envoyer", "senden").""",
 
         "create_invoice_with_payment": base + """
 Extract: customer ({name, organizationNumber}), orderLines (array of {description, product (product number string), count, unitPrice}), paidAmount, paymentTypeDescription ("Kontant"/"Cash"/"Kort"/"Card"/"Bank").
@@ -403,7 +540,8 @@ For per diem: description should include days and rate.""",
         "create_voucher": base + """
 Extract: date (YYYY-MM-DD), description, postings (array of {accountNumber (integer), amount (positive=debit, negative=credit), description}).
 For supplier invoices: include expense posting (4xxx-7xxx), input VAT posting (27xx), and AP posting (2400, negative).
-Supplier info: supplierName, supplierOrganizationNumber (extract from prompt if mentioned).""",
+Supplier info: supplierName, supplierOrganizationNumber (extract from prompt if mentioned).
+Also extract if available: invoiceNumber (e.g. "INV-2026-1234"), dueDate (YYYY-MM-DD forfallsdato), supplierBankAccount (bank account number string from invoice).""",
 
         "log_timesheet_hours": base + """
 Extract: employeeName, employeeEmail, hours (number), activityName (e.g. "Design", "Utvikling", "Testing"), projectName, customerName, customerOrganizationNumber, date (YYYY-MM-DD), hourlyRate (number), comment.""",
@@ -442,7 +580,7 @@ Extract: errors (array of {description, wrongAccount, correctAccount, amount, vo
 Extract all specific error details mentioned in the prompt.""",
 
         "overdue_invoice": base + """
-Extract: feeAmount (NOK), debitAccount (default 1500), creditAccount (default 3400), invoiceFee (boolean — whether to also create invoice for the fee).""",
+Extract: feeAmount (NOK), debitAccount (default 1500), creditAccount (default 3400), invoiceFee (boolean — whether to also create invoice for the fee), partialPaymentAmount (NOK amount of partial payment if mentioned, null otherwise), sendInvoice (boolean — whether to send the invoice to customer).""",
     }
 
     return prompts.get(task_type, base + "\nExtract all relevant fields as a flat JSON object.")
@@ -522,6 +660,46 @@ def _extract_entities_llm(task_type: str, prompt: str, file_contents: list[str] 
         return {}
 
 
+def _llm_classify_fallback(prompt: str, file_contents: list[str] | None = None) -> str:
+    """LLM fallback when keyword classifier returns unknown."""
+    user_message = prompt
+    if file_contents:
+        attachments = "\n\n---\n\n".join(
+            f"[Attached file {i + 1}]\n{content}"
+            for i, content in enumerate(file_contents)
+        )
+        user_message = f"{prompt}\n\n{attachments}"
+
+    type_list = ", ".join(t for t in KNOWN_TASK_TYPES if t != "unknown")
+    system = f"""You are a task classifier for a Norwegian accounting system (Tripletex).
+Given a user request, output ONLY the task type as a single string. No explanation.
+
+Valid task types: {type_list}
+
+If none match, output: unknown"""
+
+    client = Anthropic()
+    try:
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=50,
+            system=system,
+            messages=[{"role": "user", "content": user_message}],
+        )
+        result = response.content[0].text.strip().lower().replace('"', '').replace("'", "")
+        if result in KNOWN_TASK_TYPES:
+            return result
+        # Fuzzy match: check if the response contains a known type
+        for tt in KNOWN_TASK_TYPES:
+            if tt in result:
+                return tt
+        logger.warning("LLM fallback returned unrecognized type: %s", result)
+        return "unknown"
+    except Exception as e:
+        logger.warning("LLM classify fallback failed: %s", e)
+        return "unknown"
+
+
 # ---------------------------------------------------------------------------
 # Main entry point (same interface as v1)
 # ---------------------------------------------------------------------------
@@ -537,9 +715,15 @@ def parse_task(prompt: str, file_contents: list[str] | None = None) -> dict:
     """
     logger.info("Parsing task from prompt: %s", prompt[:120])
 
-    # Stage 1: Classify
+    # Stage 1: Classify (keywords first, LLM fallback if unknown)
     task_type = classify_task(prompt)
     logger.info("Keyword classifier: %s", task_type)
+
+    if task_type == "unknown":
+        # LLM fallback — keywords missed, ask the LLM to classify
+        logger.warning("Keyword classifier returned unknown, trying LLM fallback...")
+        task_type = _llm_classify_fallback(prompt, file_contents)
+        logger.info("LLM fallback classifier: %s", task_type)
 
     # Stage 2: Extract entities
     if task_type in _REGEX_EXTRACTABLE:

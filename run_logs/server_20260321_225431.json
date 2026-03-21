@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:54:31.148321",
+  "prompt": "Enregistrez 7 heures pour Léa Moreau (lea.moreau@example.org) sur l'activité \"Analyse\" du projet \"Migration de données\" pour Soleil SARL (nº org. 962469264). Taux horaire : 1850 NOK/h. Générez une facture de projet au client basée sur les heures enregistrées.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Excellent ! Toutes les tâches ont été accomplies avec succès :\n\n## Résumé complet :\n\n1. **✅ Enregistrement des heures** : 7 heures enregistrées pour Léa Moreau (ID: 18617757) sur l'activité \"Analyse\" (ID: 5879250) du projet \"Migration de données\" (ID: 401995384) à la date du 2026-01-01\n\n2. **✅ Ordre créé** : Ordre n°2 (ID: 402043878) pour Soleil SARL avec une ligne de 7 heures à 1850 NOK/h\n\n3. **✅ Facture générée** : Facture n°2 (ID: 2147648086) basée sur les heures enregistrées\n   - **Montant H",
+  "error": null,
+  "elapsed_seconds": 76.6
+}

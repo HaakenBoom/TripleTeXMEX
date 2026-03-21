@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:41:41.005731",
+  "prompt": "Crie uma dimensão contabilística personalizada \"Marked\" com os valores \"Bedrift\" e \"Privat\". Em seguida, lance um documento na conta 6590 por 16750 NOK, vinculado ao valor de dimensão \"Bedrift\".",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created dimension 'Marked' (index=1) with values [Bedrift=18871, Privat=18872]. Posted voucher 609142794 for 16750 on account 6590 linked to dimension value 'Bedrift' (id=18871).",
+  "error": null,
+  "elapsed_seconds": 14.38
+}

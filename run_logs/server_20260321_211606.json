@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:16:06.162395",
+  "prompt": "Erstellen Sie drei Abteilungen in Tripletex: \"Administrasjon\", \"IT\" und \"HR\".",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created 3 department(s): Administrasjon (id=959667), IT (id=959672), HR (id=959675)",
+  "error": null,
+  "elapsed_seconds": 7.25
+}

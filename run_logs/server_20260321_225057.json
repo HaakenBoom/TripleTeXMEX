@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:50:57.559288",
+  "prompt": "Créez une dimension comptable personnalisée \"Produktlinje\" avec les valeurs \"Premium\" et \"Basis\". Puis comptabilisez une pièce sur le compte 6860 pour 16900 NOK, liée à la valeur de dimension \"Premium\".",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created dimension 'Produktlinje' (index=1) with values [Premium=19281, Basis=19282]. Posted voucher 609196276 for 16900 on account 6860 linked to dimension value 'Premium' (id=19281).",
+  "error": null,
+  "elapsed_seconds": 16.58
+}

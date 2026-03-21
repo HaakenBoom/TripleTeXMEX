@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:59:50.334910",
+  "prompt": "Erfassen Sie eine Reisekostenabrechnung für Noah Weber (noah.weber@example.org) für \"Kundenbesuch Oslo\". Die Reise dauerte 3 Tage mit Tagegeld (Tagessatz 800 NOK). Auslagen: Flugticket 4150 NOK und Taxi 650 NOK.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created travel expense 'Kundenbesuch Oslo' (id=11150193)",
+  "error": null,
+  "elapsed_seconds": 21.58
+}

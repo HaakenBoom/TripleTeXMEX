@@ -1,0 +1,3708 @@
+{
+  "timestamp": "2026-03-21T23:16:24.546334",
+  "prompt_fingerprint": "aef8b8213da7",
+  "prompt": "Ejecute la nómina de Miguel Martínez (miguel.martinez@example.org) para este mes. El salario base es de 46800 NOK. Añada una bonificación única de 13350 NOK además del salario base.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "run_payroll",
+    "entities": {
+      "employeeName": "Miguel Martínez",
+      "employeeEmail": "miguel.martinez@example.org",
+      "monthlySalary": 46800,
+      "bonus": 13350,
+      "year": 2026,
+      "month": 3
+    },
+    "raw_prompt": "Ejecute la nómina de Miguel Martínez (miguel.martinez@example.org) para este mes. El salario base es de 46800 NOK. Añada una bonificación única de 13350 NOK además del salario base.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Ran payroll for employee Miguel Martínez (2026-03). salary transaction id=6958410. monthly salary=46800.0. bonus=13350",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 4.22,
+  "phase_times": {
+    "parse": 0.73,
+    "prefetch": 0.33,
+    "handler": 3.16
+  },
+  "total_api_calls": 9,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 9
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 4,
+    "wasted": 0,
+    "lookup": 3
+  },
+  "mutations": [
+    {
+      "method": "PUT",
+      "endpoint": "/employee/18690288",
+      "status": 200,
+      "entity_id": 18690288
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2847556
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3745739
+    },
+    {
+      "method": "POST",
+      "endpoint": "/salary/transaction",
+      "status": 201,
+      "entity_id": 6958410
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T23:16:21.385519",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 2,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18690280,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18690280",
+            "firstName": "Admin",
+            "lastName": "NM",
+            "displayName": "Admin NM",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "nmiai-validator@test.no",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 970475,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/970475"
+            },
+            "employments": [
+              {
+                "id": 2847548,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2847548"
+              }
+            ],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108455776,
+            "vismaConnect2FAactive": false
+          },
+          {
+            "id": 18690288,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18690288",
+            "firstName": "Miguel",
+            "lastName": "Martínez",
+            "displayName": "Miguel Martínez",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "miguel.martinez@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 970475,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/970475"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108455776,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:21.711596",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "miguel.martinez@example.org",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18690288,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18690288",
+            "firstName": "Miguel",
+            "lastName": "Martínez",
+            "displayName": "Miguel Martínez",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "miguel.martinez@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 970475,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/970475"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108455776,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:22.102206",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/18690288",
+      "status": 200,
+      "request_params": null,
+      "request_body": {
+        "id": 18690288,
+        "version": 2,
+        "dateOfBirth": "1990-01-01"
+      },
+      "response_body": {
+        "value": {
+          "id": 18690288,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18690288",
+          "firstName": "Miguel",
+          "lastName": "Martínez",
+          "displayName": "Miguel Martínez",
+          "employeeNumber": "",
+          "dateOfBirth": "1990-01-01",
+          "email": "miguel.martinez@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 970475,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/970475"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0.0,
+            "basis": 0.0,
+            "amountExtraHolidayWeek": 0.0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108455776,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:22.370376",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 200,
+      "request_params": {
+        "employeeId": 18690288,
+        "count": 10
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": null,
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:22.787007",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18690288
+        },
+        "startDate": "2026-01-01",
+        "isMainEmployer": true,
+        "taxDeductionCode": "loennFraHovedarbeidsgiver"
+      },
+      "response_body": {
+        "value": {
+          "id": 2847556,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2847556",
+          "employee": {
+            "id": 18690288,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18690288"
+          },
+          "employmentId": "",
+          "startDate": "2026-01-01",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:23.208701",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2847556
+        },
+        "date": "2026-01-01",
+        "employmentType": "ORDINARY",
+        "employmentForm": "PERMANENT",
+        "remunerationType": "MONTHLY_WAGE",
+        "workingHoursScheme": "NOT_SHIFT",
+        "percentageOfFullTimeEquivalent": 100.0,
+        "annualSalary": 561600.0
+      },
+      "response_body": {
+        "value": {
+          "id": 3745739,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3745739",
+          "employment": {
+            "id": 2847556,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2847556"
+          },
+          "date": "2026-01-01",
+          "employmentType": "ORDINARY",
+          "employmentForm": "PERMANENT",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_SHIFT",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 100.0,
+          "annualSalary": 561600.0,
+          "hourlyWage": 288,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 46800.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:23.609458",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/salary/transaction",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2026-03-31",
+        "year": 2026,
+        "month": 3,
+        "payslips": [
+          {
+            "employee": {
+              "id": 18690288
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 6958410,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/salary/transaction/6958410",
+          "date": "2026-03-31",
+          "year": 2026,
+          "month": 3,
+          "isHistorical": false,
+          "paySlipsAvailableDate": null,
+          "payslips": [
+            {
+              "id": 32629428,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/salary/payslip/32629428"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:24.214613",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/salary/type",
+      "status": 200,
+      "request_params": {
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 155,
+        "from": 0,
+        "count": 155,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 84644340,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644340",
+            "number": "1000",
+            "name": "Gjeld til ansatte",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488060,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488060"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644341,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644341",
+            "number": "2000",
+            "name": "Fastlønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - fastlønn",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644342,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644342",
+            "number": "2001",
+            "name": "Timelønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - timelønn",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644344,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644344",
+            "number": "2009",
+            "name": "Utbetalt fleksisaldo",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644345,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644345",
+            "number": "2010",
+            "name": "Utbetalt feriesaldo",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - timelønn",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644346,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644346",
+            "number": "2015",
+            "name": "Feriepenger u/skattetrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644489,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644489",
+            "number": "2016",
+            "name": "Feriepenger m/skattetrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644490,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644490",
+            "number": "2017",
+            "name": "Feriepenger - ekstra ferieuke f.o.m. 60 år",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644491,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644491",
+            "number": "2028",
+            "name": "Trekk i lønn for ferie - fastlønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - trekk i lønn for ferie",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644495,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644495",
+            "number": "5001",
+            "name": "Kilometergodtgjørelse bil",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "153-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - kilometergodtgjørelse bil",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644496,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644496",
+            "number": "5002",
+            "name": "Kost",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "155-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - reise, kost",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644497,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644497",
+            "number": "5005",
+            "name": "Losji - innland/utland",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "157-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - reise, losji",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644641,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644641",
+            "number": "6000",
+            "name": "Skattetrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "950",
+            "ameldingWageCode": "Skattetrekk - ordinært",
+            "accountNumberDebit": {
+              "id": 477488028,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488028"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644642,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644642",
+            "number": "1001",
+            "name": "Forskudd på lønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488060,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488060"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644643,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644643",
+            "number": "1002",
+            "name": "Reiseforskudd",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488060,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488060"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644644,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644644",
+            "number": "2002",
+            "name": "Bonus",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - bonus",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644645,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644645",
+            "number": "2003",
+            "name": "Faste tillegg",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - faste tillegg",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644646,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644646",
+            "number": "2004",
+            "name": "Helligdagstillegg",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - helligdagstillegg",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644647,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644647",
+            "number": "2005",
+            "name": "Overtidsgodtgjørelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644648,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644648",
+            "number": "2006",
+            "name": "Overtid 40 %",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644649,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644649",
+            "number": "2007",
+            "name": "Overtid 50 %",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644650,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644650",
+            "number": "2008",
+            "name": "Overtid 100 %",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644651,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644651",
+            "number": "2011",
+            "name": "Uregelmessige tillegg - arbeidet tid",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til arbeidet tid",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644652,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644652",
+            "number": "2012",
+            "name": "Uregelmessige tillegg - ikke-arbeidet tid",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til ikke-arbeidet tid",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644653,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644653",
+            "number": "2013",
+            "name": "Helligdagsgodtgjørelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til ikke-arbeidet tid",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644654,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644654",
+            "number": "2014",
+            "name": "Trekkpliktig kontantgodtgjørelse reise",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til ikke-arbeidet tid",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644655,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644655",
+            "number": "2018",
+            "name": "Sykelønn - fastlønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - fastlønn",
+            "accountNumberDebit": {
+              "id": 477488151,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488151"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644656,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644656",
+            "number": "2019",
+            "name": "Sykelønn - timelønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - timelønn",
+            "accountNumberDebit": {
+              "id": 477488151,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488151"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644657,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644657",
+            "number": "2020",
+            "name": "Styrehonorar og godtgjørelse i forbindelse med verv",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - styrehonorar og godtgjørelse i forbindelse med verv",
+            "accountNumberDebit": {
+              "id": 477488170,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488170"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644658,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644658",
+            "number": "2021",
+            "name": "Styrehonorar - skattemessig bosatt i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "114-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - styrehonorar og godtgjørelse verv, utlending",
+            "accountNumberDebit": {
+              "id": 477488170,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488170"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644659,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644659",
+            "number": "2022",
+            "name": "Refusjon av lønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": null,
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644660,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644660",
+            "number": "2023",
+            "name": "Sluttvederlag",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - sluttvederlag",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644661,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644661",
+            "number": "2024",
+            "name": "Lønn fra veldedig/allmennyttig organisasjon/stiftelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "139",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - veldedig/allmennyttig institusjon/organisasjon",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644662,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644662",
+            "number": "2025",
+            "name": "Honorar",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - annet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644663,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644663",
+            "number": "2026",
+            "name": "Drikkepenger til prosentlønnet serveringspersonale",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - annet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644664,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644664",
+            "number": "2027",
+            "name": "Trekkpliktig kontantytelse - annet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - annet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644665,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644665",
+            "number": "2029",
+            "name": "Trekk i lønn for ferie - sykelønn - fastlønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - trekk i lønn for ferie",
+            "accountNumberDebit": {
+              "id": 477488151,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488151"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644666,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644666",
+            "number": "2030",
+            "name": "Tips (drikkepenger)",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - tips",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644667,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644667",
+            "number": "2031",
+            "name": "Honorar, akkord, prosent eller provisjonslønn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "111-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse – honorar/akkord/prosent/provisjon",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644668,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644668",
+            "number": "2100",
+            "name": "Fastlønn - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - fastlønn, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644669,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644669",
+            "number": "2101",
+            "name": "Timelønn - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - timelønn, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644670,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644670",
+            "number": "2102",
+            "name": "Bonus - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - bonus, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644671,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644671",
+            "number": "2103",
+            "name": "Faste tillegg - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - fast tillegg, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644672,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644672",
+            "number": "2104",
+            "name": "Helligdagstillegg - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - helligdagstillegg, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644673,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644673",
+            "number": "2105",
+            "name": "Overtidsgodtgjørelse - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644674,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644674",
+            "number": "2106",
+            "name": "Uregelmessige tillegg, arbeidet tid - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg arbeidet tid, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644675,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644675",
+            "number": "2107",
+            "name": "Uregelmessige tillegg, ikke-arbeidet tid - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg ikke arbeidet tid, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644676,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644676",
+            "number": "2108",
+            "name": "Helligdagsgodtgjørelse - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg ikke arbeidet tid, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644677,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644677",
+            "number": "2109",
+            "name": "Feriepenger u/skattetrekk - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger, utlandet",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644678,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644678",
+            "number": "2110",
+            "name": "Feriepenger m/skattetrekk - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger, utlandet",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644679,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644679",
+            "number": "2111",
+            "name": "Feriepenger, ekstra ferieuke f.o.m. 60 år - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger, utlandet",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644680,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644680",
+            "number": "2112",
+            "name": "Styrehonorar og godtgjørelse i forbindelse med verv - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - styrehonorar og godtgjørelse verv, utlandet",
+            "accountNumberDebit": {
+              "id": 477488170,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488170"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644681,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644681",
+            "number": "2113",
+            "name": "Sluttvederlag - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - sluttvederlag, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644682,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644682",
+            "number": "2114",
+            "name": "Honorar - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - annet, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644683,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644683",
+            "number": "2115",
+            "name": "Trekkpliktig kontantytelse - annet, arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - annet, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644684,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644684",
+            "number": "2116",
+            "name": "Trekk i lønn for ferie - fastlønn - arbeid utført i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "113-A",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - trekk i lønn for ferie, utlandet",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644685,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644685",
+            "number": "2200",
+            "name": "Fastlønn - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - fastlønn, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644686,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644686",
+            "number": "2201",
+            "name": "Timelønn - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - timelønn, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644687,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644687",
+            "number": "2202",
+            "name": "Bonus - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - bonus, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644688,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644688",
+            "number": "2203",
+            "name": "Faste tillegg - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - faste tillegg, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644689,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644689",
+            "number": "2204",
+            "name": "Helligdagstillegg - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - helligdagstillegg, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644690,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644690",
+            "number": "2205",
+            "name": "Overtidsgodtgjørelse - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - overtidsgodtgjørelse, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644691,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644691",
+            "number": "2206",
+            "name": "Uregelmessige tillegg, arbeidet tid - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til arbeidet tid, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644692,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644692",
+            "number": "2207",
+            "name": "Uregelmessige tillegg, ikke-arbeidet tid - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til ikke-arbeidet tid, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644693,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644693",
+            "number": "2208",
+            "name": "Helligdagsgodtgjørelse - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - uregelmessige tillegg knyttet til ikke-arbeidet tid, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644694,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644694",
+            "number": "2209",
+            "name": "Feriepenger u/skattetrekk - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644695,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644695",
+            "number": "2210",
+            "name": "Feriepenger m/skattetrekk - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644696,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644696",
+            "number": "2211",
+            "name": "Feriepenger - ekstra ferieuke f.o.m. 60 år - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - feriepenger, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488063,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488063"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644697,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644697",
+            "number": "2212",
+            "name": "Styrehonorar og godtgjørelse i forbindelse med verv - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - styrehonorar og godtgjørelse i forbindelse med verv, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488170,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488170"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644698,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644698",
+            "number": "2213",
+            "name": "Sluttvederlag - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - sluttvederlag, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644699,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644699",
+            "number": "2214",
+            "name": "Trekk i lønn for ferie - fastlønn - ikke avgiftspliktig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "129",
+            "ameldingWageCode": "Trekkpliktig kontantytelse - trekk i lønn for ferie, ikke avgiftspliktig",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644700,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644700",
+            "number": "2500",
+            "name": "Skattefri erstatning for tort og svie",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "911",
+            "ameldingWageCode": "Trekkfri kontantytelse - skattefri erstatning",
+            "accountNumberDebit": {
+              "id": 477488172,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488172"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644701,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644701",
+            "number": "2501",
+            "name": "Skattefri lønn etter dødsfall",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "916",
+            "ameldingWageCode": "Trekkfri kontantytelse - lønn etter dødsfall",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644702,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644702",
+            "number": "2502",
+            "name": "Skattefritt sluttvederlag",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "916",
+            "ameldingWageCode": "Trekkfri kontantytelse - sluttvederlag",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644703,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644703",
+            "number": "3000",
+            "name": "Fri kost",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "110-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri kost",
+            "accountNumberDebit": {
+              "id": 477488160,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488160"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644704,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644704",
+            "number": "3001",
+            "name": "Fri losji",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "110-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri losji",
+            "accountNumberDebit": {
+              "id": 477488160,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488160"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644705,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644705",
+            "number": "3002",
+            "name": "Fri bolig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "121-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri bolig",
+            "accountNumberDebit": {
+              "id": 477488160,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488160"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644706,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644706",
+            "number": "3003",
+            "name": "Fri bil",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "118-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri bil",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644707,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644707",
+            "number": "3004",
+            "name": "Fri bil - bilpool",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "118-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri bil, bilpool",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644708,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644708",
+            "number": "3005",
+            "name": "Fri bil utenfor standardreglene",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "135-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri bil utenfor standardreglene",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644709,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644709",
+            "number": "3006",
+            "name": "Annen fri bil",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "125-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - annen fri bil",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644710,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644710",
+            "number": "3007",
+            "name": "Annen fri bil - bilpool",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "125-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - annen fri bil, bilpool",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644711,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644711",
+            "number": "3008",
+            "name": "Elektronisk kommunikasjon - naturalytelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "130-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - elektronisk kommunikasjon",
+            "accountNumberDebit": {
+              "id": 477488158,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488158"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644712,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644712",
+            "number": "3009",
+            "name": "Elektronisk kommunikasjon - utgiftsgodtgjørelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "130-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - elektronisk kommunikasjon",
+            "accountNumberDebit": {
+              "id": 477488171,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488171"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644713,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644713",
+            "number": "3010",
+            "name": "Pensjonsforsikring - kollektiv",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": null,
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644714,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644714",
+            "number": "3011",
+            "name": "Pensjonsforsikring - individuell",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644715,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644715",
+            "number": "3012",
+            "name": "Livsforsikring - gruppeliv",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488162,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488162"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644716,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644716",
+            "number": "3013",
+            "name": "Livsforsikring - individuell",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644717,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644717",
+            "number": "3014",
+            "name": "Ulykkesforsikring",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488163,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488163"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644718,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644718",
+            "number": "3015",
+            "name": "Forsikring - ferie og fritid",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644719,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644719",
+            "number": "3016",
+            "name": "Helseforsikring",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644720,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644720",
+            "number": "3017",
+            "name": "Andre forsikringer",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "116-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig del forsikringer",
+            "accountNumberDebit": {
+              "id": 477488162,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488162"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644721,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644721",
+            "number": "3018",
+            "name": "Rentefordel ved rimelig lån",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "120-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - rentefordel rimelig lån",
+            "accountNumberDebit": {
+              "id": 477488161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488161"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644722,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644722",
+            "number": "3019",
+            "name": "Aksjer til underkurs",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "132-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - aksjer/grunnfondsbevis til underkurs",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644723,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644723",
+            "number": "3020",
+            "name": "Opsjonsytelser",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "133-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - opsjoner",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644724,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644724",
+            "number": "3021",
+            "name": "Kostbesparelse i hjemmet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "143-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - kostbesparelse i hjemmet",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644725,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644725",
+            "number": "3022",
+            "name": "Trekkpliktig naturalytelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "112-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - annet",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644726,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644726",
+            "number": "3023",
+            "name": "Fri bolig - pensjonist",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "230-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri bolig, pensjonist",
+            "accountNumberDebit": {
+              "id": 477488160,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488160"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644727,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644727",
+            "number": "3024",
+            "name": "Fri bil - pensjonist",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "230-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - fri bil, pensjonist",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644728,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644728",
+            "number": "3025",
+            "name": "Elektronisk kommunikasjon - pensjonist",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "230-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - elektronisk kommunikasjon, pensjonist",
+            "accountNumberDebit": {
+              "id": 477488158,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488158"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644729,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644729",
+            "number": "3026",
+            "name": "Rentefordel ved rimelig lån - pensjonist",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "246-A",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - rentefordel ved rimelig lån",
+            "accountNumberDebit": {
+              "id": 477488161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488161"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644730,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644730",
+            "number": "3027",
+            "name": "Skattepliktig personalrabatt",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - skattepliktig personalrabatt",
+            "accountNumberDebit": {
+              "id": 477488164,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488164"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644731,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644731",
+            "number": "3028",
+            "name": "Yrkesbil ved tjenestlig behov - listepris",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - yrkesbil ved tjenstlig behov, listepris",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644732,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644732",
+            "number": "3029",
+            "name": "Yrkesbil ved tjenestlig behov - kilometer",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "Trekkpliktig naturalytelse - yrkesbil ved tjenstlig behov, kilometer",
+            "accountNumberDebit": {
+              "id": 477488157,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488157"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644733,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644733",
+            "number": "3500",
+            "name": "Fri reise til og fra arbeid",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "518",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri transport",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644734,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644734",
+            "number": "3503",
+            "name": "Fri kost - pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "522",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri losji, norsk pendler",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644735,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644735",
+            "number": "3504",
+            "name": "Fri losji - pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "522",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri losji, norsk pendler",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644736,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644736",
+            "number": "3505",
+            "name": "Fri bolig - pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "522",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri bolig, norsk pendler",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644737,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644737",
+            "number": "3506",
+            "name": "Fri kost - utenlandsk pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "525",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri kost, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644738,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644738",
+            "number": "3507",
+            "name": "Fri losji - utenlandsk pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "525",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri losji, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644739,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644739",
+            "number": "3508",
+            "name": "Fri bolig - utenlandsk pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "526",
+            "ameldingWageCode": "Trekkfri naturalytelse - fri bolig, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644740,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644740",
+            "number": "3509",
+            "name": "Trekkfri naturalytelse - annet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "549",
+            "ameldingWageCode": "Trekkfri naturalytelse - annet",
+            "accountNumberDebit": {
+              "id": 477488165,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488165"
+            },
+            "accountNumberCredit": {
+              "id": 477488166,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488166"
+            },
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644741,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644741",
+            "number": "3510",
+            "name": "Fri besøksreise til hjemmet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "723",
+            "ameldingWageCode": "Trekkfri naturalytelse - besøksreiser til hjemmet, annet",
+            "accountNumberDebit": {
+              "id": 477488265,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488265"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644742,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644742",
+            "number": "3511",
+            "name": "Fri besøksreise til hjemmet i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "724",
+            "ameldingWageCode": "Trekkfri naturalytelse - besøksreiser til hjemmet, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488265,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488265"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644743,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644743",
+            "number": "5000",
+            "name": "Fast bilgodtgjørelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "153-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - fast bilgodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644744,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644744",
+            "number": "5003",
+            "name": "Kost - utenlandsk arbeidstaker med opphold i Norge",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "156-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - arbeidsopphold, kost, utlending med opphold i Norge",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644745,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644745",
+            "number": "5004",
+            "name": "Losji - utenlandsk arbeidstaker med opphold i Norge",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "156-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - arbeidsopphold, losji, utlending med opphold i Norge",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644746,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644746",
+            "number": "5006",
+            "name": "Besøksreiser til hjemmet - kilometergodtgjørelse bil, utenlandsk arbeidstaker med opphold i Norge",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "156-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - besøksreiser til hjemmet, kilometergodtgjørelse bil, utlending med opphold i Norge",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644747,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644747",
+            "number": "5007",
+            "name": "Besøksreiser til hjemmet - annet, utenlandsk arbeidstaker med opphold i Norge",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "156-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - besøksreiser til hjemmet, annet, utlending med opphold i Norge",
+            "accountNumberDebit": {
+              "id": 477488182,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488182"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644748,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644748",
+            "number": "5008",
+            "name": "Stipend",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "161-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - stipend",
+            "accountNumberDebit": {
+              "id": 477488171,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488171"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644749,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644749",
+            "number": "5009",
+            "name": "Smusstillegg",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": true,
+            "isTaxable": true,
+            "payStatementCodeCode": "151-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - smusstillegg",
+            "accountNumberDebit": {
+              "id": 477488171,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488171"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644750,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644750",
+            "number": "5010",
+            "name": "Trekkpliktig utgiftsgodtgjørelse - annet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": true,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "199-A",
+            "ameldingWageCode": "Trekkpliktig utgiftsgodtgjørelse - annet",
+            "accountNumberDebit": {
+              "id": 477488171,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488171"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": true
+          },
+          {
+            "id": 84644751,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644751",
+            "number": "5500",
+            "name": "Kost uten overnatting - innland/utland",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "614",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost, uten overnatting",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644752,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644752",
+            "number": "5501",
+            "name": "Kost ved overnatting - hotell, innland/utland",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "610",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost, overnatting hotell",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644753,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644753",
+            "number": "5502",
+            "name": "Kost ved overnatting - hotell, innland, beordring, utover 28 døgn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "613",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost, overnatting hotell",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644754,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644754",
+            "number": "5503",
+            "name": "Kost ved overnatting - hotell, utland, beordring, utover 28 døgn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "616",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost, utlandet, overnatting hotell, beordring, over 28 døgn",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644755,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644755",
+            "number": "5504",
+            "name": "Kost ved overnatting - Privat eller hybel m/kokemuligheter",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "623",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost overnatting privat el hybel m/kok",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644756,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644756",
+            "number": "5505",
+            "name": "Kost ved overnatting - egen brakke/campingvogn",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "624",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - losji, egen brakke/campingvogn",
+            "accountNumberDebit": {
+              "id": 477488172,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488172"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644757,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644757",
+            "number": "5506",
+            "name": "Kost ved overnatting - langtransportsjåfør i utlandet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "626",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost, overnatting, langtransportsjåfør, utlandet",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644758,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644758",
+            "number": "5507",
+            "name": "Kost ved overnatting - Pensjonat/brakke eller hybel u/kokemuligheter",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "627",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, kost overnatting pensjonat/brakke el hybel u/kok",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644759,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644759",
+            "number": "5508",
+            "name": "Kost - pendler, utenlandsk arbeidstaker",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "628",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - arbeidsopphold, kost, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644760,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644760",
+            "number": "5509",
+            "name": "Nattillegg - innland",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "610",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - reise, nattillegg",
+            "accountNumberDebit": {
+              "id": 477488265,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488265"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644761,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644761",
+            "number": "5510",
+            "name": "Losji - pendler, utenlandsk arbeidstaker",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "628",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - arbeidsopphold, losji, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488267"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644762,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644762",
+            "number": "5514",
+            "name": "Kilometergodtgjørelse - bil",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "711",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - kilometergodtgjørelse, bil",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644763,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644763",
+            "number": "5516",
+            "name": "Kilometergodtgjørelse - passasjertillegg",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "714",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - kilometergodtgjørelse, passasjertillegg",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644764,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644764",
+            "number": "5517",
+            "name": "Kilometergodtgjørelse - andre fremkostmidler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "714",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - kilometergodtgjørelse, andre fremkomstmidler",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644765,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644765",
+            "number": "5518",
+            "name": "Besøksreiser til hjemmet - annet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "721",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - besøksreiser til hjemmet, annet",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644766,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644766",
+            "number": "5519",
+            "name": "Besøksreiser til hjemmet - kilometergodtgjørelse bil",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "721",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - besøksreiser til hjemmet, kilometergodtgjørelse bil",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644767,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644767",
+            "number": "5520",
+            "name": "Besøksreiser til hjemmet - annet, utenlandsk pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "725",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - besøksreiser til hjemmet, annet, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644768,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644768",
+            "number": "5521",
+            "name": "Besøksreiser til hjemmet - kilometergodtgjørelse bil, utenlandsk pendler",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "725",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - besøksreiser til hjemmet, kilometergodtgjørelse bil, utenlandsk pendler",
+            "accountNumberDebit": {
+              "id": 477488264,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488264"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644769,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644769",
+            "number": "5522",
+            "name": "Flyttegodtgjørelse",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "813",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - flyttegodtgjørelse",
+            "accountNumberDebit": {
+              "id": 477488172,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488172"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644770,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644770",
+            "number": "5523",
+            "name": "Stipend",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "818",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - stipend",
+            "accountNumberDebit": {
+              "id": 477488172,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488172"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644771,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644771",
+            "number": "5525",
+            "name": "Skattefrie utbetalinger",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "916",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - skattefrie utbetalinger",
+            "accountNumberDebit": {
+              "id": 477488149,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488149"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644772,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644772",
+            "number": "5526",
+            "name": "Trekkfri utgiftsgodtgjørelse - annet",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "849",
+            "ameldingWageCode": "Trekkfri utgiftsgodtgjørelse - annet",
+            "accountNumberDebit": {
+              "id": 477488172,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488172"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644773,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644773",
+            "number": "6001",
+            "name": "Utleggstrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488029,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488029"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644774,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644774",
+            "number": "6002",
+            "name": "Utleggstrekk (skatt)",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "Utleggstrekk til dekning av skatt",
+            "accountNumberDebit": {
+              "id": 477488029,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488029"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644775,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644775",
+            "number": "6003",
+            "name": "Bidragstrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488030,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488030"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644776,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644776",
+            "number": "6004",
+            "name": "Trekk - eget",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488035,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488035"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644777,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644777",
+            "number": "6005",
+            "name": "Trekk - kantine",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "",
+            "accountNumberDebit": {
+              "id": 477488192,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488192"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644778,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644778",
+            "number": "6006",
+            "name": "Trekk - fagforeningskontingent m/skattetrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "311",
+            "ameldingWageCode": "Fradrag - fagforeningskontingent",
+            "accountNumberDebit": {
+              "id": 477488033,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488033"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644779,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644779",
+            "number": "6007",
+            "name": "Trekk - fagforeningskontingent u/skattetrekk",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "311",
+            "ameldingWageCode": "Fradrag - fagforeningskontingent",
+            "accountNumberDebit": {
+              "id": 477488033,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488033"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644780,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644780",
+            "number": "6008",
+            "name": "Trekk - premie til pensjonsordninger",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": true,
+            "payStatementCodeCode": "312",
+            "ameldingWageCode": "Fradrag - premie til pensjonsordninger",
+            "accountNumberDebit": {
+              "id": 477488035,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488035"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644781,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644781",
+            "number": "6009",
+            "name": "Trekk - premie til fond og trygd",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "314",
+            "ameldingWageCode": "Fradrag - premie til fond og trygd",
+            "accountNumberDebit": {
+              "id": 477488035,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488035"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644782,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644782",
+            "number": "6010",
+            "name": "Skattetrekk - frivillig",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "950",
+            "ameldingWageCode": "Skattetrekk - frivillig",
+            "accountNumberDebit": {
+              "id": 477488028,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488028"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          },
+          {
+            "id": 84644783,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/salary/type/84644783",
+            "number": "6011",
+            "name": "Utleggstrekk (samordnet)",
+            "description": "",
+            "showInTimesheet": false,
+            "isSickPayable": false,
+            "isVacationPayable": false,
+            "isTaxable": false,
+            "payStatementCodeCode": "",
+            "ameldingWageCode": "Samordnet Utleggstrekk",
+            "accountNumberDebit": {
+              "id": 477488029,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477488029"
+            },
+            "accountNumberCredit": null,
+            "isPayrollTaxable": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:24.545565",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/salary/payslip",
+      "status": 200,
+      "request_params": {
+        "wageTransactionId": 6958410,
+        "employeeId": 18690288,
+        "count": 10
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    }
+  ]
+}

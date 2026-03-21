@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:37:04.099537",
+  "prompt": "Realize o encerramento anual simplificado de 2025: 1) Calcule e registe a depreciação anual de três ativos: IT-utstyr (470650 NOK, 10 anos lineares, conta 1210), Kjøretøy (146700 NOK, 3 anos, conta 1230), Inventar (313500 NOK, 4 anos, conta 1240). Use conta 6010 para despesa de depreciação e 1209 para depreciação acumulada. 2) Reverta despesas antecipadas (total 63300 NOK na conta 1700). 3) Calcule e registe a provisão fiscal (22 % do resultado tributável) na conta 8700/2920. Registe cada deprec",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 5 vouchers created. Depreciation IT-utstyr: 47065.0 NOK; Depreciation Kjøretøy: 48900.0 NOK; Depreciation Inventar: 78375.0 NOK; Prepaid reversal: 63300 NOK; Tax provision (22%): 52280.8 NOK",
+  "error": null,
+  "elapsed_seconds": 9.21
+}

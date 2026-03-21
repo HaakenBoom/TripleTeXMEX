@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:59:28.755834",
+  "prompt": "We have a new employee named Charles Taylor, born 21. October 1994. Please create them as an employee with email charles.taylor@example.org and start date 3. June 2026.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Charles Taylor (id=18676999)",
+  "error": null,
+  "elapsed_seconds": 11.81
+}

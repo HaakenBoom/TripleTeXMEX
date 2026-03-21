@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:53:08.827559",
+  "prompt": "Opprett produktet \"Analyserapport\" med produktnummer 1908. Prisen er 18050 kr eksklusiv MVA, og standard MVA-sats på 25 % skal nyttast.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created product Analyserapport (id=84423597)",
+  "error": null,
+  "elapsed_seconds": 3.99
+}

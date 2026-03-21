@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:41:21.828355",
+  "prompt": "Kunden Strandvik AS (org.nr 827237108) har ein uteståande faktura på 30500 kr eksklusiv MVA for \"Skylagring\". Registrer full betaling på denne fakturaen.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Registered payment of 38125.0 on invoice 2147575143. Invoice is now paid.",
+  "error": null,
+  "elapsed_seconds": 15.08
+}

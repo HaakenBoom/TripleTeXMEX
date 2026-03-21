@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:41:54.816743",
+  "prompt": "Crie um pedido para o cliente Solmar Lda (org. nº 867069526) com os produtos Sessão de formação (4466) a 35600 NOK e Licença de software (3717) a 3250 NOK. Converta o pedido em fatura e registe o pagamento total.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147646831 with payment for customer Solmar Lda (paymentTypeId=37594193, paidAmount=48562.5)",
+  "error": null,
+  "elapsed_seconds": 4.27
+}

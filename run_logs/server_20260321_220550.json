@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:05:50.960922",
+  "prompt": "Kunden Havbris AS (org.nr 995581094) har reklamert på fakturaen for \"Programvarelisens\" (34650 kr ekskl. MVA). Opprett en fullstendig kreditnota som reverserer hele fakturaen.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created credit note for invoice 2147576294",
+  "error": null,
+  "elapsed_seconds": 5.61
+}

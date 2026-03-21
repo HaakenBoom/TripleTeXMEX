@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:21:34.516419",
+  "prompt": "O cliente Estrela Lda (org. nº 890872492) reclamou sobre a fatura referente a \"Consultoria de dados\" (12000 NOK sem IVA). Emita uma nota de crédito completa que reverta toda a fatura.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created credit note for invoice 2147650817",
+  "error": null,
+  "elapsed_seconds": 1.9
+}

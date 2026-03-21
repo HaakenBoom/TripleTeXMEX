@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:53:32.917920",
+  "prompt": "Registrer ei reiserekning for Åse Haugen (ase.haugen@example.org) for \"Kundebesøk Oslo\". Reisa varte 4 dagar med diett (dagssats 800 kr). Utlegg: flybillett 3600 kr og taxi 250 kr.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created travel expense 'Kundebesøk Oslo' (id=11149901)",
+  "error": null,
+  "elapsed_seconds": 12.42
+}

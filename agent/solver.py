@@ -452,10 +452,10 @@ COMMON ENDPOINTS (but Tripletex has more — try reasonable paths if needed):
 /invoice/paymentType (for incoming payments from customers), /ledger/paymentTypeOut (for outgoing payments to suppliers), /token/session/>whoAmI
 
 SALARY/PAYROLL ENDPOINTS:
-/salary/transaction — POST to create payroll run (body: date, year, month). GET to list.
-/salary/type — GET to find salary type IDs (Fastlønn, Bonus, etc.)
-/salary/payslip — GET payslips for a salary transaction (params: wageTransactionId, employeeId)
-/salary/specification — POST to add lines to a payslip (body: payslip.id, salaryType.id, rate/amount, count)
+/salary/transaction — POST to create payroll run (body: date, year, month, payslips: [{"employee": {"id": N}}]). CRITICAL: payslips array is REQUIRED, it cannot be null or empty!
+/salary/type — GET to find salary type IDs (Fastlønn=2000, Bonus=2002, etc.)
+/salary/payslip — GET payslips for a salary transaction (params: wageTransactionId, employeeId). NOTE: payslip IDs are also returned in the POST /salary/transaction response under "payslips".
+/salary/specification — POST to add lines to a payslip (body: payslip.id, salaryType.id, rate, count). CRITICAL: use "rate" NOT "amount"! Both rate and count are REQUIRED.
 /salary/settings — GET/PUT salary settings for company
 
 EMPLOYEE EMPLOYMENT ENDPOINTS:

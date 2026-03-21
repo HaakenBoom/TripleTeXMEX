@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:06:47.721921",
+  "prompt": "Enregistrez une note de frais de déplacement pour Arthur Robert (arthur.robert@example.org) pour \"Visite client Kristiansand\". Le voyage a duré 5 jours avec indemnités journalières (taux journalier 800 NOK). Dépenses : billet d'avion 3850 NOK et taxi 650 NOK.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created travel expense 'Visite client Kristiansand' (id=11150220)",
+  "error": null,
+  "elapsed_seconds": 13.45
+}

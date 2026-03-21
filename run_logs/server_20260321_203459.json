@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:34:59.962778",
+  "prompt": "Vi har mottatt faktura INV-2026-9382 fra leverandøren Stormberg AS (org.nr 877462137) på 61600 kr inklusiv MVA. Beløpet gjelder kontortjenester (konto 6340). Registrer leverandørfakturaen med korrekt inngående MVA (25 %).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609139612)",
+  "error": null,
+  "elapsed_seconds": 18.88
+}

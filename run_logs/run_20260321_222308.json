@@ -1,0 +1,306 @@
+{
+  "timestamp": "2026-03-21T22:23:08.050572",
+  "prompt_fingerprint": "531dd50b2592",
+  "prompt": "Create the project \"Analysis Oakwood\" linked to the customer Oakwood Ltd (org no. 849612913). The project manager is Lucy Taylor (lucy.taylor@example.org).",
+  "prompt_language": "en",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_project",
+    "entities": {
+      "name": "Analysis Oakwood",
+      "customerName": "Oakwood Ltd",
+      "customerOrganizationNumber": "849612913",
+      "projectManagerName": "Lucy Taylor",
+      "projectManagerEmail": "lucy.taylor@example.org",
+      "isInternal": false
+    },
+    "raw_prompt": "Create the project \"Analysis Oakwood\" linked to the customer Oakwood Ltd (org no. 849612913). The project manager is Lucy Taylor (lucy.taylor@example.org).",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created project Analysis Oakwood (id=402041737)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 13.73,
+  "phase_times": {
+    "parse": 0.86,
+    "prefetch": 0.0,
+    "handler": 12.87
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 3
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402041737
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:22:58.428560",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "count": 1,
+        "firstName": "Lucy",
+        "lastName": "Taylor"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18617379,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18617379",
+            "firstName": "Lucy",
+            "lastName": "Taylor",
+            "displayName": "Lucy Taylor",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "lucy.taylor@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 744563,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/744563"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 107926997,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:23:01.778312",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "849612913",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108330442,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108330442",
+            "name": "Oakwood Ltd",
+            "organizationNumber": "849612913",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10002,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Oakwood Ltd (10002)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405511325,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405511325"
+            },
+            "physicalAddress": {
+              "id": 405511324,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405511324"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 377238707,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/377238707"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:23:08.049909",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Analysis Oakwood",
+        "projectManager": {
+          "id": 18617379
+        },
+        "isInternal": false,
+        "startDate": "2026-03-21",
+        "customer": {
+          "id": 108330442
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 402041737,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402041737",
+          "name": "Analysis Oakwood",
+          "number": "2",
+          "displayName": "2 Analysis Oakwood",
+          "description": "",
+          "projectManager": {
+            "id": 18617379,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18617379"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2026-03-21",
+          "endDate": null,
+          "customer": {
+            "id": 108330442,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108330442"
+          },
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": false,
+          "isOffer": false,
+          "isFixedPrice": false,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 0,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11091115,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11091115"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15645980,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15645980"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "2 Analysis Oakwood",
+          "invoiceDueDate": 14,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "Oakwood Ltd",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Lucy Taylor",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 0,
+          "accountingDimensionValues": []
+        }
+      }
+    }
+  ]
+}

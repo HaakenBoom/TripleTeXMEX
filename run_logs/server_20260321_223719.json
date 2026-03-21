@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:37:19.182351",
+  "prompt": "Vous avez recu une facture fournisseur (voir PDF ci-joint). Enregistrez la facture dans Tripletex. Creez le fournisseur s'il n'existe pas. Utilisez le bon compte de charges et la TVA deductible.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609190562)",
+  "error": null,
+  "elapsed_seconds": 4.5
+}

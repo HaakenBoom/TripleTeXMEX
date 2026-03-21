@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:43:05.867247",
+  "prompt": "Créez le client Étoile SARL avec le numéro d'organisation 864083323. L'adresse est Kirkegata 121, 7010 Trondheim. E-mail : post@etoile.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created customer Étoile SARL (id=108445766)",
+  "error": null,
+  "elapsed_seconds": 2.8
+}

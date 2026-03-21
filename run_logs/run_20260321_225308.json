@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-03-21T22:53:08.826984",
+  "prompt_fingerprint": "26609d7c32ea",
+  "prompt": "Opprett produktet \"Analyserapport\" med produktnummer 1908. Prisen er 18050 kr eksklusiv MVA, og standard MVA-sats på 25 % skal nyttast.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_product",
+    "entities": {
+      "name": "Analyserapport",
+      "number": 1908,
+      "priceExcludingVat": 18050,
+      "priceIncludingVat": 22562.5,
+      "vatType": "25%",
+      "isStockItem": false
+    },
+    "raw_prompt": "Opprett produktet \"Analyserapport\" med produktnummer 1908. Prisen er 18050 kr eksklusiv MVA, og standard MVA-sats på 25 % skal nyttast.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created product Analyserapport (id=84423597)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.98,
+  "phase_times": {
+    "parse": 0.93,
+    "prefetch": 0.0,
+    "handler": 3.06
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/product",
+      "status": 201,
+      "entity_id": 84423597
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:53:08.826361",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/product",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Analyserapport",
+        "priceExcludingVatCurrency": 18050,
+        "priceIncludingVatCurrency": 22562.5,
+        "number": 1908,
+        "isStockItem": false,
+        "vatType": {
+          "id": 3
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 84423597,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/product/84423597",
+          "name": "Analyserapport",
+          "number": "1908",
+          "displayNumber": "1908",
+          "description": "",
+          "orderLineDescription": "",
+          "costExcludingVatCurrency": 0,
+          "costPrice": 0,
+          "priceExcludingVatCurrency": 18050,
+          "priceIncludingVatCurrency": 22562.5,
+          "isInactive": false,
+          "productUnit": null,
+          "incomingStock": 0,
+          "outgoingStock": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "department": null,
+          "account": null,
+          "supplier": null,
+          "resaleProduct": null,
+          "isDeletable": false,
+          "hasSupplierProductConnected": false,
+          "image": null,
+          "displayName": "1908 Analyserapport",
+          "mainSupplierProduct": null,
+          "isRoundPriceIncVat": false,
+          "priceInTargetCurrency": 0,
+          "purchasePriceCurrency": 0
+        }
+      }
+    }
+  ]
+}

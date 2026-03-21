@@ -1,0 +1,2065 @@
+{
+  "timestamp": "2026-03-21T23:16:01.712648",
+  "prompt_fingerprint": "aa4956e95651",
+  "prompt": "Log 27 hours for Emily Smith (emily.smith@example.org) on the activity \"Rådgivning\" in the project \"System Upgrade\" for Greenfield Ltd (org no. 811374563). Hourly rate: 1050 NOK/h. Generate a project invoice to the customer based on the logged hours.",
+  "prompt_language": "en",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "log_timesheet_hours",
+    "entities": {
+      "employeeName": "Emily Smith",
+      "employeeEmail": "emily.smith@example.org",
+      "hours": 27,
+      "activityName": "Rådgivning",
+      "projectName": "System Upgrade",
+      "customerName": "Greenfield Ltd",
+      "customerOrganizationNumber": "811374563",
+      "date": "2026-03-21",
+      "hourlyRate": 1050,
+      "comment": null
+    },
+    "raw_prompt": "Log 27 hours for Emily Smith (emily.smith@example.org) on the activity \"Rådgivning\" in the project \"System Upgrade\" for Greenfield Ltd (org no. 811374563). Hourly rate: 1050 NOK/h. Generate a project invoice to the customer based on the logged hours.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": "POST /timesheet/entry failed (422): Request mapping failed",
+  "handler_returned_none": false,
+  "elapsed_seconds": 49.39,
+  "phase_times": {
+    "parse": 0.94,
+    "prefetch": 0.0,
+    "handler": 1.65,
+    "repair": 0.0,
+    "agent_loop": 46.11
+  },
+  "total_api_calls": 22,
+  "errors_4xx": 7,
+  "status_counts": {
+    "2xx": 15,
+    "4xx": 7
+  },
+  "call_phases": {
+    "prefetch": 4,
+    "action": 4,
+    "wasted": 7,
+    "lookup": 7
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175913055
+    },
+    {
+      "method": "POST",
+      "endpoint": "/order",
+      "status": 201,
+      "entity_id": 402045394
+    },
+    {
+      "method": "POST",
+      "endpoint": "/product",
+      "status": 201,
+      "entity_id": 84424305
+    },
+    {
+      "method": "POST",
+      "endpoint": "/order/orderline",
+      "status": 201,
+      "entity_id": 1607582500
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T23:15:13.560124",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "emily.smith@example.org",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18689955,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18689955",
+            "firstName": "Emily",
+            "lastName": "Smith",
+            "displayName": "Emily Smith",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "emily.smith@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 970296,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/970296"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108455365,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:13.857606",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "811374563",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108455390,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108455390",
+            "name": "Greenfield Ltd",
+            "organizationNumber": "811374563",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Greenfield Ltd (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405758127,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405758127"
+            },
+            "physicalAddress": {
+              "id": 405758126,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405758126"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 477411728,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477411728"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:14.215022",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 200,
+      "request_params": {
+        "name": "System Upgrade",
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 402045337,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402045337",
+            "name": "System Upgrade",
+            "number": "1",
+            "displayName": "1 System Upgrade",
+            "description": "",
+            "projectManager": {
+              "id": 18689955,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18689955"
+            },
+            "department": null,
+            "mainProject": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "customer": {
+              "id": 108455390,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108455390"
+            },
+            "isClosed": false,
+            "isReadyForInvoicing": false,
+            "isInternal": false,
+            "isOffer": false,
+            "isFixedPrice": false,
+            "projectCategory": null,
+            "deliveryAddress": null,
+            "boligmappaAddress": null,
+            "displayNameFormat": "NAME_STANDARD",
+            "reference": "",
+            "externalAccountsNumber": "",
+            "discountPercentage": 0.0,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "fixedprice": 0,
+            "contributionMarginPercent": 0,
+            "numberOfSubProjects": 0,
+            "numberOfProjectParticipants": 1,
+            "orderLines": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "markUpOrderLines": 0.0,
+            "markUpFeesEarned": 0.0,
+            "isPriceCeiling": false,
+            "priceCeilingAmount": 0.0,
+            "projectHourlyRates": [
+              {
+                "id": 11092069,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11092069"
+              }
+            ],
+            "forParticipantsOnly": false,
+            "participants": [
+              {
+                "id": 15647000,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15647000"
+              }
+            ],
+            "contact": null,
+            "attention": null,
+            "invoiceComment": "",
+            "invoicingPlan": [],
+            "preliminaryInvoice": null,
+            "generalProjectActivitiesPerProjectOnly": false,
+            "projectActivities": [],
+            "hierarchyNameAndNumber": "1 System Upgrade",
+            "invoiceDueDate": 14,
+            "invoiceDueDateType": "DAYS",
+            "invoiceReceiverEmail": "",
+            "overdueNoticeEmail": "",
+            "accessType": "WRITE",
+            "useProductNetPrice": false,
+            "ignoreCompanyProductDiscountAgreement": false,
+            "customerName": "Greenfield Ltd",
+            "hierarchyLevel": 0,
+            "projectManagerNameAndNumber": "Emily Smith",
+            "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+            "invoiceOnAccountVatHigh": false,
+            "invoiceReserveTotalAmountCurrency": 0,
+            "accountingDimensionValues": []
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:14.571885",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity/>forTimeSheet",
+      "status": 200,
+      "request_params": {
+        "projectId": 402045337,
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 3,
+        "from": 0,
+        "count": 3,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 6000181,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000181",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 6000180,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000180",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          },
+          {
+            "id": 6000203,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000203",
+            "name": "Rådgivning",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Rådgivning",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:14.907300",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18689955
+        },
+        "project": {
+          "id": 402045337
+        },
+        "activity": {
+          "id": 6000203
+        },
+        "date": "2026-03-21",
+        "hours": 27,
+        "hourlyCharge": 1050
+      },
+      "response_body": {
+        "status": 422,
+        "code": 16000,
+        "message": "Request mapping failed",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "hourlyCharge",
+            "message": "Feltet eksisterer ikke i objektet.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "1d8ff4f6-d917-4957-a440-01ebdcb37815"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:15.256428",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/vatType",
+      "status": 200,
+      "request_params": {
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 56,
+        "from": 0,
+        "count": 56,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 1,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1",
+            "name": "Fradrag inngående avgift, høy sats",
+            "number": "1",
+            "displayName": "1: (25%) Fradrag inngående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 2,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/2",
+            "name": "Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-2",
+            "displayName": "UT-2: (100%) Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 3,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3",
+            "name": "Utgående avgift, høy sats",
+            "number": "3",
+            "displayName": "3: (25%) Utgående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 4,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/4",
+            "name": "Direktepostert utgående avgift, høy sats",
+            "number": "4",
+            "displayName": "4: (100%) Direktepostert utgående avgift, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 5,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5",
+            "name": "Ingen utgående avgift (innenfor mva-loven)",
+            "number": "5",
+            "displayName": "5: (0%) Ingen utgående avgift (innenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 6,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/6",
+            "name": "Ingen utgående avgift (utenfor mva-loven)",
+            "number": "6",
+            "displayName": "6: (0%) Ingen utgående avgift (utenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 7,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/7",
+            "name": "Ingen avgiftsbehandling (inntekter)",
+            "number": "7",
+            "displayName": "7: (0%) Ingen avgiftsbehandling (inntekter)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 11,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11",
+            "name": "Fradrag inngående avgift, middels sats",
+            "number": "11",
+            "displayName": "11: (15%) Fradrag inngående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 12,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12",
+            "name": "Fradrag inngående avgift, lav sats",
+            "number": "13",
+            "displayName": "13: (12%) Fradrag inngående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 13,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13",
+            "name": "Grunnlag inngående avgift ved innførsel, høy sats",
+            "number": "21",
+            "displayName": "21: (0%) Grunnlag inngående avgift ved innførsel, høy sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 14,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14",
+            "name": "Grunnlag inngående avgift ved innførsel, middels sats",
+            "number": "22",
+            "displayName": "22: (0%) Grunnlag inngående avgift ved innførsel, middels sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 21,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/21",
+            "name": "Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-21",
+            "displayName": "UT-21: (100%) Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 22,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/22",
+            "name": "Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-22",
+            "displayName": "UT-22: (100%) Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 23,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/23",
+            "name": "Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "number": "14",
+            "displayName": "14: (100%) Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 24,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/24",
+            "name": "Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "number": "15",
+            "displayName": "15: (100%) Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 31,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31",
+            "name": "Utgående avgift, middels sats",
+            "number": "31",
+            "displayName": "31: (15%) Utgående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 32,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32",
+            "name": "Utgående avgift, lav sats",
+            "number": "33",
+            "displayName": "33: (12%) Utgående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 34,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "number": "86",
+            "displayName": "86: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 35,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "number": "87",
+            "displayName": "87: (25%) Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 41,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/41",
+            "name": "Direktepostert utgående avgift, middels sats",
+            "number": "41",
+            "displayName": "41: (100%) Direktepostert utgående avgift, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 42,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/42",
+            "name": "Direktepostert utgående avgift, lav sats",
+            "number": "42",
+            "displayName": "42: (100%) Direktepostert utgående avgift, lav sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 51,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/51",
+            "name": "Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "number": "51",
+            "displayName": "51: (0%) Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 52,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/52",
+            "name": "Avgiftsfri utførsel av varer og tjenester",
+            "number": "52",
+            "displayName": "52: (0%) Avgiftsfri utførsel av varer og tjenester",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 81,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats",
+            "number": "81",
+            "displayName": "81: (25%) Fradrag inngående avgift ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 82,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/82",
+            "name": "Inngående avgift uten fradrag ved innførsel, høy sats",
+            "number": "82",
+            "displayName": "82: (25%) Inngående avgift uten fradrag ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 83,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/83",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats",
+            "number": "83",
+            "displayName": "83: (15%) Fradrag inngående avgift ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 84,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/84",
+            "name": "Inngående avgift uten fradrag ved innførsel, middels sats",
+            "number": "84",
+            "displayName": "84: (15%) Inngående avgift uten fradrag ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 85,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/85",
+            "name": "Grunnlag, avgiftsfri innførsel",
+            "number": "85",
+            "displayName": "85: (0%) Grunnlag, avgiftsfri innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 88,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/88",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "number": "88",
+            "displayName": "88: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 89,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/89",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "number": "89",
+            "displayName": "89: (12%) Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 91,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/91",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "number": "91",
+            "displayName": "91: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 92,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/92",
+            "name": "Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "number": "92",
+            "displayName": "92: (25%) Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 111,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111",
+            "name": "Fradrag inngående avgift, råfisk",
+            "number": "12",
+            "displayName": "12: (11,11%) Fradrag inngående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 230,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230",
+            "name": "Grunnlag, ingen inngående avgift ved innførsel",
+            "number": "20",
+            "displayName": "20: (0%) Grunnlag, ingen inngående avgift ved innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 311,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311",
+            "name": "Utgående avgift, råfisk",
+            "number": "32",
+            "displayName": "32: (11,11%) Utgående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/500",
+            "name": "Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "number": "URED-13",
+            "displayName": "URED-13: (12%) Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 501,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/501",
+            "name": "Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "number": "RED-13",
+            "displayName": "RED-13: (6%) Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "percentage": 6,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 550,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550",
+            "name": "Tap på krav - kode 1",
+            "number": "TAP-1",
+            "displayName": "TAP-1: (25%) Tap på krav - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 551,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551",
+            "name": "Tap på krav - kode 11",
+            "number": "TAP-11",
+            "displayName": "TAP-11: (15%) Tap på krav - kode 11",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            }
+          },
+          {
+            "id": 552,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/552",
+            "name": "Tap på krav - kode 12",
+            "number": "TAP-12",
+            "displayName": "TAP-12: (11,11%) Tap på krav - kode 12",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 111,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111"
+            }
+          },
+          {
+            "id": 553,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553",
+            "name": "Tap på krav - kode 13",
+            "number": "TAP-13",
+            "displayName": "TAP-13: (12%) Tap på krav - kode 13",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            }
+          },
+          {
+            "id": 554,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/554",
+            "name": "Uttak - kode 3",
+            "number": "UTTAK-3",
+            "displayName": "UTTAK-3: (25%) Uttak - kode 3",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            }
+          },
+          {
+            "id": 555,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/555",
+            "name": "Uttak - kode 5",
+            "number": "UTTAK-5",
+            "displayName": "UTTAK-5: (0%) Uttak - kode 5",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 5,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5"
+            }
+          },
+          {
+            "id": 556,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/556",
+            "name": "Uttak - kode 31",
+            "number": "UTTAK-31",
+            "displayName": "UTTAK-31: (15%) Uttak - kode 31",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 31,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31"
+            }
+          },
+          {
+            "id": 557,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/557",
+            "name": "Uttak - kode 32",
+            "number": "UTTAK-32",
+            "displayName": "UTTAK-32: (11,11%) Uttak - kode 32",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 311,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311"
+            }
+          },
+          {
+            "id": 558,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/558",
+            "name": "Uttak - kode 33",
+            "number": "UTTAK-33",
+            "displayName": "UTTAK-33: (12%) Uttak - kode 33",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 32,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32"
+            }
+          },
+          {
+            "id": 559,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559",
+            "name": "Mva-justering for kapitalvarer - kode 1",
+            "number": "JUST-1",
+            "displayName": "JUST-1: (25%) Mva-justering for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 560,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 1",
+            "number": "TILB-1",
+            "displayName": "TILB-1: (25%) Tilbakeføring av mva for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 561,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/561",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 81",
+            "number": "TILB-81",
+            "displayName": "TILB-81: (25%) Tilbakeføring av mva for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 562,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/562",
+            "name": "Mva-justering for kapitalvarer - kode 81",
+            "number": "JUST-81",
+            "displayName": "JUST-81: (25%) Mva-justering for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 600,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/600",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "number": "81-K",
+            "displayName": "81-K: (25%) Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 601,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/601",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "number": "83-K",
+            "displayName": "83-K: (15%) Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 602,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/602",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "number": "86-K",
+            "displayName": "86-K: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 603,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/603",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "number": "88-K",
+            "displayName": "88-K: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 604,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/604",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "number": "91-K",
+            "displayName": "91-K: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 0,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0",
+            "name": "Ingen avgiftsbehandling",
+            "number": "0",
+            "displayName": "0: (0%) Ingen avgiftsbehandling",
+            "percentage": 0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:15.602334",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/token/session/>whoAmI",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "employeeId": 18689947,
+          "actualEmployeeId": 18689948,
+          "employee": {
+            "id": 18689947,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18689947"
+          },
+          "companyId": 108455365,
+          "company": {
+            "id": 108455365,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/company/108455365"
+          },
+          "language": "no",
+          "loggedInWithConnect": false,
+          "employeeIsProxy": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:18.700275",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "emily.smith@example.org"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18689955,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18689955",
+            "firstName": "Emily",
+            "lastName": "Smith",
+            "displayName": "Emily Smith",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "emily.smith@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 970296,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/970296"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108455365,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:20.695116",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "811374563"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108455390,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108455390",
+            "name": "Greenfield Ltd",
+            "organizationNumber": "811374563",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Greenfield Ltd (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405758127,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405758127"
+            },
+            "physicalAddress": {
+              "id": 405758126,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405758126"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 477411728,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/477411728"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:22.913844",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 200,
+      "request_params": {
+        "name": "System Upgrade"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 402045337,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402045337",
+            "name": "System Upgrade",
+            "number": "1",
+            "displayName": "1 System Upgrade",
+            "description": "",
+            "projectManager": {
+              "id": 18689955,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18689955"
+            },
+            "department": null,
+            "mainProject": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "customer": {
+              "id": 108455390,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108455390"
+            },
+            "isClosed": false,
+            "isReadyForInvoicing": false,
+            "isInternal": false,
+            "isOffer": false,
+            "isFixedPrice": false,
+            "projectCategory": null,
+            "deliveryAddress": null,
+            "boligmappaAddress": null,
+            "displayNameFormat": "NAME_STANDARD",
+            "reference": "",
+            "externalAccountsNumber": "",
+            "discountPercentage": 0.0,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "fixedprice": 0,
+            "contributionMarginPercent": 0,
+            "numberOfSubProjects": 0,
+            "numberOfProjectParticipants": 1,
+            "orderLines": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "markUpOrderLines": 0.0,
+            "markUpFeesEarned": 0.0,
+            "isPriceCeiling": false,
+            "priceCeilingAmount": 0.0,
+            "projectHourlyRates": [
+              {
+                "id": 11092069,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11092069"
+              }
+            ],
+            "forParticipantsOnly": false,
+            "participants": [
+              {
+                "id": 15647000,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15647000"
+              }
+            ],
+            "contact": null,
+            "attention": null,
+            "invoiceComment": "",
+            "invoicingPlan": [],
+            "preliminaryInvoice": null,
+            "generalProjectActivitiesPerProjectOnly": false,
+            "projectActivities": [],
+            "hierarchyNameAndNumber": "1 System Upgrade",
+            "invoiceDueDate": 14,
+            "invoiceDueDateType": "DAYS",
+            "invoiceReceiverEmail": "",
+            "overdueNoticeEmail": "",
+            "accessType": "WRITE",
+            "useProductNetPrice": false,
+            "ignoreCompanyProductDiscountAgreement": false,
+            "customerName": "Greenfield Ltd",
+            "hierarchyLevel": 0,
+            "projectManagerNameAndNumber": "Emily Smith",
+            "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+            "invoiceOnAccountVatHigh": false,
+            "invoiceReserveTotalAmountCurrency": 0,
+            "accountingDimensionValues": []
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:25.479906",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity",
+      "status": 200,
+      "request_params": {
+        "projectId": 402045337
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 5,
+        "from": 0,
+        "count": 5,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 6000178,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000178",
+            "name": "Administrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "GENERAL_ACTIVITY",
+            "isProjectActivity": false,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Administrasjon",
+            "deletable": true
+          },
+          {
+            "id": 6000179,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000179",
+            "name": "Ferie",
+            "number": "",
+            "description": "",
+            "activityType": "GENERAL_ACTIVITY",
+            "isProjectActivity": false,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Ferie",
+            "deletable": false
+          },
+          {
+            "id": 6000180,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000180",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          },
+          {
+            "id": 6000181,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000181",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 6000203,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000203",
+            "name": "Rådgivning",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Rådgivning",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:30.823589",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402045337
+        },
+        "activity": {
+          "id": 6000203
+        },
+        "employee": {
+          "id": 18689955
+        },
+        "date": "2024-12-19",
+        "hours": 27,
+        "hourlyRate": 1050,
+        "comment": "Consulting work on System Upgrade project"
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": null,
+            "message": "Startdato for prosjektet 1 System Upgrade er 2026-01-01. Det kan ikke registreres timer før denne datoen.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "4fa3fb2c-8a21-4843-9f94-127b6ff2a68f"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:34.872370",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402045337
+        },
+        "activity": {
+          "id": 6000203
+        },
+        "employee": {
+          "id": 18689955
+        },
+        "date": "2026-01-02",
+        "hours": 27,
+        "hourlyRate": 1050,
+        "comment": "Consulting work on System Upgrade project"
+      },
+      "response_body": {
+        "value": {
+          "id": 175913055,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175913055",
+          "project": {
+            "id": 402045337,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402045337"
+          },
+          "activity": {
+            "id": 6000203,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6000203"
+          },
+          "date": "2026-01-02",
+          "hours": 27.0,
+          "chargeableHours": 27.0,
+          "employee": {
+            "id": 18689955,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18689955"
+          },
+          "timeClocks": [],
+          "comment": "Consulting work on System Upgrade project",
+          "locked": false,
+          "chargeable": false,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 27.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:38.186072",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project/402045337/orderline",
+      "status": 404,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "status": 404,
+        "code": 6000,
+        "message": "Object not found",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": null,
+        "requestId": "9d4ad588-0403-4753-a05d-97ba1a80ebf4"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:40.721338",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project/402045337/hourlyRate",
+      "status": 404,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "status": 404,
+        "code": 6000,
+        "message": "Object not found",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": null,
+        "requestId": "33fb0604-9983-4318-9dee-b40de40cedae"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:43.333467",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project/hourlyRate",
+      "status": 400,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402045337
+        },
+        "activity": {
+          "id": 6000203
+        },
+        "hourlyRate": 1050
+      },
+      "response_body": {
+        "status": 400,
+        "code": 4000,
+        "message": "HTTP 405 Method Not Allowed",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": null,
+        "requestId": "9b6726e6-24dc-4661-b269-aaae38fb852d"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:46.538329",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/order",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "orderDate": "2026-01-02",
+        "customer": {
+          "id": 108455390
+        },
+        "project": {
+          "id": 402045337
+        },
+        "currency": {
+          "id": 1
+        }
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "deliveryDate",
+            "message": "Kan ikke være null.",
+            "path": "null.deliveryDate",
+            "rootId": null
+          }
+        ],
+        "requestId": "aa01ea82-87e3-45c6-94e0-a72e2557a4a0"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:49.130612",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/order",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "orderDate": "2026-01-02",
+        "deliveryDate": "2026-01-02",
+        "customer": {
+          "id": 108455390
+        },
+        "project": {
+          "id": 402045337
+        },
+        "currency": {
+          "id": 1
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 402045394,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/order/402045394",
+          "customer": {
+            "id": 108455390,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108455390"
+          },
+          "contact": null,
+          "attn": null,
+          "displayName": "2 Ordre",
+          "receiverEmail": "",
+          "overdueNoticeEmail": "",
+          "number": "2",
+          "reference": "",
+          "department": null,
+          "orderDate": "2026-01-02",
+          "project": {
+            "id": 402045337,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402045337"
+          },
+          "invoiceComment": "",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "isShowOpenPostsOnInvoices": false,
+          "isClosed": false,
+          "deliveryDate": "2026-01-02",
+          "deliveryAddress": null,
+          "deliveryComment": "",
+          "isPrioritizeAmountsIncludingVat": false,
+          "orderLineSorting": "PRODUCT",
+          "orderGroups": [],
+          "orderLines": [],
+          "isSubscription": false,
+          "subscriptionDuration": 0,
+          "subscriptionDurationType": "MONTHS",
+          "subscriptionPeriodsOnInvoice": 0,
+          "subscriptionPeriodsOnInvoiceType": "MONTHS",
+          "subscriptionInvoicingTimeInAdvanceOrArrears": "ADVANCE",
+          "subscriptionInvoicingTime": 0,
+          "subscriptionInvoicingTimeType": "MONTHS",
+          "isSubscriptionAutoInvoicing": false,
+          "preliminaryInvoice": {
+            "id": 2147650208,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147650208"
+          },
+          "attachment": [],
+          "sendMethodDescription": "Faktura må sendes manuelt.",
+          "invoiceOnAccountVatHigh": false,
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "markUpOrderLines": 0,
+          "discountPercentage": 0.0,
+          "customerName": "Greenfield Ltd",
+          "projectManagerNameAndNumber": "",
+          "travelReports": [],
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:52.001832",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/product",
+      "status": 200,
+      "request_params": {
+        "name": "Rådgivning"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:55.011763",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/product",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Rådgivning",
+        "number": "RADGIVNING",
+        "priceExcludingVatCurrency": 1050,
+        "vatType": {
+          "id": 3
+        },
+        "isStockItem": false
+      },
+      "response_body": {
+        "value": {
+          "id": 84424305,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/product/84424305",
+          "name": "Rådgivning",
+          "number": "RADGIVNING",
+          "displayNumber": "RADGIVNING",
+          "description": "",
+          "orderLineDescription": "",
+          "costExcludingVatCurrency": 0,
+          "costPrice": 0,
+          "priceExcludingVatCurrency": 1050,
+          "priceIncludingVatCurrency": 1312.5,
+          "isInactive": false,
+          "productUnit": null,
+          "incomingStock": 0,
+          "outgoingStock": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "department": null,
+          "account": null,
+          "supplier": null,
+          "resaleProduct": null,
+          "isDeletable": false,
+          "hasSupplierProductConnected": false,
+          "image": null,
+          "displayName": "RADGIVNING Rådgivning",
+          "mainSupplierProduct": null,
+          "isRoundPriceIncVat": false,
+          "priceInTargetCurrency": 0,
+          "purchasePriceCurrency": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:15:58.492921",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/order/orderline",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "order": {
+          "id": 402045394
+        },
+        "product": {
+          "id": 84424305
+        },
+        "count": 27,
+        "unitPriceExcludingVatCurrency": 1050,
+        "vatType": {
+          "id": 3
+        },
+        "description": "Rådgivning - 27 timer"
+      },
+      "response_body": {
+        "value": {
+          "id": 1607582500,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607582500",
+          "product": {
+            "id": 84424305,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/product/84424305"
+          },
+          "inventory": null,
+          "description": "Rådgivning - 27 timer",
+          "displayName": "RADGIVNING Rådgivning. Rådgivning - 27 timer",
+          "count": 27.0,
+          "unitCostCurrency": 0.0,
+          "unitPriceExcludingVatCurrency": 1050.0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markup": 0.0,
+          "discount": 0.0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "amountExcludingVatCurrency": 28350.0,
+          "amountIncludingVatCurrency": 35437.5,
+          "vendor": null,
+          "order": {
+            "id": 402045394,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/order/402045394"
+          },
+          "unitPriceIncludingVatCurrency": 1312.5,
+          "isSubscription": false,
+          "subscriptionPeriodStart": null,
+          "subscriptionPeriodEnd": null,
+          "orderGroup": null,
+          "sortIndex": 0,
+          "isPicked": false,
+          "pickedDate": null,
+          "orderedQuantity": 0,
+          "isCharged": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:16:01.711450",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 422,
+      "request_params": {
+        "sendToCustomer": false
+      },
+      "request_body": {
+        "orders": [
+          {
+            "id": 402045394
+          }
+        ],
+        "invoiceDate": "2026-01-02"
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "invoiceDueDate",
+            "message": "Kan ikke være null.",
+            "path": "null.invoiceDueDate",
+            "rootId": null
+          }
+        ],
+        "requestId": "025a70d0-b755-410d-a596-9f2140150b6f"
+      }
+    }
+  ]
+}

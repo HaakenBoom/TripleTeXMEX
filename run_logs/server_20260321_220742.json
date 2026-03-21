@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:07:42.401288",
+  "prompt": "Sie haben ein Angebotsschreiben erhalten (siehe beigefugte PDF) fuer einen neuen Mitarbeiter. Fuehren Sie das vollstaendige Onboarding durch: erstellen Sie den Mitarbeiter, weisen Sie die richtige Abteilung zu, richten Sie die Beschaeftigungsdetails mit Prozentsatz und Jahresgehalt ein, und konfigurieren Sie die Standardarbeitszeit.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Emma Richter (id=18678085)",
+  "error": null,
+  "elapsed_seconds": 5.72
+}

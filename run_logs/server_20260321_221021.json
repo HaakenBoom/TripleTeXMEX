@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:10:21.220805",
+  "prompt": "Du har mottatt en leverandorfaktura (se vedlagt PDF). Registrer fakturaen i Tripletex. Opprett leverandoren hvis den ikke finnes. Bruk riktig utgiftskonto og inngaende MVA.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609178374)",
+  "error": null,
+  "elapsed_seconds": 6.87
+}

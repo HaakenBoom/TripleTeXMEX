@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:36:50.757202",
+  "prompt": "Me sende ein faktura på 9364 EUR til Elvdal AS (org.nr 808826054) då kursen var 11.65 NOK/EUR. Kunden har no betalt, men kursen er 12.35 NOK/EUR. Registrer betalinga og bokfør valutadifferansen (agio) på rett konto.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "FX correction posted: Agiotap 6554.80 kr (9364 EUR × (12.35-11.65) NOK/EUR). Voucher 609190092.",
+  "error": null,
+  "elapsed_seconds": 4.7
+}

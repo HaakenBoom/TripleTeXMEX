@@ -1,0 +1,264 @@
+{
+  "timestamp": "2026-03-21T21:08:52.383769",
+  "prompt_fingerprint": "731bad9a2979",
+  "prompt": "Vous avez recu une lettre d'offre (voir PDF ci-joint) pour un nouvel employe. Effectuez l'integration complete : creez l'employe, attribuez le bon departement, configurez les details d'emploi avec le pourcentage et le salaire annuel, et configurez les heures de travail standard.",
+  "prompt_language": "unknown",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Louise",
+      "lastName": "Moreau",
+      "dateOfBirth": "1986-10-01",
+      "isAdministrator": false,
+      "employment": {
+        "startDate": "2026-07-22",
+        "annualSalary": 700000,
+        "employmentPercentage": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "workingHours": {
+        "hoursPerDay": 6.0
+      },
+      "comments": "Projeteur Lieder, Département Production. Période d'essai de 6 mois avec préavis mutuel de 14 jours. Préavis de 3 mois après la période d'essai.",
+      "startDate": "2026-07-22",
+      "annualSalary": 700000,
+      "employmentPercentage": 80.0,
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Vous avez recu une lettre d'offre (voir PDF ci-joint) pour un nouvel employe. Effectuez l'integration complete : creez l'employe, attribuez le bon departement, configurez les details d'emploi avec le pourcentage et le salaire annuel, et configurez les heures de travail standard.",
+    "_file_contents": [
+      "[File: files/tilbudsbrev_fr_03.pdf]\nTILBUD OM STILLING\nKjaere Louise Moreau,\nVi har gleden av a tilby deg stillingen som Prosjektleder i avdeling Produksjon.\nDetaljer\nFodselsdato: 01.10.1986\nTiltredelse: 22.07.2026\nAnsettelsesform: Fast stilling\nStillingsprosent: 80.0%\nArslonn: 700000 kr\nArbeidstid: 6.0 timer per dag\nVilkar: Ansettelsesforholdet reguleres av arbeidsmiljoloven og bedriftens personalhandbok. Det gjelder en provetid pa 6\nmaneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden er oppsigelsesfristen 3 maneder. Ferie og\nferiepenger folger ferieloven.\nMed vennlig hilsen,\n___________________________\nHR-avdelingen"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/tilbudsbrev_fr_03.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDYwMgo+PgpzdHJlYW0KeJyNVMtu2zAQvOcr9lKgBVqGesu5NUjcpnX6itprQYNrmTJNuqTsIH/fpWRHdpIWEiBQInd2ZskdxvDpjLOsgPuzywrOpxFEJeMcqgVcV2Eq5imLUigmURgqCa+rm9nlzyv4egt39Dm7+fLhDVTNPvx8GkMUnWRICFlCkRRskncJPjcCHcLMbpVHuLUOxfbtUY49gOesKDvALwVL4aDWKNGA2IGAVun5A0iswdOnVqamFW/X8M1Z3+CqDbEOFEVLDMthQW5XvrGGneilipMX9OZ5xnhPf4Wt0A26p7CXysyTlGW8g02t9Ki9FK29+P8ORUXMJtExllMyzqJJmY8ipdky7g9H6dZR6drjSNIBG8eMFyzm8SjSrJwcOuK98di2gdMvrFuPIz7CT4VvH89xFHees7Rvprs9zG/o4NG0I8mHBCVn/NUo0jRhxaQv2HltjRnJNeAKHh5YjWqlLKYh2vPNUUnaITmScoDmjJNZ1uSFDb1S1E8T8CHBH3gkT4uSlZ1oztKYAu6DDfVKuAs4Pe6l1RJbcFhvNdnad/7s9a6Vbqy2O7KmrWGO0qlFi8YHKd4aoZfCyLldMSCLQd2gDp6laDrLHVK1sBFwaEb4fqIvp7bt7JmwrEw7fWthOtOvUQJ1FtVKNCGt8UqqGuxm41Xd63bKtwyuqQz3yEbE9Pc0imYT2KdmMEWnkKoZRA2S0pSVRbfpixC1QbqUHCys7oYw1e0Fe3bVJXS58t6Dt6SdYowmvUtFIszzmzHJIpYkXfjvfz/PYTSkfR9+/PHucC+iOQT+BRY+oGUKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago2IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlIC9UeXBlMQovVHlwZSAvRm9udAo+PgplbmRvYmoKNyAwIG9iago8PAovRm9udCA8PC9GMSA1IDAgUgovRjIgNiAwIFI+PgovUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KPj4KZW5kb2JqCjggMCBvYmoKPDwKL0NyZWF0aW9uRGF0ZSAoRDoyMDI2MDMwNDE5MTgwNlopCj4+CmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDEwMiAwMDAwMCBuIAowMDAwMDAwMjA1IDAwMDAwIG4gCjAwMDAwMDAyODUgMDAwMDAgbiAKMDAwMDAwMDk1OSAwMDAwMCBuIAowMDAwMDAxMDYxIDAwMDAwIG4gCjAwMDAwMDExNTggMDAwMDAgbiAKMDAwMDAwMTI1NSAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDkKL1Jvb3QgMiAwIFIKL0luZm8gOCAwIFIKL0lEIFs8N0I5MkMwRkRCNDFDRUNGRDE3RTgxQjY5N0QwOTFFRjQ+PDdCOTJDMEZEQjQxQ0VDRkQxN0U4MUI2OTdEMDkxRUY0Pl0KPj4Kc3RhcnR4cmVmCjEzMTAKJSVFT0YK",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Louise Moreau (id=18669653)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.06,
+  "phase_times": {
+    "parse": 1.81,
+    "prefetch": 0.29,
+    "handler": 0.93
+  },
+  "total_api_calls": 4,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 4
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 3,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18669653
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2837416
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3735987
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T21:08:51.452712",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 959078,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/959078",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:08:51.755716",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Louise",
+        "lastName": "Moreau",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 959078
+        },
+        "allowInformationRegistration": true,
+        "dateOfBirth": "1986-10-01",
+        "comments": "Projeteur Lieder, Département Production. Période d'essai de 6 mois avec préavis mutuel de 14 jours. Préavis de 3 mois après la période d'essai."
+      },
+      "response_body": {
+        "value": {
+          "id": 18669653,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669653",
+          "firstName": "Louise",
+          "lastName": "Moreau",
+          "displayName": "Louise Moreau",
+          "employeeNumber": "",
+          "dateOfBirth": "1986-10-01",
+          "email": "",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "Projeteur Lieder, Département Production. Période d'essai de 6 mois avec préavis mutuel de 14 jours. Préavis de 3 mois après la période d'essai.",
+          "address": null,
+          "department": {
+            "id": 959078,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/959078"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108425613,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:08:52.053498",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18669653
+        },
+        "startDate": "2026-07-22",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2837416,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2837416",
+          "employee": {
+            "id": 18669653,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18669653"
+          },
+          "employmentId": "",
+          "startDate": "2026-07-22",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T21:08:52.382972",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2837416
+        },
+        "date": "2026-07-22",
+        "annualSalary": 700000,
+        "percentageOfFullTimeEquivalent": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "response_body": {
+        "value": {
+          "id": 3735987,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3735987",
+          "employment": {
+            "id": 2837416,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2837416"
+          },
+          "date": "2026-07-22",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 80.0,
+          "annualSalary": 700000,
+          "hourlyWage": 359,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 58333.33
+        }
+      }
+    }
+  ]
+}

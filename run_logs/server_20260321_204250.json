@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T20:42:50.950385",
+  "prompt": "You received a supplier invoice (see attached PDF). Register the invoice in Tripletex. Create the supplier if it does not exist. Use the correct expense account and input VAT.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609143317)",
+  "error": null,
+  "elapsed_seconds": 4.05
+}

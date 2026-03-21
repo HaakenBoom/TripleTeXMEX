@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:57:28.469221",
+  "prompt": "Du har motteke ein arbeidskontrakt (sjaa vedlagt PDF). Opprett den tilsette i Tripletex med alle detaljar fraa kontrakten: personnummer, fodselsdato, avdeling, stillingskode, lonn, stillingsprosent og startdato.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Liv Aasen (id=18685776)",
+  "error": null,
+  "elapsed_seconds": 8.07
+}

@@ -833,6 +833,93 @@ def print_summary(all_results: list[dict]):
         print(f"  3. REDUCE CALLS (for efficiency bonus on perfect tasks): {'; '.join(efficient_targets[:5])}")
 
 
+def print_trend_analysis(current_results: list[dict], previous_results: list[dict]):
+    """Compare current batch against previous runs to detect trends."""
+    if not previous_results:
+        return
+
+    print(f"\n{'═' * 70}")
+    print(f"TREND ANALYSIS (latest {len(current_results)} vs previous {len(previous_results)} runs)")
+    print(f"{'═' * 70}\n")
+
+    def _stats(results):
+        ok = sum(1 for r in results if classify_root_cause(r) == "OK")
+        total_score = sum(
+            r.get("score_estimate", {}).get("estimated_score", 0)
+            for r in results
+            if isinstance(r.get("score_estimate", {}).get("estimated_score", 0), (int, float))
+        )
+        total_errors = sum(r["errors_4xx"] for r in results)
+        avg_calls = sum(r["total_calls"] for r in results) / max(len(results), 1)
+        det = sum(1 for r in results if r["path"] == "deterministic")
+        return {"ok": ok, "total": len(results), "score": total_score,
+                "errors": total_errors, "avg_calls": avg_calls, "deterministic": det}
+
+    curr = _stats(current_results)
+    prev = _stats(previous_results)
+
+    def _arrow(curr_val, prev_val, higher_is_better=True):
+        if curr_val > prev_val:
+            return "+" if higher_is_better else "!"
+        elif curr_val < prev_val:
+            return "-" if higher_is_better else "+"
+        return "="
+
+    success_rate_curr = curr["ok"] / max(curr["total"], 1) * 100
+    success_rate_prev = prev["ok"] / max(prev["total"], 1) * 100
+    det_rate_curr = curr["deterministic"] / max(curr["total"], 1) * 100
+    det_rate_prev = prev["deterministic"] / max(prev["total"], 1) * 100
+
+    print(f"  {'Metric':<25} {'Current':>10} {'Previous':>10} {'Delta':>10}")
+    print(f"  {'─' * 60}")
+    print(f"  {'Success rate':<25} {success_rate_curr:>9.0f}% {success_rate_prev:>9.0f}% {success_rate_curr - success_rate_prev:>+9.0f}% {_arrow(success_rate_curr, success_rate_prev)}")
+    print(f"  {'Total est. score':<25} {curr['score']:>10.1f} {prev['score']:>10.1f} {curr['score'] - prev['score']:>+10.1f} {_arrow(curr['score'], prev['score'])}")
+    print(f"  {'Total 4xx errors':<25} {curr['errors']:>10} {prev['errors']:>10} {curr['errors'] - prev['errors']:>+10} {_arrow(curr['errors'], prev['errors'], higher_is_better=False)}")
+    print(f"  {'Avg API calls/run':<25} {curr['avg_calls']:>10.1f} {prev['avg_calls']:>10.1f} {curr['avg_calls'] - prev['avg_calls']:>+10.1f} {_arrow(curr['avg_calls'], prev['avg_calls'], higher_is_better=False)}")
+    print(f"  {'Deterministic path %':<25} {det_rate_curr:>9.0f}% {det_rate_prev:>9.0f}% {det_rate_curr - det_rate_prev:>+9.0f}% {_arrow(det_rate_curr, det_rate_prev)}")
+
+    # Per-task regression detection
+    curr_by_type = defaultdict(list)
+    prev_by_type = defaultdict(list)
+    for r in current_results:
+        curr_by_type[r["task_type"]].append(r)
+    for r in previous_results:
+        prev_by_type[r["task_type"]].append(r)
+
+    regressions = []
+    improvements = []
+    for task_type in set(list(curr_by_type.keys()) + list(prev_by_type.keys())):
+        curr_runs = curr_by_type.get(task_type, [])
+        prev_runs = prev_by_type.get(task_type, [])
+        if not curr_runs or not prev_runs:
+            continue
+
+        def _best_score(runs):
+            scores = [r.get("score_estimate", {}).get("estimated_score", 0) for r in runs]
+            return max((s for s in scores if isinstance(s, (int, float))), default=0)
+
+        curr_best = _best_score(curr_runs)
+        prev_best = _best_score(prev_runs)
+        delta = curr_best - prev_best
+        if delta < -0.5:
+            regressions.append((task_type, prev_best, curr_best, delta))
+        elif delta > 0.5:
+            improvements.append((task_type, prev_best, curr_best, delta))
+
+    if regressions:
+        print(f"\n  REGRESSIONS (score dropped):")
+        for task, prev_s, curr_s, delta in sorted(regressions, key=lambda x: x[3]):
+            print(f"    {task}: {prev_s:.1f} -> {curr_s:.1f} ({delta:+.1f})")
+
+    if improvements:
+        print(f"\n  IMPROVEMENTS (score increased):")
+        for task, prev_s, curr_s, delta in sorted(improvements, key=lambda x: -x[3]):
+            print(f"    {task}: {prev_s:.1f} -> {curr_s:.1f} ({delta:+.1f})")
+
+    if not regressions and not improvements:
+        print(f"\n  No significant per-task score changes detected.")
+
+
 def main():
     log_dir = Path("run_logs")
     if not log_dir.exists():
@@ -846,14 +933,34 @@ def main():
 
     # Parse args
     verbose = "-v" in sys.argv or "--verbose" in sys.argv
+    show_all = "-a" in sys.argv or "--all" in sys.argv
     filter_str = None
-    for arg in sys.argv[1:]:
-        if not arg.startswith("-"):
-            filter_str = arg
-            break
+    limit = 10  # Default to latest 10 runs
+
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        if args[i] in ("-n", "--limit") and i + 1 < len(args):
+            try:
+                limit = int(args[i + 1])
+            except ValueError:
+                pass
+            i += 2
+            continue
+        if not args[i].startswith("-"):
+            filter_str = args[i]
+        i += 1
 
     if filter_str:
         run_files = [f for f in run_files if filter_str in f.name]
+
+    # Split into current and previous batches for trend analysis
+    all_run_files = run_files
+    previous_files = []
+    if not show_all and len(run_files) > limit:
+        previous_files = run_files[:-limit]
+        run_files = run_files[-limit:]
+        print(f"Showing latest {len(run_files)} of {len(all_run_files)} runs (use -a/--all for all, -n N to change limit)\n")
 
     all_results = []
     for f in run_files:
@@ -867,8 +974,19 @@ def main():
         all_results.append(r)
         print_run(f.name, r, verbose)
 
+    # Load previous results for trend comparison
+    previous_results = []
+    for f in previous_files:
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            previous_results.append(analyze_run(data))
+        except Exception:
+            continue
+
     if all_results:
         print_summary(all_results)
+        if previous_results:
+            print_trend_analysis(all_results, previous_results)
 
 
 if __name__ == "__main__":

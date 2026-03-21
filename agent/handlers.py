@@ -1314,15 +1314,16 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
             cost_body["amountCurrencyIncVat"] = cost["amount"]
             cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
         if cost.get("description"):
-            cost_body["description"] = cost["description"]
+            cost_body["comments"] = cost["description"]
         if cost.get("category"):
             cost_body["category"] = cost["category"]
         if cost.get("paymentType"):
-            cost_body["paymentType"] = cost["paymentType"]
+            pt = cost["paymentType"]
+            cost_body["paymentType"] = pt if isinstance(pt, dict) else {"id": pt}
         if cost.get("rate") is not None:
             cost_body["rate"] = cost["rate"]
-        if cost.get("count") is not None:
-            cost_body["count"] = cost["count"]
+        if cost.get("isPaidByEmployee") is not None:
+            cost_body["isPaidByEmployee"] = cost["isPaidByEmployee"]
 
         try:
             cost_result = client.post("/travelExpense/cost", cost_body)
@@ -2243,8 +2244,35 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
                     tx["amount"] = float(amt_str)
                 except ValueError:
                     continue
+            elif k in ("inn", "inntekt", "credit", "crédito", "crédit"):
+                # Separate income column (positive amount)
+                amt_str = val.strip().replace(" ", "").replace("\xa0", "")
+                if not amt_str:
+                    continue
+                if "," in amt_str and "." in amt_str:
+                    amt_str = amt_str.replace(".", "").replace(",", ".")
+                elif "," in amt_str:
+                    amt_str = amt_str.replace(",", ".")
+                try:
+                    tx["amount"] = float(amt_str)
+                except ValueError:
+                    continue
+            elif k in ("ut", "utgift", "debit", "débito", "débit"):
+                # Separate outgoing column (negative amount)
+                amt_str = val.strip().replace(" ", "").replace("\xa0", "")
+                if not amt_str:
+                    continue
+                if "," in amt_str and "." in amt_str:
+                    amt_str = amt_str.replace(".", "").replace(",", ".")
+                elif "," in amt_str:
+                    amt_str = amt_str.replace(",", ".")
+                try:
+                    tx["amount"] = -abs(float(amt_str))
+                except ValueError:
+                    continue
             elif k in ("beskrivelse", "description", "descripción", "descrição", "beschreibung",
-                        "tekst", "text", "referanse", "reference", "ref"):
+                        "tekst", "text", "referanse", "reference", "ref",
+                        "forklaring", "explicação", "explicación", "explication"):
                 tx["description"] = val.strip()
             elif k in ("kunde", "customer", "client", "cliente", "kundenr", "customer_ref"):
                 tx["customer_ref"] = val.strip()

@@ -2061,6 +2061,10 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
             })
             logger.info("Set placeholder dateOfBirth on employee %d for payroll", emp_id)
 
+    # Extract payroll period early — needed for employment startDate
+    payroll_month = entities.get("month", current_date.month)
+    payroll_year = entities.get("year", current_date.year)
+
     # Step 2: Ensure employment exists
     emp_resp = client.get("/employee/employment", {"employeeId": emp_id, "count": 10})
     employments = emp_resp.get("values", [])
@@ -2116,8 +2120,7 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         logger.info("Set salary: annual=%d, monthly=%d", annual_salary, monthly_salary)
 
     # Step 4: Create salary transaction (payroll run) for the month
-    payroll_month = entities.get("month", current_date.month)
-    payroll_year = entities.get("year", current_date.year)
+    # (payroll_month and payroll_year already extracted at top of function)
 
     # Use last day of month as the payroll date
     if payroll_month == 12:

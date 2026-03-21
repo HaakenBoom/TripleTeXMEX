@@ -1437,6 +1437,45 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
     # Phase 3: Build final postings
     # IMPORTANT: row must be >= 1 (Tripletex reserves row 0 for system-generated).
     # All postings sharing the same row must balance to zero.
+
+    # Detect if any posting is on an AP account (2400-2499) — needs supplier reference
+    supplier_id = None
+    for r in non_vat_entries:
+        if 2400 <= r["account_number"] <= 2499:
+            # Extract supplier info from description or voucher description
+            import re
+            desc = entities.get("description", "") + " " + (r["posting"].get("description") or "")
+            org_match = re.search(r'(?:Org\.?\s*(?:nr\.?|nummer)?:?\s*)(\d{6,9})', desc)
+            name_match = re.search(r'(?:fra|from|de|von)\s+(.+?)(?:\s*\(|\s*-\s*Org|\s*$)', desc, re.IGNORECASE)
+            if not name_match:
+                # Try "Leverandørgjeld - SupplierName"
+                name_match = re.search(r'(?:Leverandørgjeld|gjeld)\s*-\s*(.+?)(?:\s*\(|$)', desc, re.IGNORECASE)
+
+            supplier_name = name_match.group(1).strip() if name_match else None
+            org_number = org_match.group(1) if org_match else None
+
+            if supplier_name or org_number:
+                # Look up supplier
+                search_params: dict[str, Any] = {"count": 1}
+                if org_number:
+                    search_params["organizationNumber"] = org_number
+                elif supplier_name:
+                    search_params["name"] = supplier_name
+                supp_resp = client.get("/supplier", search_params)
+                supp_values = supp_resp.get("values", [])
+                if supp_values:
+                    supplier_id = supp_values[0]["id"]
+                else:
+                    # Create supplier
+                    supp_body: dict[str, Any] = {"name": supplier_name or f"Supplier {org_number}"}
+                    if org_number:
+                        supp_body["organizationNumber"] = org_number
+                    supp_result = client.post("/supplier", supp_body)
+                    if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
+                        supplier_id = supp_result["value"]["id"]
+                        logger.info("Created supplier '%s' (id=%d)", supp_body["name"], supplier_id)
+            break
+
     postings = []
     for idx, r in enumerate(non_vat_entries):
         p: dict[str, Any] = {
@@ -1450,6 +1489,9 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             p["vatType"] = {"id": r["vat_type_id"]}
         if r["posting"].get("description"):
             p["description"] = r["posting"]["description"]
+        # Add supplier reference to AP postings
+        if supplier_id and 2400 <= r["account_number"] <= 2499:
+            p["supplier"] = {"id": supplier_id}
         postings.append(p)
 
     body: dict[str, Any] = {
@@ -1459,7 +1501,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
     }
 
     result = client.post("/ledger/voucher", body)
-    logger.info("create_voucher result: %s", result)
+    _check_response(result, "POST /ledger/voucher")
     value = result.get("value", {})
     return f"Created voucher (id={value.get('id', '?')})"
 
@@ -2028,10 +2070,11 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         employment_id = employments[0]["id"]
         logger.info("Found existing employment %d for employee %d", employment_id, emp_id)
     else:
-        # Create employment
+        # Create employment — startDate must be before the payroll month
+        emp_start_year = min(payroll_year, current_date.year)
         emp_body: dict[str, Any] = {
             "employee": {"id": emp_id},
-            "startDate": f"{current_date.year}-01-01",
+            "startDate": f"{emp_start_year}-01-01",
             "isMainEmployer": True,
             "taxDeductionCode": "loennFraHovedarbeidsgiver",
         }
@@ -2089,6 +2132,7 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         "date": payroll_date,
         "year": payroll_year,
         "month": payroll_month,
+        "payslips": [{"employee": {"id": emp_id}}],
     }
     sal_result = client.post("/salary/transaction", sal_body)
     _check_response(sal_result, "POST /salary/transaction")

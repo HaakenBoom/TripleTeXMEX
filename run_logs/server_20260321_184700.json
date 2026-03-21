@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:47:00.888968",
+  "prompt": "Cree una dimensión contable personalizada \"Prosjekttype\" con los valores \"Forskning\" y \"Utvikling\". Luego registre un asiento en la cuenta 7000 por 14550 NOK, vinculado al valor de dimensión \"Forskning\".",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created dimension 'Prosjekttype' (index=1) with values [Forskning=18509, Utvikling=18510]. Posted voucher 609094797 for 14550 on account 7000 linked to dimension value 'Forskning' (id=18509).",
+  "error": null,
+  "elapsed_seconds": 10.56
+}

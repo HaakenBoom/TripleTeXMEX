@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:53:11.346832",
+  "prompt": "Erstellen Sie eine Rechnung für den Kunden Bergwerk GmbH (Org.-Nr. 967361690) mit drei Produktzeilen: Schulung (9995) zu 28050 NOK mit 25 % MwSt., Cloud-Speicher (8754) zu 3400 NOK mit 15 % MwSt. (Lebensmittel), und Systementwicklung (8751) zu 13300 NOK mit 0 % MwSt. (befreit).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147626580 for customer Bergwerk GmbH",
+  "error": null,
+  "elapsed_seconds": 18.36
+}

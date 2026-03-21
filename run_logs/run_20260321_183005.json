@@ -1,0 +1,363 @@
+{
+  "timestamp": "2026-03-21T18:30:05.201642",
+  "prompt_fingerprint": "ba7fb68cc834",
+  "prompt": "Vous avez recu une facture fournisseur (voir PDF ci-joint). Enregistrez la facture dans Tripletex. Creez le fournisseur s'il n'existe pas. Utilisez le bon compte de charges et la TVA deductible.",
+  "prompt_language": "fr",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_voucher",
+    "entities": {
+      "date": "2026-06-06",
+      "description": "Faktura INV-2026-8404 fra Étoile SARL - Nettverkstjenester",
+      "postings": [
+        {
+          "accountNumber": 6300,
+          "amount": 74200,
+          "description": "Nettverkstjenester (ekskl. MVA)"
+        },
+        {
+          "accountNumber": 2710,
+          "amount": 18550,
+          "description": "Fradragsberettiget MVA 25%"
+        },
+        {
+          "accountNumber": 2400,
+          "amount": -92750,
+          "description": "Leverandørgjeld - Étoile SARL (Org.nr: 857637224)"
+        }
+      ]
+    },
+    "raw_prompt": "Vous avez recu une facture fournisseur (voir PDF ci-joint). Enregistrez la facture dans Tripletex. Creez le fournisseur s'il n'existe pas. Utilisez le bon compte de charges et la TVA deductible.",
+    "_file_contents": [
+      "[File: files/leverandorfaktura_fr_04.pdf]\nÉtoile SARL\nOrg.nr: 857637224\nSjøgata 137, 3015 Drammen\nFAKTURA\nFakturanummer: INV-2026-8404\nFakturadato: 06.06.2026\nForfallsdato: 06.07.2026\nTil: Ditt firma\nBeskrivelse Belop\nNettverkstjenester 74200 kr\nMVA 25%: 18550 kr\nTotalt: 92750 kr\nKonto: 6300\nBankkonto: 19048571614"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/leverandorfaktura_fr_04.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDQ0Mwo+PgpzdHJlYW0KeJyVk01vEzEQhu/9FXNBAom6Htvjj70lKpGg0ErN0vtKdarNfiGvW34j/4gj3mxCNkmpwtHWPO9jjz0CvlxwRgZ+XsxzuFogoGacQ76CT/mwJZGhBePUUJQ/wvtfsStrD8vZ/dcPkK+3ZVcLAchfI41k2m3Iu/DE2pCBJaOlEUJN+G0x6V3xcv37qYgFoDQfQXIkuA5F0/j2QIogDqVCOSYFaOeYlZugxewm/34/O8IQXzmrJsNwvOWiqOJzKNrnpAzZ8UUPYSTLjJrSn28fLgUX+tIqrs4yy9RfPjU/FrE707tneXo7zQbzWdK0a8Uo7cKqqOv+P6x7eLCas61kDLPjcfOyzuC6jBFWZWiKHS0skwQkFFMITcKSCXfrGpawz5KCKdpkzX1fhfLF173f5RyCDZDWzMmjIJKSkTpMqrsfb/dga+eOmfHBb32MLz5UfVz71vfRh0kACWSST8uNEimuCm8PkDI0fCiVGqZG7tvDDAS9ywAt0UlAarg4ChheBhQR0zh2vItFHTNwwpzy/5hglVKF3eA3XZv+R/pxnJ/MrnSpg+PIzYu2qsZSdFyleUeNf+fgD8C9CxwKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago2IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlIC9UeXBlMQovVHlwZSAvRm9udAo+PgplbmRvYmoKNyAwIG9iago8PAovRm9udCA8PC9GMSA1IDAgUgovRjIgNiAwIFI+PgovUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KPj4KZW5kb2JqCjggMCBvYmoKPDwKL0NyZWF0aW9uRGF0ZSAoRDoyMDI2MDMwNDE5MTgwNVopCj4+CmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDEwMiAwMDAwMCBuIAowMDAwMDAwMjA1IDAwMDAwIG4gCjAwMDAwMDAyODUgMDAwMDAgbiAKMDAwMDAwMDgwMCAwMDAwMCBuIAowMDAwMDAwOTAyIDAwMDAwIG4gCjAwMDAwMDA5OTkgMDAwMDAgbiAKMDAwMDAwMTA5NiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDkKL1Jvb3QgMiAwIFIKL0luZm8gOCAwIFIKL0lEIFs8NDRCMDAxMTUyQzYxNDYzNTgxQzZFMUQ3QjQ0Mjc1NUE+PDQ0QjAwMTE1MkM2MTQ2MzU4MUM2RTFEN0I0NDI3NTVBPl0KPj4Kc3RhcnR4cmVmCjExNTEKJSVFT0YK",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created voucher (id=?)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 17.42,
+  "phase_times": {
+    "parse": 2.05,
+    "prefetch": 0.0,
+    "handler": 15.17
+  },
+  "total_api_calls": 4,
+  "errors_4xx": 1,
+  "status_counts": {
+    "2xx": 3,
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 3,
+    "action": 0,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T18:29:54.967129",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 6300,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 359452451,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/359452451",
+            "number": 6300,
+            "numberPretty": "6300",
+            "name": "Leie lokale",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "63",
+            "groupingCode": "6300",
+            "displayName": "6300 Leie lokale",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:29:58.666715",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 2710,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 359452277,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/359452277",
+            "number": 2710,
+            "numberPretty": "2710",
+            "name": "Inngående merverdiavgift, høy sats",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": true,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "27",
+            "groupingCode": "2740",
+            "displayName": "2710 Inngående merverdiavgift, høy sats",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:30:01.820625",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 2400,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 359452255,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/359452255",
+            "number": 2400,
+            "numberPretty": "2400",
+            "name": "Leverandørgjeld",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "VENDOR",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": true,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "24",
+            "groupingCode": "2400",
+            "displayName": "2400 Leverandørgjeld",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:30:05.200823",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "date": "2026-06-06",
+        "description": "Faktura INV-2026-8404 fra Étoile SARL - Nettverkstjenester",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 359452451
+            },
+            "date": "2026-03-21",
+            "amountGross": 92750,
+            "amountGrossCurrency": 92750,
+            "vatType": {
+              "id": 0
+            },
+            "description": "Nettverkstjenester (ekskl. MVA)"
+          },
+          {
+            "row": 2,
+            "account": {
+              "id": 359452255
+            },
+            "date": "2026-03-21",
+            "amountGross": -92750,
+            "amountGrossCurrency": -92750,
+            "description": "Leverandørgjeld - Étoile SARL (Org.nr: 857637224)"
+          }
+        ]
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": "postings.supplier.id",
+            "message": "Leverandør mangler.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "4bb0a7fa-849c-41da-9c22-dee1a6e251e3"
+      }
+    }
+  ]
+}

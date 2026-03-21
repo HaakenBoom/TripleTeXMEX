@@ -1,0 +1,124 @@
+{
+  "timestamp": "2026-03-21T18:32:26.945063",
+  "prompt_fingerprint": "2478f46c260e",
+  "prompt": "Registrieren Sie den Lieferanten Brückentor GmbH mit der Organisationsnummer 978195806. E-Mail: faktura@brckentorgmbh.no.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Brückentor GmbH",
+      "organizationNumber": "978195806",
+      "invoiceEmail": "faktura@brckentorgmbh.no",
+      "isSupplier": true
+    },
+    "raw_prompt": "Registrieren Sie den Lieferanten Brückentor GmbH mit der Organisationsnummer 978195806. E-Mail: faktura@brckentorgmbh.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Brückentor GmbH (id=108393699)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 10.31,
+  "phase_times": {
+    "parse": 0.97,
+    "prefetch": 0.0,
+    "handler": 9.34
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108393699
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T18:32:26.944386",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Brückentor GmbH",
+        "isCustomer": true,
+        "organizationNumber": "978195806",
+        "invoiceEmail": "faktura@brckentorgmbh.no",
+        "isSupplier": true
+      },
+      "response_body": {
+        "value": {
+          "id": 108393699,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108393699",
+          "name": "Brückentor GmbH",
+          "organizationNumber": "978195806",
+          "globalLocationNumber": 0,
+          "supplierNumber": 20001,
+          "customerNumber": 10001,
+          "isSupplier": true,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "",
+          "invoiceEmail": "faktura@brckentorgmbh.no",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Brückentor GmbH (10001/20001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405636501,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405636501"
+          },
+          "physicalAddress": {
+            "id": 405636500,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405636500"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 373083412,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/373083412"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

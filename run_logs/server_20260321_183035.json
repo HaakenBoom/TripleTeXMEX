@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:30:35.401924",
+  "prompt": "Registe uma despesa de viagem para Inês Sousa (ines.sousa@example.org) referente a \"Visita cliente Bergen\". A viagem durou 2 dias com ajudas de custo (taxa diária 800 NOK). Despesas: bilhete de avião 5200 NOK e táxi 350 NOK.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created travel expense 'Visita cliente Bergen' (id=11149304)",
+  "error": null,
+  "elapsed_seconds": 22.38
+}

@@ -1314,15 +1314,16 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
             cost_body["amountCurrencyIncVat"] = cost["amount"]
             cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
         if cost.get("description"):
-            cost_body["description"] = cost["description"]
+            cost_body["comments"] = cost["description"]
         if cost.get("category"):
             cost_body["category"] = cost["category"]
         if cost.get("paymentType"):
-            cost_body["paymentType"] = cost["paymentType"]
+            pt = cost["paymentType"]
+            cost_body["paymentType"] = pt if isinstance(pt, dict) else {"id": pt}
         if cost.get("rate") is not None:
             cost_body["rate"] = cost["rate"]
-        if cost.get("count") is not None:
-            cost_body["count"] = cost["count"]
+        if cost.get("isPaidByEmployee") is not None:
+            cost_body["isPaidByEmployee"] = cost["isPaidByEmployee"]
 
         try:
             cost_result = client.post("/travelExpense/cost", cost_body)
@@ -1703,17 +1704,21 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
 
     postings = [
         {
+            "row": 1,
             "account": {"id": account_id},
             "amountGross": amount,
             "amountGrossCurrency": amount,
             "date": e.get("voucherDate", today),
+            "vatType": {"id": posting_vat_id},
             dim_field: {"id": linked_value_id},
         },
         {
+            "row": 2,
             "account": {"id": bank_id},
             "amountGross": -amount,
             "amountGrossCurrency": -amount,
             "date": e.get("voucherDate", today),
+            "vatType": {"id": 0},
         },
     ]
 
@@ -2239,8 +2244,35 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
                     tx["amount"] = float(amt_str)
                 except ValueError:
                     continue
+            elif k in ("inn", "inntekt", "credit", "crédito", "crédit"):
+                # Separate income column (positive amount)
+                amt_str = val.strip().replace(" ", "").replace("\xa0", "")
+                if not amt_str:
+                    continue
+                if "," in amt_str and "." in amt_str:
+                    amt_str = amt_str.replace(".", "").replace(",", ".")
+                elif "," in amt_str:
+                    amt_str = amt_str.replace(",", ".")
+                try:
+                    tx["amount"] = float(amt_str)
+                except ValueError:
+                    continue
+            elif k in ("ut", "utgift", "debit", "débito", "débit"):
+                # Separate outgoing column (negative amount)
+                amt_str = val.strip().replace(" ", "").replace("\xa0", "")
+                if not amt_str:
+                    continue
+                if "," in amt_str and "." in amt_str:
+                    amt_str = amt_str.replace(".", "").replace(",", ".")
+                elif "," in amt_str:
+                    amt_str = amt_str.replace(",", ".")
+                try:
+                    tx["amount"] = -abs(float(amt_str))
+                except ValueError:
+                    continue
             elif k in ("beskrivelse", "description", "descripción", "descrição", "beschreibung",
-                        "tekst", "text", "referanse", "reference", "ref"):
+                        "tekst", "text", "referanse", "reference", "ref",
+                        "forklaring", "explicação", "explicación", "explication"):
                 tx["description"] = val.strip()
             elif k in ("kunde", "customer", "client", "cliente", "kundenr", "customer_ref"):
                 tx["customer_ref"] = val.strip()
@@ -2443,7 +2475,7 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
 
     # Determine closure date from entities
     closure_year = entities.get("closureYear") or entities.get("year")
-    closure_month = entities.get("closureMonth")
+    closure_month = entities.get("closureMonth") or entities.get("month")
     if closure_year and closure_month:
         import calendar
         last_day = calendar.monthrange(closure_year, closure_month)[1]
@@ -2576,26 +2608,43 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         for entry in parsed_entries:
             if not entry.get("postings") and (entry.get("debitAccount") or entry.get("creditAccount")):
                 amount = entry.get("amount") or entry.get("monthlyDepreciation") or 0
+                entry_type = entry.get("type", "")
+                debit_acct = entry.get("debitAccount")
+                credit_acct = entry.get("creditAccount")
                 postings = []
-                if entry.get("debitAccount"):
-                    postings.append({"accountNumber": entry["debitAccount"], "amount": amount})
-                if entry.get("creditAccount"):
-                    postings.append({"accountNumber": entry["creditAccount"], "amount": -amount})
-                elif entry.get("debitAccount"):
-                    # No credit account specified — for accruals, the credit is often
-                    # an expense account. Try to infer from type or use a default.
-                    entry_type = entry.get("type", "")
+
+                if debit_acct and credit_acct:
+                    # Both accounts specified — straightforward
+                    postings.append({"accountNumber": debit_acct, "amount": amount})
+                    postings.append({"accountNumber": credit_acct, "amount": -amount})
+                elif debit_acct and not credit_acct:
+                    # Only debitAccount — infer the counterpart based on type
                     if entry_type == "accrual":
-                        # Prepaid/accrual: debit is balance sheet, credit goes to expense
-                        # Default expense account for accrual reversals
-                        postings.append({"accountNumber": 6300, "amount": -amount})
+                        # Accrual reversal: debit expense, credit prepaid (balance sheet)
+                        # If the parser put a balance sheet account (1xxx) as debit,
+                        # it's actually the credit — flip the accounts
+                        if 1000 <= int(debit_acct) <= 1999:
+                            # Balance sheet account → this is the credit (source)
+                            postings.append({"accountNumber": 6300, "amount": amount})
+                            postings.append({"accountNumber": debit_acct, "amount": -amount})
+                        else:
+                            # Expense account as debit → need a balance sheet credit
+                            postings.append({"accountNumber": debit_acct, "amount": amount})
+                            postings.append({"accountNumber": 1720, "amount": -amount})
                     elif entry_type == "depreciation":
-                        # Depreciation: debit expense, credit accumulated depreciation (1209)
+                        # Depreciation: debit expense, credit accumulated depreciation
+                        postings.append({"accountNumber": debit_acct, "amount": amount})
                         postings.append({"accountNumber": 1209, "amount": -amount})
+                    else:
+                        # Unknown type — just make a single posting
+                        postings.append({"accountNumber": debit_acct, "amount": amount})
+                elif credit_acct and not debit_acct:
+                    postings.append({"accountNumber": credit_acct, "amount": -amount})
+
                 if postings:
                     entry["postings"] = postings
-                    logger.info("Normalized entry '%s' from debit/credit to %d postings",
-                                entry.get("description", "?"), len(postings))
+                    logger.info("Normalized entry '%s' (type=%s) from debit/credit to %d postings",
+                                entry.get("description", "?"), entry_type, len(postings))
 
     if parsed_entries:
         logger.info("Annual closure: using %d LLM-parsed entries", len(parsed_entries))

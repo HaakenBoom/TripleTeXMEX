@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T16:48:29.257614",
+  "prompt": "You received an offer letter (see attached PDF) for a new employee. Complete the onboarding: create the employee, assign the correct department, set up employment details with percentage and annual salary, and configure standard working hours.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Daniel Smith (id=18639349)",
+  "error": null,
+  "elapsed_seconds": 10.54
+}

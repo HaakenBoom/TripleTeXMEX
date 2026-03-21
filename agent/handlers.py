@@ -2352,12 +2352,29 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
     )
 
 
+def _make_closure_posting(account_id: int, amount: float, posting_date: str) -> dict[str, Any]:
+    """Build a single voucher posting with explicit vatType 0 (no VAT).
+
+    Annual closure postings (depreciation, prepaid reversals, tax provisions)
+    never involve VAT. Setting vatType explicitly prevents Tripletex from
+    treating the posting as 'system-generated' on vatLocked accounts (422 error).
+    """
+    return {
+        "account": {"id": account_id},
+        "amountGross": amount,
+        "amountGrossCurrency": amount,
+        "date": posting_date,
+        "vatType": {"id": 0},
+    }
+
+
 def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -> str:
     """Handle annual closure / year-end closing tasks.
 
     Strategy:
-    1. If the LLM parser extracted structured entries (with postings), use those directly
-    2. Otherwise, fall back to regex parsing of the raw prompt for depreciation/prepaid/tax
+    1. If parser extracted depreciationItems (structured per-asset), use those
+    2. If parser extracted entries (with postings), use those directly
+    3. Otherwise, fall back to regex parsing of the raw prompt
     """
     import re
 
@@ -2366,22 +2383,131 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
     today = _today()
     account_cache: dict[str, int] = {}
 
+    # Determine closure date from entities
+    closure_year = entities.get("closureYear") or entities.get("year")
+    closure_month = entities.get("closureMonth")
+    if closure_year and closure_month:
+        import calendar
+        last_day = calendar.monthrange(closure_year, closure_month)[1]
+        closure_date = f"{closure_year}-{closure_month:02d}-{last_day:02d}"
+    elif closure_year:
+        closure_date = f"{closure_year}-12-31"
+    elif entities.get("date"):
+        closure_date = entities["date"]
+    else:
+        closure_date = f"{date.today().year - 1}-12-31"
+
     # ---------------------------------------------------------------
-    # PATH A: Use LLM-parsed entries if available (most reliable)
+    # PATH A: depreciationItems format (parser returns per-asset items)
+    # ---------------------------------------------------------------
+    dep_items = entities.get("depreciationItems", [])
+    if dep_items:
+        logger.info("Annual closure: using %d depreciationItems", len(dep_items))
+        vouchers_created = []
+        total_depreciation_expense = 0.0
+
+        for item in dep_items:
+            cost = item.get("acquisitionCost", 0)
+            years = item.get("depreciationPeriodYears", 1)
+            asset_name = item.get("assetName", "Asset")
+            expense_acct = str(item.get("depreciationExpenseAccountNumber", 6010))
+            accum_acct = str(item.get("accumulatedDepreciationAccountNumber", 1209))
+
+            annual_dep = round(cost / years, 2)
+            total_depreciation_expense += annual_dep
+
+            expense_id = _get_or_create_account(client, expense_acct, cache=account_cache)
+            accum_id = _get_or_create_account(client, accum_acct,
+                                               name=f"Akkumulerte avskrivninger",
+                                               cache=account_cache)
+
+            voucher_body: dict[str, Any] = {
+                "date": closure_date,
+                "description": f"Avskrivning {asset_name}",
+                "postings": [
+                    _make_closure_posting(expense_id, annual_dep, closure_date),
+                    _make_closure_posting(accum_id, -annual_dep, closure_date),
+                ],
+            }
+            result = client.post("/ledger/voucher", voucher_body)
+            _check_response(result, f"POST /ledger/voucher (depreciation {asset_name})")
+            vouchers_created.append(f"Depreciation {asset_name}: {annual_dep} NOK")
+            logger.info("Created depreciation voucher: %s = %s NOK", asset_name, annual_dep)
+
+        # Prepaid expense reversal
+        prepaid = entities.get("prepaidExpenseReversal")
+        if prepaid:
+            amount = prepaid.get("amount", 0)
+            acct = str(prepaid.get("accountNumber", 1700))
+            # Determine the expense account for the reversal
+            # Typically charges go to a general expense account (e.g. 6300)
+            # But the prompt may specify — use 6300 as default for prepaid reversals
+            expense_acct = "6300"
+            # Check if the prompt specifies a "charges" / "kostnad" account
+            p_lower = raw_prompt.lower()
+            charge_match = re.search(r'(?:charges?|kostnad|utgift).*?(?:konto|account|compte)\s*(\d{4})', p_lower)
+            if not charge_match:
+                charge_match = re.search(r'(?:konto|account|compte)\s*(\d{4}).*?(?:charges?|kostnad|utgift)', p_lower)
+            if charge_match:
+                expense_acct = charge_match.group(1)
+
+            prepaid_id = _get_or_create_account(client, acct, cache=account_cache)
+            expense_id = _get_or_create_account(client, expense_acct,
+                                                 name="Forskuddsbetalt kostnad",
+                                                 cache=account_cache)
+
+            voucher_body = {
+                "date": closure_date,
+                "description": "Reversering forskuddsbetalt kostnad",
+                "postings": [
+                    _make_closure_posting(expense_id, amount, closure_date),
+                    _make_closure_posting(prepaid_id, -amount, closure_date),
+                ],
+            }
+            result = client.post("/ledger/voucher", voucher_body)
+            _check_response(result, "POST /ledger/voucher (prepaid reversal)")
+            vouchers_created.append(f"Prepaid reversal: {amount} NOK")
+
+        # Tax provision
+        tax_info = entities.get("taxCalculation")
+        if tax_info:
+            tax_rate = tax_info.get("taxRate", 0.22)
+            tax_exp_acct = str(tax_info.get("expenseAccountNumber", 8700))
+            tax_liab_acct = str(tax_info.get("liabilityAccountNumber", 2920))
+
+            # Taxable income = total depreciation + prepaid reversal
+            prepaid_amount = (prepaid.get("amount", 0) if prepaid else 0)
+            taxable_income = total_depreciation_expense + prepaid_amount
+            tax_amount = round(taxable_income * tax_rate, 2)
+
+            if tax_amount > 0:
+                tax_exp_id = _get_or_create_account(client, tax_exp_acct, cache=account_cache)
+                tax_liab_id = _get_or_create_account(client, tax_liab_acct, cache=account_cache)
+
+                voucher_body = {
+                    "date": closure_date,
+                    "description": "Skatteavsetning",
+                    "postings": [
+                        _make_closure_posting(tax_exp_id, tax_amount, closure_date),
+                        _make_closure_posting(tax_liab_id, -tax_amount, closure_date),
+                    ],
+                }
+                result = client.post("/ledger/voucher", voucher_body)
+                _check_response(result, "POST /ledger/voucher (tax provision)")
+                vouchers_created.append(f"Tax provision ({tax_rate*100:.0f}%): {tax_amount} NOK")
+
+        return (
+            f"Annual closure completed: {len(vouchers_created)} vouchers created. "
+            + "; ".join(vouchers_created)
+        )
+
+    # ---------------------------------------------------------------
+    # PATH B: Use LLM-parsed entries if available (generic postings format)
     # ---------------------------------------------------------------
     parsed_entries = entities.get("entries", [])
     if parsed_entries:
         logger.info("Annual closure: using %d LLM-parsed entries", len(parsed_entries))
         vouchers_created = []
-        voucher_date = today
-        # Derive date from entities or default
-        if entities.get("closureYear") and entities.get("closureMonth"):
-            import calendar
-            y, m = entities["closureYear"], entities["closureMonth"]
-            last_day = calendar.monthrange(y, m)[1]
-            voucher_date = f"{y}-{m:02d}-{last_day:02d}"
-        elif entities.get("date"):
-            voucher_date = entities["date"]
 
         for entry in parsed_entries:
             entry_postings = entry.get("postings", [])
@@ -2400,19 +2526,16 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
                     cache=account_cache,
                 )
                 amount = p.get("amount") or p.get("amountGross") or 0
-                api_postings.append({
-                    "account": {"id": acct_id},
-                    "amountGross": amount,
-                    "amountGrossCurrency": amount,
-                    "date": voucher_date,
-                })
+                api_postings.append(
+                    _make_closure_posting(acct_id, amount, closure_date)
+                )
 
             if not api_postings:
                 continue
 
             description = entry.get("description", "Voucher")
-            voucher_body: dict[str, Any] = {
-                "date": voucher_date,
+            voucher_body = {
+                "date": closure_date,
                 "description": description,
                 "postings": api_postings,
             }
@@ -2427,7 +2550,7 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
         )
 
     # ---------------------------------------------------------------
-    # PATH B: Regex-based parsing of raw prompt (legacy fallback)
+    # PATH C: Regex-based parsing of raw prompt (legacy fallback)
     # ---------------------------------------------------------------
     depreciations = []
     prompt_text = raw_prompt or str(entities)
@@ -2525,7 +2648,6 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
 
     vouchers_created = []
     total_depreciation_expense = 0.0
-    closure_date = entities.get("date", f"{date.today().year - 1}-12-31")
 
     # Create depreciation vouchers
     for dep in depreciations:
@@ -2539,18 +2661,8 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
             "date": closure_date,
             "description": f"Avskrivning {dep['name']}",
             "postings": [
-                {
-                    "account": {"id": expense_acct_id},
-                    "amountGross": annual_dep,
-                    "amountGrossCurrency": annual_dep,
-                    "date": closure_date,
-                },
-                {
-                    "account": {"id": accum_acct_id},
-                    "amountGross": -annual_dep,
-                    "amountGrossCurrency": -annual_dep,
-                    "date": closure_date,
-                },
+                _make_closure_posting(expense_acct_id, annual_dep, closure_date),
+                _make_closure_posting(accum_acct_id, -annual_dep, closure_date),
             ],
         }
         result = client.post("/ledger/voucher", voucher_body)
@@ -2566,18 +2678,8 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
             "date": closure_date,
             "description": "Reversering forskuddsbetalt kostnad",
             "postings": [
-                {
-                    "account": {"id": prepaid_expense_id},
-                    "amountGross": prepaid_amount,
-                    "amountGrossCurrency": prepaid_amount,
-                    "date": closure_date,
-                },
-                {
-                    "account": {"id": prepaid_acct_id},
-                    "amountGross": -prepaid_amount,
-                    "amountGrossCurrency": -prepaid_amount,
-                    "date": closure_date,
-                },
+                _make_closure_posting(prepaid_expense_id, prepaid_amount, closure_date),
+                _make_closure_posting(prepaid_acct_id, -prepaid_amount, closure_date),
             ],
         }
         result = client.post("/ledger/voucher", voucher_body)
@@ -2596,18 +2698,8 @@ def _handle_annual_closure(task: dict, client: TripletexClient, context: dict) -
             "date": closure_date,
             "description": "Skatteavsetning",
             "postings": [
-                {
-                    "account": {"id": tax_exp_id},
-                    "amountGross": tax_amount,
-                    "amountGrossCurrency": tax_amount,
-                    "date": closure_date,
-                },
-                {
-                    "account": {"id": tax_liab_id},
-                    "amountGross": -tax_amount,
-                    "amountGrossCurrency": -tax_amount,
-                    "date": closure_date,
-                },
+                _make_closure_posting(tax_exp_id, tax_amount, closure_date),
+                _make_closure_posting(tax_liab_id, -tax_amount, closure_date),
             ],
         }
         result = client.post("/ledger/voucher", voucher_body)

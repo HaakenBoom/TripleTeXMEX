@@ -409,7 +409,7 @@ def _handle_create_employee(task: dict, client: TripletexClient, context: dict) 
     # Also check comments for "Department: X" pattern
     if not dept_name and emp.get("comments"):
         import re
-        dept_match = re.search(r'(?:Department|Avdeling|Abteilung|Departamento|Département):\s*(.+)', emp.get("comments", ""))
+        dept_match = re.search(r'(?:Department|Avdeling|Abteilung|Departamento|Département):\s*([^.!\n,;]+)', emp.get("comments", ""))
         if dept_match:
             dept_name = dept_match.group(1).strip()
 
@@ -1342,33 +1342,46 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
 
     # Add cost items if specified
     costs = entities.get("costs", [])
-    for cost in costs:
-        cost_body: dict[str, Any] = {
-            "travelExpense": {"id": te_id},
-        }
-        if cost.get("date"):
-            cost_body["date"] = cost["date"]
-        if cost.get("amount") is not None:
-            cost_body["amountCurrencyIncVat"] = cost["amount"]
-            cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
-        if cost.get("description"):
-            cost_body["comments"] = cost["description"]
-        if cost.get("category"):
-            cost_body["category"] = cost["category"]
-        if cost.get("paymentType"):
-            pt = cost["paymentType"]
-            cost_body["paymentType"] = pt if isinstance(pt, dict) else {"id": pt}
-        if cost.get("rate") is not None:
-            cost_body["rate"] = cost["rate"]
-        if cost.get("isPaidByEmployee") is not None:
-            cost_body["isPaidByEmployee"] = cost["isPaidByEmployee"]
-
+    if costs:
+        # Fetch a default payment type for travel expenses (required by API)
+        default_payment_type_id = None
         try:
-            cost_result = client.post("/travelExpense/cost", cost_body)
-            _check_response(cost_result, "POST /travelExpense/cost")
-            logger.info("Added cost to travel expense %d: %s", te_id, cost.get("description", ""))
+            pt_resp = client.get("/travelExpense/paymentType", {"count": 10})
+            pt_values = pt_resp.get("values", [])
+            if pt_values:
+                default_payment_type_id = pt_values[0]["id"]
         except Exception as e:
-            logger.warning("Failed to add cost to travel expense: %s", e)
+            logger.warning("Failed to fetch travel payment types: %s", e)
+
+        for cost in costs:
+            cost_body: dict[str, Any] = {
+                "travelExpense": {"id": te_id},
+            }
+            if cost.get("date"):
+                cost_body["date"] = cost["date"]
+            if cost.get("amount") is not None:
+                cost_body["amountCurrencyIncVat"] = cost["amount"]
+                cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
+            if cost.get("description"):
+                cost_body["comments"] = cost["description"]
+            if cost.get("category"):
+                cost_body["category"] = cost["category"]
+            if cost.get("paymentType"):
+                pt = cost["paymentType"]
+                cost_body["paymentType"] = pt if isinstance(pt, dict) else {"id": pt}
+            elif default_payment_type_id:
+                cost_body["paymentType"] = {"id": default_payment_type_id}
+            if cost.get("rate") is not None:
+                cost_body["rate"] = cost["rate"]
+            if cost.get("isPaidByEmployee") is not None:
+                cost_body["isPaidByEmployee"] = cost["isPaidByEmployee"]
+
+            try:
+                cost_result = client.post("/travelExpense/cost", cost_body)
+                _check_response(cost_result, "POST /travelExpense/cost")
+                logger.info("Added cost to travel expense %d: %s", te_id, cost.get("description", ""))
+            except Exception as e:
+                logger.warning("Failed to add cost to travel expense: %s", e)
 
     # Deliver the travel expense (mark as completed)
     try:

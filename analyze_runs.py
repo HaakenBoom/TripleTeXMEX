@@ -58,7 +58,7 @@ MAX_SCORE = {1: 2.0, 2: 4.0, 3: 6.0}
 # Keywords that suggest specific task types — used to detect parser misclassification
 _TASK_SIGNALS = {
     "reverse_invoice_payment": [
-        "reverse", "reverser", "tilbakefør", "revertir", "reverter", "stornieren",
+        "reverse payment", "reverser betaling", "tilbakefør betaling", "revertir pago", "reverter pagamento", "stornieren Zahlung",
         "payment returned", "betaling returnert", "undo payment", "angre betaling",
     ],
     "create_credit_note": [

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:50:03.544905",
+  "prompt": "Utfør forenklet årsoppgjør for 2025: 1) Beregn og bokfør årlige avskrivninger for tre eiendeler: Programvare (288400 kr, 3 år lineært, konto 1250), Kjøretøy (120750 kr, 3 år, konto 1230), IT-utstyr (74550 kr, 3 år, konto 1210). Bruk konto 6010 for avskrivningskostnad og 1209 for akkumulerte avskrivninger. 2) Reverser forskuddsbetalte kostnader (totalt 27350 kr på konto 1700). 3) Beregn og bokfør skattekostnad (22 % av skattbart resultat) på konto 8700/2920. Bokfør hver avskrivning som et eget bi",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 5 vouchers created. Depreciation Programvare: 96133.33 NOK; Depreciation Kjøretøy: 40250.0 NOK; Depreciation IT-utstyr: 24850.0 NOK; Prepaid reversal: 27350 NOK; Tax provision (22%): 41488.33 NOK",
+  "error": null,
+  "elapsed_seconds": 6.66
+}

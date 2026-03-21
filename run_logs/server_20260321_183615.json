@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:36:15.060797",
+  "prompt": "Le paiement de Étoile SARL (nº org. 943745862) pour la facture \"Conseil en données\" (33900 NOK HT) a été retourné par la banque. Annulez le paiement afin que la facture affiche à nouveau le montant impayé.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Registered payment of 42375.0 on invoice 2147567857. Invoice is now paid.",
+  "error": null,
+  "elapsed_seconds": 9.45
+}

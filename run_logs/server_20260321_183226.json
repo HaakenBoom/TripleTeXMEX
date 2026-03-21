@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:32:26.945760",
+  "prompt": "Registrieren Sie den Lieferanten Brückentor GmbH mit der Organisationsnummer 978195806. E-Mail: faktura@brckentorgmbh.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created customer Brückentor GmbH (id=108393699)",
+  "error": null,
+  "elapsed_seconds": 10.31
+}

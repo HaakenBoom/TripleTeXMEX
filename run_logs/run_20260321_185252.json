@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-03-21T18:52:52.982394",
+  "prompt_fingerprint": "1a351fdd9f38",
+  "prompt": "Totalkostnadene auka monaleg frå januar til februar 2026. Analyser hovudboka og finn dei tre kostnadskontoane med størst auke i beløp. Opprett eit internt prosjekt for kvar av dei tre kontoane med kontoens namn. Opprett også ein aktivitet for kvart prosjekt.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "unknown",
+    "entities": {},
+    "raw_prompt": "Totalkostnadene auka monaleg frå januar til februar 2026. Analyser hovudboka og finn dei tre kostnadskontoane med størst auke i beløp. Opprett eit internt prosjekt for kvar av dei tre kontoane med kontoens namn. Opprett også ein aktivitet for kvart prosjekt.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 38.04,
+  "phase_times": {
+    "parse": 0.7,
+    "prefetch": 0.06,
+    "agent_loop": 37.28
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 1,
+  "status_counts": {
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 0,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T18:52:15.706269",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 403,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "error": "Invalid or expired proxy token. Each submission receives a unique token - do not reuse tokens from previous submissions.",
+        "source": "nmiai-proxy"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:33:24.454967",
+  "prompt": "Kunden Vestfjord AS (org.nr 860678403) har reklamert på fakturaen for \"Skylagring\" (45350 kr ekskl. MVA). Opprett ei fullstendig kreditnota som reverserer heile fakturaen.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created credit note for invoice 2147571533",
+  "error": null,
+  "elapsed_seconds": 16.42
+}

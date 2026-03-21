@@ -1,0 +1,2716 @@
+{
+  "timestamp": "2026-03-21T18:32:05.031711",
+  "prompt_fingerprint": "c7c448f08843",
+  "prompt": "Exécutez le cycle de vie complet du projet 'Migration Cloud Montagne' (Montagne SARL, nº org. 815119924) : 1) Le projet a un budget de 489850 NOK. 2) Enregistrez le temps : Louis Moreau (chef de projet, louis.moreau@example.org) 33 heures et Louis Dubois (consultant, louis.dubois@example.org) 108 heures. 3) Enregistrez un coût fournisseur de 48850 NOK de Soleil SARL (nº org. 981965965). 4) Créez une facture client pour le projet.",
+  "prompt_language": "fr",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "unknown",
+    "entities": {},
+    "raw_prompt": "Exécutez le cycle de vie complet du projet 'Migration Cloud Montagne' (Montagne SARL, nº org. 815119924) : 1) Le projet a un budget de 489850 NOK. 2) Enregistrez le temps : Louis Moreau (chef de projet, louis.moreau@example.org) 33 heures et Louis Dubois (consultant, louis.dubois@example.org) 108 heures. 3) Enregistrez un coût fournisseur de 48850 NOK de Soleil SARL (nº org. 981965965). 4) Créez une facture client pour le projet.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 62.63,
+  "phase_times": {
+    "parse": 0.71,
+    "prefetch": 0.29,
+    "agent_loop": 61.05
+  },
+  "total_api_calls": 18,
+  "errors_4xx": 2,
+  "status_counts": {
+    "2xx": 16,
+    "4xx": 2
+  },
+  "call_phases": {
+    "prefetch": 4,
+    "action": 8,
+    "wasted": 2,
+    "lookup": 4
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402027116
+    },
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108393600
+    },
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175909954
+    },
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175909955
+    },
+    {
+      "method": "POST",
+      "endpoint": "/travelExpense",
+      "status": 201,
+      "entity_id": 11149312
+    },
+    {
+      "method": "POST",
+      "endpoint": "/travelExpense/cost",
+      "status": 201
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/travelExpense/cost/20256313",
+      "status": 200,
+      "entity_id": 20256313
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/travelExpense/:deliver",
+      "status": 200
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T18:31:03.401539",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 3,
+        "from": 0,
+        "count": 3,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18646647,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646647",
+            "firstName": "Admin",
+            "lastName": "NM",
+            "displayName": "Admin NM",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "nmiai-validator@test.no",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 946409,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/946409"
+            },
+            "employments": [
+              {
+                "id": 2826151,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2826151"
+              }
+            ],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108393550,
+            "vismaConnect2FAactive": false
+          },
+          {
+            "id": 18646654,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646654",
+            "firstName": "Louis",
+            "lastName": "Moreau",
+            "displayName": "Louis Moreau",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.moreau@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 946409,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/946409"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108393550,
+            "vismaConnect2FAactive": false
+          },
+          {
+            "id": 18646656,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646656",
+            "firstName": "Louis",
+            "lastName": "Dubois",
+            "displayName": "Louis Dubois",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.dubois@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 946409,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/946409"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108393550,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:03.711019",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/vatType",
+      "status": 200,
+      "request_params": {
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 56,
+        "from": 0,
+        "count": 56,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 1,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1",
+            "name": "Fradrag inngående avgift, høy sats",
+            "number": "1",
+            "displayName": "1: (25%) Fradrag inngående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 2,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/2",
+            "name": "Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-2",
+            "displayName": "UT-2: (100%) Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 3,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3",
+            "name": "Utgående avgift, høy sats",
+            "number": "3",
+            "displayName": "3: (25%) Utgående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 4,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/4",
+            "name": "Direktepostert utgående avgift, høy sats",
+            "number": "4",
+            "displayName": "4: (100%) Direktepostert utgående avgift, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 5,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5",
+            "name": "Ingen utgående avgift (innenfor mva-loven)",
+            "number": "5",
+            "displayName": "5: (0%) Ingen utgående avgift (innenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 6,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/6",
+            "name": "Ingen utgående avgift (utenfor mva-loven)",
+            "number": "6",
+            "displayName": "6: (0%) Ingen utgående avgift (utenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 7,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/7",
+            "name": "Ingen avgiftsbehandling (inntekter)",
+            "number": "7",
+            "displayName": "7: (0%) Ingen avgiftsbehandling (inntekter)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 11,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11",
+            "name": "Fradrag inngående avgift, middels sats",
+            "number": "11",
+            "displayName": "11: (15%) Fradrag inngående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 12,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12",
+            "name": "Fradrag inngående avgift, lav sats",
+            "number": "13",
+            "displayName": "13: (12%) Fradrag inngående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 13,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13",
+            "name": "Grunnlag inngående avgift ved innførsel, høy sats",
+            "number": "21",
+            "displayName": "21: (0%) Grunnlag inngående avgift ved innførsel, høy sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 14,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14",
+            "name": "Grunnlag inngående avgift ved innførsel, middels sats",
+            "number": "22",
+            "displayName": "22: (0%) Grunnlag inngående avgift ved innførsel, middels sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 21,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/21",
+            "name": "Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-21",
+            "displayName": "UT-21: (100%) Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 22,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/22",
+            "name": "Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-22",
+            "displayName": "UT-22: (100%) Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 23,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/23",
+            "name": "Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "number": "14",
+            "displayName": "14: (100%) Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 24,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/24",
+            "name": "Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "number": "15",
+            "displayName": "15: (100%) Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 31,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31",
+            "name": "Utgående avgift, middels sats",
+            "number": "31",
+            "displayName": "31: (15%) Utgående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 32,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32",
+            "name": "Utgående avgift, lav sats",
+            "number": "33",
+            "displayName": "33: (12%) Utgående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 34,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "number": "86",
+            "displayName": "86: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 35,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "number": "87",
+            "displayName": "87: (25%) Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 41,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/41",
+            "name": "Direktepostert utgående avgift, middels sats",
+            "number": "41",
+            "displayName": "41: (100%) Direktepostert utgående avgift, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 42,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/42",
+            "name": "Direktepostert utgående avgift, lav sats",
+            "number": "42",
+            "displayName": "42: (100%) Direktepostert utgående avgift, lav sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 51,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/51",
+            "name": "Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "number": "51",
+            "displayName": "51: (0%) Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 52,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/52",
+            "name": "Avgiftsfri utførsel av varer og tjenester",
+            "number": "52",
+            "displayName": "52: (0%) Avgiftsfri utførsel av varer og tjenester",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 81,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats",
+            "number": "81",
+            "displayName": "81: (25%) Fradrag inngående avgift ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 82,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/82",
+            "name": "Inngående avgift uten fradrag ved innførsel, høy sats",
+            "number": "82",
+            "displayName": "82: (25%) Inngående avgift uten fradrag ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 83,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/83",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats",
+            "number": "83",
+            "displayName": "83: (15%) Fradrag inngående avgift ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 84,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/84",
+            "name": "Inngående avgift uten fradrag ved innførsel, middels sats",
+            "number": "84",
+            "displayName": "84: (15%) Inngående avgift uten fradrag ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 85,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/85",
+            "name": "Grunnlag, avgiftsfri innførsel",
+            "number": "85",
+            "displayName": "85: (0%) Grunnlag, avgiftsfri innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 88,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/88",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "number": "88",
+            "displayName": "88: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 89,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/89",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "number": "89",
+            "displayName": "89: (12%) Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 91,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/91",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "number": "91",
+            "displayName": "91: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 92,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/92",
+            "name": "Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "number": "92",
+            "displayName": "92: (25%) Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 111,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111",
+            "name": "Fradrag inngående avgift, råfisk",
+            "number": "12",
+            "displayName": "12: (11,11%) Fradrag inngående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 230,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230",
+            "name": "Grunnlag, ingen inngående avgift ved innførsel",
+            "number": "20",
+            "displayName": "20: (0%) Grunnlag, ingen inngående avgift ved innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 311,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311",
+            "name": "Utgående avgift, råfisk",
+            "number": "32",
+            "displayName": "32: (11,11%) Utgående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/500",
+            "name": "Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "number": "URED-13",
+            "displayName": "URED-13: (12%) Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 501,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/501",
+            "name": "Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "number": "RED-13",
+            "displayName": "RED-13: (6%) Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "percentage": 6,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 550,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550",
+            "name": "Tap på krav - kode 1",
+            "number": "TAP-1",
+            "displayName": "TAP-1: (25%) Tap på krav - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 551,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551",
+            "name": "Tap på krav - kode 11",
+            "number": "TAP-11",
+            "displayName": "TAP-11: (15%) Tap på krav - kode 11",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            }
+          },
+          {
+            "id": 552,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/552",
+            "name": "Tap på krav - kode 12",
+            "number": "TAP-12",
+            "displayName": "TAP-12: (11,11%) Tap på krav - kode 12",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 111,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111"
+            }
+          },
+          {
+            "id": 553,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553",
+            "name": "Tap på krav - kode 13",
+            "number": "TAP-13",
+            "displayName": "TAP-13: (12%) Tap på krav - kode 13",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            }
+          },
+          {
+            "id": 554,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/554",
+            "name": "Uttak - kode 3",
+            "number": "UTTAK-3",
+            "displayName": "UTTAK-3: (25%) Uttak - kode 3",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            }
+          },
+          {
+            "id": 555,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/555",
+            "name": "Uttak - kode 5",
+            "number": "UTTAK-5",
+            "displayName": "UTTAK-5: (0%) Uttak - kode 5",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 5,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5"
+            }
+          },
+          {
+            "id": 556,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/556",
+            "name": "Uttak - kode 31",
+            "number": "UTTAK-31",
+            "displayName": "UTTAK-31: (15%) Uttak - kode 31",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 31,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31"
+            }
+          },
+          {
+            "id": 557,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/557",
+            "name": "Uttak - kode 32",
+            "number": "UTTAK-32",
+            "displayName": "UTTAK-32: (11,11%) Uttak - kode 32",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 311,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311"
+            }
+          },
+          {
+            "id": 558,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/558",
+            "name": "Uttak - kode 33",
+            "number": "UTTAK-33",
+            "displayName": "UTTAK-33: (12%) Uttak - kode 33",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 32,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32"
+            }
+          },
+          {
+            "id": 559,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559",
+            "name": "Mva-justering for kapitalvarer - kode 1",
+            "number": "JUST-1",
+            "displayName": "JUST-1: (25%) Mva-justering for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 560,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 1",
+            "number": "TILB-1",
+            "displayName": "TILB-1: (25%) Tilbakeføring av mva for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 561,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/561",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 81",
+            "number": "TILB-81",
+            "displayName": "TILB-81: (25%) Tilbakeføring av mva for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 562,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/562",
+            "name": "Mva-justering for kapitalvarer - kode 81",
+            "number": "JUST-81",
+            "displayName": "JUST-81: (25%) Mva-justering for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 600,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/600",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "number": "81-K",
+            "displayName": "81-K: (25%) Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 601,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/601",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "number": "83-K",
+            "displayName": "83-K: (15%) Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 602,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/602",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "number": "86-K",
+            "displayName": "86-K: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 603,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/603",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "number": "88-K",
+            "displayName": "88-K: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 604,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/604",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "number": "91-K",
+            "displayName": "91-K: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 0,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0",
+            "name": "Ingen avgiftsbehandling",
+            "number": "0",
+            "displayName": "0: (0%) Ingen avgiftsbehandling",
+            "percentage": 0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:03.980533",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/token/session/>whoAmI",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "employeeId": 18646647,
+          "actualEmployeeId": 18646648,
+          "employee": {
+            "id": 18646647,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646647"
+          },
+          "companyId": 108393550,
+          "company": {
+            "id": 108393550,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/company/108393550"
+          },
+          "language": "no",
+          "loggedInWithConnect": false,
+          "employeeIsProxy": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:08.625104",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "815119924"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108393561,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108393561",
+            "name": "Montagne SARL",
+            "organizationNumber": "815119924",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Montagne SARL (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405636235,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405636235"
+            },
+            "physicalAddress": {
+              "id": 405636234,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405636234"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 467479301,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479301"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:12.295056",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Migration Cloud Montagne",
+        "customer": {
+          "id": 108393561
+        },
+        "projectManager": {
+          "id": 18646654
+        },
+        "startDate": "2024-01-01",
+        "fixedprice": 489850.0,
+        "isFixedPrice": true,
+        "currency": {
+          "id": 1
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 402027116,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402027116",
+          "name": "Migration Cloud Montagne",
+          "number": "2",
+          "displayName": "2 Migration Cloud Montagne",
+          "description": "",
+          "projectManager": {
+            "id": 18646654,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646654"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2024-01-01",
+          "endDate": null,
+          "customer": {
+            "id": 108393561,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108393561"
+          },
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": false,
+          "isOffer": false,
+          "isFixedPrice": true,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 489850.0,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11087252,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11087252"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15641967,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15641967"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "2 Migration Cloud Montagne",
+          "invoiceDueDate": 14,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "Montagne SARL",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Louis Moreau",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 489850,
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:17.746356",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "981965965",
+        "isSupplier": true
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:20.519989",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Soleil SARL",
+        "organizationNumber": "981965965",
+        "isSupplier": true,
+        "isCustomer": false
+      },
+      "response_body": {
+        "value": {
+          "id": 108393600,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108393600",
+          "name": "Soleil SARL",
+          "organizationNumber": "981965965",
+          "globalLocationNumber": 0,
+          "supplierNumber": 20002,
+          "customerNumber": 10002,
+          "isSupplier": true,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Soleil SARL (10002/20002)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405636307,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405636307"
+          },
+          "physicalAddress": {
+            "id": 405636306,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405636306"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 467479301,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479301"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:24.434435",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity/>forTimeSheet",
+      "status": 200,
+      "request_params": {
+        "projectId": 402027116
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 3,
+        "from": 0,
+        "count": 3,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 5922780,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5922780",
+            "name": "Design",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Design",
+            "deletable": true
+          },
+          {
+            "id": 5922770,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5922770",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 5922769,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5922769",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:29.415644",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2024-12-01",
+        "hours": 33.0,
+        "employee": {
+          "id": 18646654
+        },
+        "project": {
+          "id": 402027116
+        },
+        "activity": {
+          "id": 5922770
+        },
+        "comment": "Gestion de projet - Migration Cloud"
+      },
+      "response_body": {
+        "value": {
+          "id": 175909954,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175909954",
+          "project": {
+            "id": 402027116,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402027116"
+          },
+          "activity": {
+            "id": 5922770,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5922770"
+          },
+          "date": "2024-12-01",
+          "hours": 33.0,
+          "chargeableHours": 33.0,
+          "employee": {
+            "id": 18646654,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646654"
+          },
+          "timeClocks": [],
+          "comment": "Gestion de projet - Migration Cloud",
+          "locked": false,
+          "chargeable": true,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 33.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:33.447814",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2024-12-01",
+        "hours": 108.0,
+        "employee": {
+          "id": 18646656
+        },
+        "project": {
+          "id": 402027116
+        },
+        "activity": {
+          "id": 5922770
+        },
+        "comment": "Consultation technique - Migration Cloud"
+      },
+      "response_body": {
+        "value": {
+          "id": 175909955,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175909955",
+          "project": {
+            "id": 402027116,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402027116"
+          },
+          "activity": {
+            "id": 5922770,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/5922770"
+          },
+          "date": "2024-12-01",
+          "hours": 108.0,
+          "chargeableHours": 108.0,
+          "employee": {
+            "id": 18646656,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646656"
+          },
+          "timeClocks": [],
+          "comment": "Consultation technique - Migration Cloud",
+          "locked": false,
+          "chargeable": true,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 108.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:36.793644",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "title": "Coût fournisseur - Migration Cloud",
+        "employee": {
+          "id": 18646654
+        },
+        "project": {
+          "id": 402027116
+        },
+        "isChargeable": true,
+        "paymentCurrency": {
+          "id": 1
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 11149312,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/11149312",
+          "attestationSteps": [],
+          "attestation": null,
+          "project": {
+            "id": 402027116,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402027116"
+          },
+          "employee": {
+            "id": 18646654,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646654"
+          },
+          "approvedBy": null,
+          "completedBy": null,
+          "rejectedBy": null,
+          "department": {
+            "id": 946409,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/946409"
+          },
+          "freeDimension1": null,
+          "freeDimension2": null,
+          "freeDimension3": null,
+          "payslip": null,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "paymentCurrency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "voucher": null,
+          "attachment": null,
+          "isCompleted": false,
+          "isApproved": false,
+          "rejectedComment": "",
+          "isChargeable": true,
+          "isFixedInvoicedAmount": false,
+          "isMarkupInvoicedPercent": false,
+          "isIncludeAttachedReceiptsWhenReinvoicing": false,
+          "completedDate": null,
+          "approvedDate": null,
+          "date": "2026-03-21",
+          "travelAdvance": 0,
+          "fixedInvoicedAmount": 0,
+          "markupInvoicedPercent": 0,
+          "amount": 0,
+          "chargeableAmountCurrency": 0.0,
+          "paymentAmount": 0.0,
+          "chargeableAmount": 0.0,
+          "lowRateVAT": 0,
+          "mediumRateVAT": 0,
+          "highRateVAT": 0,
+          "paymentAmountCurrency": 0.0,
+          "number": 1,
+          "numberAsString": "1-2026",
+          "invoice": null,
+          "title": "Coût fournisseur - Migration Cloud",
+          "displayName": "1 - Coût fournisseur - Migration Cloud",
+          "displayNameWithoutNumber": "Coût fournisseur - Migration Cloud",
+          "perDiemCompensations": [],
+          "mileageAllowances": [],
+          "accommodationAllowances": [],
+          "costs": [],
+          "attachmentCount": 1,
+          "state": "OPEN",
+          "stateName": "Åpent",
+          "actions": [
+            {
+              "rel": "DELIVER",
+              "type": "PUT",
+              "href": "kkpqfuj-amager.tripletex.dev/v2/expense/:deliver",
+              "id": 11149312
+            },
+            {
+              "rel": "COPY",
+              "type": "POST",
+              "href": "kkpqfuj-amager.tripletex.dev/v2/expense/copy",
+              "id": 11149312
+            },
+            {
+              "rel": "DELETE",
+              "type": "DELETE",
+              "href": "kkpqfuj-amager.tripletex.dev/v2/expense/list",
+              "id": 11149312
+            }
+          ],
+          "isSalaryAdmin": false,
+          "showPayslip": false,
+          "accountingPeriodClosed": false,
+          "accountingPeriodVATClosed": false,
+          "type": 1
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:40.538068",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/cost",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "travelExpense": {
+          "id": 11149312
+        },
+        "date": "2024-12-01",
+        "amountCurrencyIncVat": 48850.0,
+        "currency": {
+          "id": 1
+        },
+        "vatType": {
+          "id": 1
+        },
+        "comments": "Coût fournisseur Soleil SARL",
+        "isChargeable": true
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "paymentType",
+            "message": "Kan ikke være null.",
+            "path": "null.paymentType",
+            "rootId": null
+          }
+        ],
+        "requestId": "914107b5-135d-4b65-8543-de6f0ef36949"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:44.784553",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/paymentType",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 36822597,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/paymentType/36822597",
+            "description": "Privat utlegg",
+            "account": {
+              "id": 467479454,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479454"
+            },
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "displayName": "Privat utlegg"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:47.918361",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/cost",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "travelExpense": {
+          "id": 11149312
+        },
+        "date": "2024-12-01",
+        "amountCurrencyIncVat": 48850.0,
+        "currency": {
+          "id": 1
+        },
+        "vatType": {
+          "id": 1
+        },
+        "paymentType": {
+          "id": 36822597
+        },
+        "comments": "Coût fournisseur Soleil SARL",
+        "isChargeable": true
+      },
+      "response_body": {
+        "value": {
+          "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/cost/20256313"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:50.707414",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/:deliver",
+      "status": 422,
+      "request_params": {
+        "id": 11149312
+      },
+      "request_body": null,
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": "project.invoicingPlan.orders.travelReports.mileageAllowances.tollCost.costCategory.id,project.invoicingPlan.orders.travelReports.costs.costCategory.id,project.invoicingPlan.travelReports.mileageAllowances.tollCost.costCategory.id,project.invoicingPlan.travelReports.costs.costCategory.id,invoice.orders.travelReports.mileageAllowances.tollCost.costCategory.id,invoice.orders.travelReports.costs.costCategory.id,invoice.travelReports.mileageAllowances.tollCost.costCategory.id,invoice.travelReports.costs.costCategory.id,mileageAllowances.tollCost.costCategory.id,costs.costCategory.id",
+            "message": "Feltet må fylles ut.",
+            "path": "[0].costs[0].costCategory",
+            "rootId": 11149312
+          }
+        ],
+        "requestId": "55aaa875-0749-45d5-8ced-611efad4b27c"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:31:55.168857",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/costCategory",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 36,
+        "from": 0,
+        "count": 36,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 36822598,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822598",
+            "description": "Bredbånd",
+            "account": {
+              "id": 467479650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479650"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 10,
+            "displayName": "Bredbånd"
+          },
+          {
+            "id": 36822599,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822599",
+            "description": "Kontorrekvisita",
+            "account": {
+              "id": 467479644,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479644"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 11,
+            "displayName": "Kontorrekvisita"
+          },
+          {
+            "id": 36822600,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822600",
+            "description": "Data/EDB-kostnad",
+            "account": {
+              "id": 467479645,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479645"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 12,
+            "displayName": "Data/EDB-kostnad"
+          },
+          {
+            "id": 36822601,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822601",
+            "description": "Aviser, tidsskrifter, bøker o.l.",
+            "account": {
+              "id": 467479647,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479647"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 13,
+            "displayName": "Aviser, tidsskrifter, bøker o.l."
+          },
+          {
+            "id": 36822602,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822602",
+            "description": "Møte, kurs, oppdatering o.l.",
+            "account": {
+              "id": 467479648,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479648"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 14,
+            "displayName": "Møte, kurs, oppdatering o.l."
+          },
+          {
+            "id": 36822603,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822603",
+            "description": "Annen kontorkostnad",
+            "account": {
+              "id": 467479649,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479649"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 15,
+            "displayName": "Annen kontorkostnad"
+          },
+          {
+            "id": 36822604,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822604",
+            "description": "Telefon",
+            "account": {
+              "id": 467479650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479650"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 20,
+            "displayName": "Telefon"
+          },
+          {
+            "id": 36822605,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822605",
+            "description": "Porto",
+            "account": {
+              "id": 467479651,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479651"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": false,
+            "showOnEmployeeExpenses": true,
+            "isInactive": false,
+            "sequence": 21,
+            "displayName": "Porto"
+          },
+          {
+            "id": 36822606,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822606",
+            "description": "Bomavgift",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Bomavgift"
+          },
+          {
+            "id": 36822607,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822607",
+            "description": "Buss",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Buss"
+          },
+          {
+            "id": 36822608,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822608",
+            "description": "Båt",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Båt"
+          },
+          {
+            "id": 36822609,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822609",
+            "description": "Drivstoff",
+            "account": {
+              "id": 467479653,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479653"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Drivstoff"
+          },
+          {
+            "id": 36822610,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822610",
+            "description": "Drivstoff - leiebil",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Drivstoff - leiebil"
+          },
+          {
+            "id": 36822611,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822611",
+            "description": "Drivstoff - selskapets transportmiddel",
+            "account": {
+              "id": 467479653,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479653"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Drivstoff - selskapets transportmiddel"
+          },
+          {
+            "id": 36822612,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822612",
+            "description": "Ferge",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Ferge"
+          },
+          {
+            "id": 36822613,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822613",
+            "description": "Fly",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Fly"
+          },
+          {
+            "id": 36822614,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822614",
+            "description": "Flybuss",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Flybuss"
+          },
+          {
+            "id": 36822615,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822615",
+            "description": "Flytog",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Flytog"
+          },
+          {
+            "id": 36822616,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822616",
+            "description": "Hotell",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Hotell"
+          },
+          {
+            "id": 36822617,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822617",
+            "description": "Hurtigbåt",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Hurtigbåt"
+          },
+          {
+            "id": 36822618,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822618",
+            "description": "Kollektivtransport",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Kollektivtransport"
+          },
+          {
+            "id": 36822619,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822619",
+            "description": "Leiebil - personbil",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Leiebil - personbil"
+          },
+          {
+            "id": 36822620,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822620",
+            "description": "Leiebil - annet",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Leiebil - annet"
+          },
+          {
+            "id": 36822621,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822621",
+            "description": "Mat",
+            "account": {
+              "id": 467479662,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479662"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": true,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Mat"
+          },
+          {
+            "id": 36822622,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822622",
+            "description": "Metro",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Metro"
+          },
+          {
+            "id": 36822623,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822623",
+            "description": "Parkering",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Parkering"
+          },
+          {
+            "id": 36822624,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822624",
+            "description": "Reisekostnad, ikke oppgavepliktig",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Reisekostnad, ikke oppgavepliktig"
+          },
+          {
+            "id": 36822625,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822625",
+            "description": "Representasjon - fradragsb.",
+            "account": {
+              "id": 467479668,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479668"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": true,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Representasjon - fradragsb."
+          },
+          {
+            "id": 36822626,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822626",
+            "description": "Representasjon - ikke fradragsb.",
+            "account": {
+              "id": 467479669,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479669"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": true,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Representasjon - ikke fradragsb."
+          },
+          {
+            "id": 36822627,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822627",
+            "description": "T-bane",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "T-bane"
+          },
+          {
+            "id": 36822628,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822628",
+            "description": "Taxi",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Taxi"
+          },
+          {
+            "id": 36822629,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822629",
+            "description": "Telefon",
+            "account": {
+              "id": 467479650,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479650"
+            },
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Telefon"
+          },
+          {
+            "id": 36822630,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822630",
+            "description": "Tog",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Tog"
+          },
+          {
+            "id": 36822631,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822631",
+            "description": "Trikk",
+            "account": {
+              "id": 467479660,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479660"
+            },
+            "vatType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Trikk"
+          },
+          {
+            "id": 36822632,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822632",
+            "description": "Vekslingsgebyr",
+            "account": {
+              "id": 467479663,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479663"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Vekslingsgebyr"
+          },
+          {
+            "id": 36822633,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822633",
+            "description": "Vedlikehold transportmidler",
+            "account": {
+              "id": 467479654,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/467479654"
+            },
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "isVatLocked": false,
+            "showOnTravelExpenses": true,
+            "showOnEmployeeExpenses": false,
+            "isInactive": false,
+            "sequence": 0,
+            "displayName": "Vedlikehold transportmidler"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:32:01.803970",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/cost/20256313",
+      "status": 200,
+      "request_params": null,
+      "request_body": {
+        "travelExpense": {
+          "id": 11149312
+        },
+        "date": "2024-12-01",
+        "amountCurrencyIncVat": 48850.0,
+        "currency": {
+          "id": 1
+        },
+        "vatType": {
+          "id": 1
+        },
+        "paymentType": {
+          "id": 36822597
+        },
+        "costCategory": {
+          "id": 36822600
+        },
+        "comments": "Coût fournisseur Soleil SARL",
+        "isChargeable": true
+      },
+      "response_body": {
+        "value": {
+          "id": 20256313,
+          "version": 2,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/cost/20256313",
+          "travelExpense": {
+            "id": 11149312,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/11149312"
+          },
+          "vatType": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+          },
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "costCategory": {
+            "id": 36822600,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/costCategory/36822600"
+          },
+          "paymentType": {
+            "id": 36822597,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/paymentType/36822597"
+          },
+          "category": "",
+          "comments": "Coût fournisseur Soleil SARL",
+          "rate": 1,
+          "amountCurrencyIncVat": 48850.0,
+          "amountNOKInclVAT": 48850.0,
+          "amountNOKInclVATLow": 0,
+          "amountNOKInclVATMedium": 0,
+          "amountNOKInclVATHigh": 9770.0,
+          "isPaidByEmployee": false,
+          "isChargeable": true,
+          "date": "2024-12-01",
+          "participants": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T18:32:05.030547",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/travelExpense/:deliver",
+      "status": 200,
+      "request_params": {
+        "id": 11149312
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 11149312,
+            "version": 5,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/11149312",
+            "attestationSteps": [],
+            "attestation": null,
+            "project": {
+              "id": 402027116,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/402027116"
+            },
+            "employee": {
+              "id": 18646654,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646654"
+            },
+            "approvedBy": null,
+            "completedBy": {
+              "id": 18646647,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18646647"
+            },
+            "rejectedBy": null,
+            "department": {
+              "id": 946409,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/946409"
+            },
+            "freeDimension1": null,
+            "freeDimension2": null,
+            "freeDimension3": null,
+            "payslip": null,
+            "vatType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            },
+            "paymentCurrency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "voucher": null,
+            "attachment": null,
+            "isCompleted": true,
+            "isApproved": false,
+            "rejectedComment": "",
+            "isChargeable": true,
+            "isFixedInvoicedAmount": false,
+            "isMarkupInvoicedPercent": false,
+            "isIncludeAttachedReceiptsWhenReinvoicing": false,
+            "completedDate": "2026-03-21",
+            "approvedDate": null,
+            "date": "2026-03-21",
+            "travelAdvance": 0.0,
+            "fixedInvoicedAmount": 0.0,
+            "markupInvoicedPercent": 0.0,
+            "amount": 48850.0,
+            "chargeableAmountCurrency": 39080.0,
+            "paymentAmount": 48850.0,
+            "chargeableAmount": 39080.0,
+            "lowRateVAT": 0.0,
+            "mediumRateVAT": 0.0,
+            "highRateVAT": 9770.0,
+            "paymentAmountCurrency": 48850.0,
+            "number": 1,
+            "numberAsString": "1-2026",
+            "invoice": null,
+            "title": "Coût fournisseur - Migration Cloud",
+            "displayName": "1 - Coût fournisseur - Migration Cloud",
+            "displayNameWithoutNumber": "Coût fournisseur - Migration Cloud",
+            "perDiemCompensations": [],
+            "mileageAllowances": [],
+            "accommodationAllowances": [],
+            "costs": [
+              {
+                "id": 20256313,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/travelExpense/cost/20256313"
+              }
+            ],
+            "attachmentCount": 1,
+            "state": "DELIVERED",
+            "stateName": "Levert",
+            "actions": [
+              {
+                "rel": "APPROVE",
+                "type": "PUT",
+                "href": "kkpqfuj-amager.tripletex.dev/v2/expense/:approve",
+                "id": 11149312
+              },
+              {
+                "rel": "REJECT",
+                "type": "PUT",
+                "href": "kkpqfuj-amager.tripletex.dev/v2/expense/:reject",
+                "id": 11149312
+              },
+              {
+                "rel": "COPY",
+                "type": "POST",
+                "href": "kkpqfuj-amager.tripletex.dev/v2/expense/copy",
+                "id": 11149312
+              },
+              {
+                "rel": "DELETE",
+                "type": "DELETE",
+                "href": "kkpqfuj-amager.tripletex.dev/v2/expense/list",
+                "id": 11149312
+              }
+            ],
+            "isSalaryAdmin": false,
+            "showPayslip": false,
+            "accountingPeriodClosed": false,
+            "accountingPeriodVATClosed": false,
+            "type": 1
+          }
+        ]
+      }
+    }
+  ]
+}

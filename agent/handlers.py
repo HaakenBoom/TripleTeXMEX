@@ -799,8 +799,8 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
     e = task["entities"]
     today = e.get("today", _today())
 
-    # Bank account setup is now LAZY — only triggered if POST /invoice fails
-    # with a bank account error. Saves 2-3 API calls in the common case.
+    # Proactively ensure bank account is set up (GET is free, avoids wasted POST on failure)
+    _ensure_company_bank_account(client, context)
 
     # Step 1: Find or create customer (avoids duplicates)
     customer_data = e.get("customer")
@@ -864,7 +864,8 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
     e = task["entities"]
     today = e.get("today", _today())
 
-    # Bank account setup is now LAZY — only triggered if POST /invoice fails
+    # Proactively ensure bank account is set up (GET is free, avoids wasted POST on failure)
+    _ensure_company_bank_account(client, context)
 
     # Step 0b: Find payment type via /invoice/paymentType (NOT /ledger/paymentTypeOut!)
     # /invoice/paymentType = incoming payments (customer → us)
@@ -1353,15 +1354,36 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
     # Add cost items if specified
     costs = entities.get("costs", [])
     if costs:
-        # Fetch a default payment type for travel expenses (required by API)
+        # Fetch a default payment type for travel expenses (REQUIRED by API)
+        # Try multiple approaches to ensure we always have a payment type
         default_payment_type_id = None
+
+        # Approach 1: dedicated travel payment type endpoint
         try:
-            pt_resp = client.get("/travelExpense/paymentType", {"count": 10})
+            pt_resp = client.get("/travelExpense/paymentType", {"count": 100})
             pt_values = pt_resp.get("values", [])
             if pt_values:
-                default_payment_type_id = pt_values[0]["id"]
+                # Prefer active payment types shown on employee expenses
+                for pt in pt_values:
+                    if not pt.get("isInactive", False) and pt.get("showOnEmployeeExpenses", True):
+                        default_payment_type_id = pt["id"]
+                        break
+                if not default_payment_type_id:
+                    default_payment_type_id = pt_values[0]["id"]
+                logger.info("Travel payment type from /travelExpense/paymentType: id=%s", default_payment_type_id)
         except Exception as e:
             logger.warning("Failed to fetch travel payment types: %s", e)
+
+        # Approach 2: try outgoing payment types as fallback
+        if not default_payment_type_id:
+            try:
+                pt_resp2 = client.get("/ledger/paymentTypeOut", {"count": 100})
+                pt_values2 = pt_resp2.get("values", [])
+                if pt_values2:
+                    default_payment_type_id = pt_values2[0]["id"]
+                    logger.info("Travel payment type from /ledger/paymentTypeOut: id=%s", default_payment_type_id)
+            except Exception as e:
+                logger.warning("Fallback payment type fetch failed: %s", e)
 
         for cost in costs:
             cost_body: dict[str, Any] = {
@@ -1541,20 +1563,37 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
     has_ap_posting = any(2400 <= r["account_number"] <= 2499 for r in non_vat_entries)
 
     if not supplier_name and has_ap_posting:
-        # Fall back to extracting from description text
+        # Fall back to extracting from description text AND raw prompt
         import re
+        # Combine all available text sources for extraction
+        desc_parts = [entities.get("description", "")]
         for r in non_vat_entries:
             if 2400 <= r["account_number"] <= 2499:
-                desc = entities.get("description", "") + " " + (r["posting"].get("description") or "")
-                org_match = re.search(r'(?:Org\.?\s*(?:nr\.?|nummer)?:?\s*)(\d{6,9})', desc)
-                name_match = re.search(r'(?:fra|from|de|von)\s+(.+?)(?:\s*\(|\s*-\s*Org|\s*$)', desc, re.IGNORECASE)
-                if not name_match:
-                    name_match = re.search(r'(?:Leverandørgjeld|gjeld)\s*-\s*(.+?)(?:\s*\(|$)', desc, re.IGNORECASE)
-                if name_match:
-                    supplier_name = name_match.group(1).strip()
-                if org_match and not supplier_org:
-                    supplier_org = org_match.group(1)
-                break
+                desc_parts.append(r["posting"].get("description") or "")
+        # Also search the raw prompt for supplier info
+        raw_prompt = task.get("raw_prompt", "")
+        desc_parts.append(raw_prompt)
+        desc = " ".join(desc_parts)
+
+        org_match = re.search(r'(?:[Oo]rg\.?\s*(?:nr\.?|n[uú]m(?:ero|mer)?|nº)?\.?:?\s*)(\d{6,9})', desc)
+        # Try multiple name patterns, stopping at first match
+        name_patterns = [
+            r'(?:fra|from|de|von|du|de la|dal)\s+(.+?)(?:\s*\(|\s*-\s*(?:Org|org)|,|\s*$)',
+            r'(?:Leverand[øo]rgjeld|gjeld|fournisseur|proveedor|fornecedor|Lieferant)\s*[-:]\s*(.+?)(?:\s*\(|\s*$)',
+            # Extract "Company Name" from patterns like "facture de Company Name"
+            r'(?:facture?\s+(?:de|du|fournisseur))\s+(.+?)(?:\s*\(|\s*-|\s*$)',
+        ]
+        for pat in name_patterns:
+            name_match = re.search(pat, desc, re.IGNORECASE)
+            if name_match:
+                candidate = name_match.group(1).strip().rstrip('.,;:')
+                # Reject if too long (likely captured too much)
+                if len(candidate) <= 60 and candidate:
+                    supplier_name = candidate
+                    break
+
+        if org_match and not supplier_org:
+            supplier_org = org_match.group(1)
 
     if supplier_name or supplier_org:
         # Look up existing supplier
@@ -1580,14 +1619,31 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 logger.info("Created supplier '%s' org=%s (id=%d)",
                             supp_body["name"], supplier_org, supplier_id)
 
+    # If AP posting exists but no supplier was resolved, create a fallback supplier
+    # to avoid "Leverandør mangler" 422 errors
+    if has_ap_posting and not supplier_id:
+        fallback_name = supplier_name or entities.get("description", "Leverandør")[:50]
+        logger.info("Creating fallback supplier for AP posting: '%s'", fallback_name)
+        supp_body: dict[str, Any] = {"name": fallback_name}
+        if supplier_org:
+            supp_body["organizationNumber"] = supplier_org
+        if supplier_bank_account:
+            supp_body["bankAccountPresentation"] = [{"number": supplier_bank_account}]
+        supp_result = client.post("/supplier", supp_body)
+        if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
+            supplier_id = supp_result["value"]["id"]
+            logger.info("Created fallback supplier (id=%d)", supplier_id)
+
     # Phase 4: Build final postings (skip entries with unresolved account_id)
     postings = []
-    for idx, r in enumerate(non_vat_entries):
+    row_num = 0
+    for r in non_vat_entries:
         if r["account_id"] is None:
             logger.warning("Skipping posting with unresolved account_id for account %s", r["account_number"])
             continue
+        row_num += 1
         p: dict[str, Any] = {
-            "row": idx + 1,
+            "row": row_num,
             "account": {"id": r["account_id"]},
             "date": r["posting"].get("date", voucher_date),
             "amountGross": r["amount"],
@@ -1616,7 +1672,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         if bank_values:
             bank_id = bank_values[0]["id"]
             postings.append({
-                "row": len(postings) + 1,
+                "row": row_num + 1,
                 "account": {"id": bank_id},
                 "date": postings[0].get("date", today),
                 "amountGross": -posting_sum,
@@ -2237,7 +2293,20 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
     employment_id = None
     if employments:
         employment_id = employments[0]["id"]
-        logger.info("Found existing employment %d for employee %d", employment_id, emp_id)
+        # Ensure existing employment covers the payroll period — update startDate if needed
+        emp_start = employments[0].get("startDate", "")
+        payroll_first_day = f"{payroll_year}-{payroll_month:02d}-01"
+        if emp_start and emp_start > payroll_first_day:
+            logger.info("Employment startDate %s is after payroll month %s, updating...",
+                        emp_start, payroll_first_day)
+            emp_version = employments[0].get("version", 0)
+            new_start = f"{min(payroll_year, int(emp_start[:4]))}-01-01"
+            client.put(f"/employee/employment/{employment_id}", {
+                "id": employment_id,
+                "version": emp_version,
+                "startDate": new_start,
+            })
+        logger.info("Using existing employment %d for employee %d", employment_id, emp_id)
     else:
         # Create employment — startDate must be before the payroll month
         emp_start_year = min(payroll_year, current_date.year)
@@ -2339,6 +2408,7 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
 
         if bonus_type_id:
             # Add bonus as a salary specification on the payslip
+            # API requires: rate (amount per unit), count (number of units)
             spec_body: dict[str, Any] = {
                 "payslip": {"id": payslip_id},
                 "salaryType": {"id": bonus_type_id},
@@ -2347,17 +2417,8 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
             }
             spec_result = client.post("/salary/specification", spec_body)
             if isinstance(spec_result, dict) and spec_result.get("status", 0) >= 400:
-                logger.warning("POST /salary/specification failed: %s, trying alternative...",
+                logger.warning("POST /salary/specification failed: %s",
                              spec_result.get("message", ""))
-                # Try alternative field names
-                spec_body2: dict[str, Any] = {
-                    "payslip": {"id": payslip_id},
-                    "salaryType": {"id": bonus_type_id},
-                    "amount": bonus,
-                    "count": 1,
-                }
-                spec_result = client.post("/salary/specification", spec_body2)
-                logger.info("Retry salary specification result: %s", spec_result)
             else:
                 logger.info("Added bonus specification to payslip %d", payslip_id)
         else:

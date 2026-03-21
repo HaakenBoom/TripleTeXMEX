@@ -1440,6 +1440,10 @@ def _handle_delete_travel_expense(task: dict, client: TripletexClient, context: 
 def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
     today = entities.get("today", _today())
+    voucher_date = entities.get("date", today)
+    invoice_number = entities.get("invoiceNumber") or ""
+    due_date = entities.get("dueDate") or ""
+    supplier_bank_account = entities.get("supplierBankAccount") or ""
 
     # Phase 0: Extract supplier info from ENTITIES first (parser already extracted these)
     supplier_name = entities.get("supplierName") or ""
@@ -1568,6 +1572,8 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             supp_body: dict[str, Any] = {"name": supplier_name or f"Supplier {supplier_org}"}
             if supplier_org:
                 supp_body["organizationNumber"] = supplier_org
+            if supplier_bank_account:
+                supp_body["bankAccountPresentation"] = [{"number": supplier_bank_account}]
             supp_result = client.post("/supplier", supp_body)
             if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
                 supplier_id = supp_result["value"]["id"]
@@ -1583,7 +1589,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         p: dict[str, Any] = {
             "row": idx + 1,
             "account": {"id": r["account_id"]},
-            "date": r["posting"].get("date", today),
+            "date": r["posting"].get("date", voucher_date),
             "amountGross": r["amount"],
             "amountGrossCurrency": r["amount"],
         }
@@ -1594,6 +1600,10 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         # Add supplier reference to AP postings
         if supplier_id and 2400 <= r["account_number"] <= 2499:
             p["supplier"] = {"id": supplier_id}
+            if invoice_number:
+                p["invoiceNumber"] = invoice_number
+            if due_date:
+                p["termOfPayment"] = due_date
         postings.append(p)
 
     # Only add bank counter-posting if postings genuinely don't balance

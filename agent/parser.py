@@ -523,7 +523,8 @@ For per diem: description should include days and rate.""",
         "create_voucher": base + """
 Extract: date (YYYY-MM-DD), description, postings (array of {accountNumber (integer), amount (positive=debit, negative=credit), description}).
 For supplier invoices: include expense posting (4xxx-7xxx), input VAT posting (27xx), and AP posting (2400, negative).
-Supplier info: supplierName, supplierOrganizationNumber (extract from prompt if mentioned).""",
+Supplier info: supplierName, supplierOrganizationNumber (extract from prompt if mentioned).
+Also extract if available: invoiceNumber (e.g. "INV-2026-1234"), dueDate (YYYY-MM-DD forfallsdato), supplierBankAccount (bank account number string from invoice).""",
 
         "log_timesheet_hours": base + """
 Extract: employeeName, employeeEmail, hours (number), activityName (e.g. "Design", "Utvikling", "Testing"), projectName, customerName, customerOrganizationNumber, date (YYYY-MM-DD), hourlyRate (number), comment.""",

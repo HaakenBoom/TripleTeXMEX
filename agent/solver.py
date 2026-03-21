@@ -39,6 +39,11 @@ def solve_task(prompt: str, files: list, base_url: str, session_token: str) -> s
     task = parse_task(prompt, file_contents if file_contents else None)
     phase_times["parse"] = round(time.time() - t0, 2)
     task_type = task.get("task_type", "unknown")
+    # Always include raw prompt so handlers can detect intent (e.g., reversal vs payment)
+    task["raw_prompt"] = prompt
+    # Include file contents for handlers that need them (e.g., bank reconciliation)
+    task["_file_contents"] = file_contents
+    task["_files_raw"] = files
     logger.info("Parsed task_type: %s (%.1fs)", task_type, phase_times["parse"])
     logger.info("Parsed entities: %s", json.dumps(task.get("entities", {}), ensure_ascii=False)[:500])
 
@@ -403,7 +408,7 @@ FALLBACK_SYSTEM_PROMPT = """You are an accounting agent for Tripletex (Norwegian
 
 CRITICAL: NEVER give up. NEVER say "I can't do this". Always attempt every part of the task. Even if one part fails, complete the other parts for partial credit. Partial credit is better than zero.
 
-CRITICAL: When the task describes EXISTING entities (invoices, payments, customers, orders), you MUST FIND them first — NEVER create new ones. If GET /invoice returns 0 results, try different date ranges (2024-01-01 to 2025-12-31) or broader search params. The task environment uses dates in 2024-2025.
+CRITICAL: When the task describes EXISTING entities (invoices, payments, customers, orders), you MUST FIND them first — NEVER create new ones. If GET /invoice returns 0 results, try different date ranges (2020-01-01 to 2030-12-31) or broader search params. The task environment may use dates across multiple years.
 
 KEY RULES:
 1. vatType MUST be {"id": N}, NEVER a string. OUTGOING (sales/invoices): 25%→id=3, 15%→id=31, 12%→id=32, 0%→id=5. INCOMING (expenses/purchases): 25%→id=1, 15%→id=11, 12%→id=12, 0%/none→id=0. For voucher postings on expense accounts (4xxx-7xxx), use INCOMING IDs. For balance accounts (1xxx-2xxx), use id=0.
@@ -451,7 +456,7 @@ POST /invoice accepts query params: sendToCustomer, paymentTypeId, paidAmount (r
 PUT /invoice/{id}/:payment to register payment after creation (params: paymentDate, paymentTypeId, paidAmount) — use NEGATIVE paidAmount to reverse!
 PUT /invoice/{id}/:createCreditNote to create a credit note (params: date, comment)
 PUT /ledger/voucher/{id}/:reverse to reverse a voucher
-GET /invoice REQUIRES invoiceDateFrom and invoiceDateTo params — use broad range like 2024-01-01 to 2025-12-31
+GET /invoice REQUIRES invoiceDateFrom and invoiceDateTo params — use broad range like 2020-01-01 to 2030-12-31
 
 BANK RECONCILIATION:
 /bank/statement — GET bank statements

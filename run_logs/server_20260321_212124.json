@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:21:24.054931",
+  "prompt": "Run payroll for Sarah Brown (sarah.brown@example.org) for this month. The base salary is 48300 NOK. Add a one-time bonus of 11650 NOK on top of the base salary. If the salary API is unavailable, you can use manual vouchers on salary accounts (5000-series) to record the payroll expense.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Ran payroll for employee Sarah Brown (2026-03). salary transaction id=6958174. monthly salary=48300. bonus=11650",
+  "error": null,
+  "elapsed_seconds": 16.82
+}

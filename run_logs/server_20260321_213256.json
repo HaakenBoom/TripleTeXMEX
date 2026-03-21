@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:32:56.796755",
+  "prompt": "Effectuez la clôture annuelle simplifiée pour 2025 : 1) Calculez et comptabilisez l'amortissement annuel de trois immobilisations : Kjøretøy (119400 NOK, 3 ans linéaire, compte 1230), Kontormaskiner (393350 NOK, 4 ans, compte 1200), Programvare (262450 NOK, 3 ans, compte 1250). Utilisez le compte 6010 pour les charges d'amortissement et 1209 pour les amortissements cumulés. 2) Extournez les charges constatées d'avance (total 63250 NOK au compte 1700). 3) Calculez et comptabilisez la provision d'",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 5 vouchers created. Depreciation Kjøretøy: 39800.0 NOK; Depreciation Kontormaskiner: 98337.5 NOK; Depreciation Programvare: 87483.33 NOK; Prepaid reversal: 63250 NOK; Tax provision (22%): 63551.58 NOK",
+  "error": null,
+  "elapsed_seconds": 9.78
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:17:50.937784",
+  "prompt": "Registre 34 horas para Carmen Romero (carmen.romero@example.org) en la actividad \"Analyse\" del proyecto \"Desarrollo de app\" para Sierra SL (org. nº 849835467). Tarifa por hora: 1150 NOK/h. Genere una factura de proyecto al cliente basada en las horas registradas.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Max iterations reached",
+  "error": null,
+  "elapsed_seconds": 86.77
+}

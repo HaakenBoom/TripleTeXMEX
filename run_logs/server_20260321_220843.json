@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:08:43.041024",
+  "prompt": "Sie haben einen Arbeitsvertrag erhalten (siehe beigefugte PDF). Erstellen Sie den Mitarbeiter in Tripletex mit allen Details aus dem Vertrag: Personalnummer, Geburtsdatum, Abteilung, Berufsschluessel, Gehalt, Beschaeftigungsprozentsatz und Startdatum.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Johanna Schneider (id=18678203)",
+  "error": null,
+  "elapsed_seconds": 6.17
+}

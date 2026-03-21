@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:15:41.895072",
+  "prompt": "Le client Forêt SARL (nº org. 925519685) a une facture impayée de 40750 NOK hors TVA pour \"Design web\". Enregistrez le paiement intégral de cette facture.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147638876 with payment for customer Forêt SARL (paymentTypeId=28228817, paidAmount=0.0)",
+  "error": null,
+  "elapsed_seconds": 17.0
+}

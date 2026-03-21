@@ -1,0 +1,304 @@
+{
+  "timestamp": "2026-03-21T22:08:43.040015",
+  "prompt_fingerprint": "4f09aa6b239e",
+  "prompt": "Sie haben einen Arbeitsvertrag erhalten (siehe beigefugte PDF). Erstellen Sie den Mitarbeiter in Tripletex mit allen Details aus dem Vertrag: Personalnummer, Geburtsdatum, Abteilung, Berufsschluessel, Gehalt, Beschaeftigungsprozentsatz und Startdatum.",
+  "prompt_language": "de",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Johanna",
+      "lastName": "Schneider",
+      "email": "johanna.schneider@example.org",
+      "dateOfBirth": "1990-12-20",
+      "phoneNumberMobile": null,
+      "isAdministrator": false,
+      "address": null,
+      "employeeNumber": "20129099845",
+      "nationalIdentityNumber": "20129099845",
+      "bankAccountNumber": "66713580709",
+      "comments": null,
+      "employment": {
+        "startDate": "2026-11-15",
+        "annualSalary": 960000,
+        "employmentPercentage": 80.0,
+        "occupationCode": "4110",
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "startDate": "2026-11-15",
+      "annualSalary": 960000,
+      "employmentPercentage": 80.0,
+      "occupationCode": "4110",
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Sie haben einen Arbeitsvertrag erhalten (siehe beigefugte PDF). Erstellen Sie den Mitarbeiter in Tripletex mit allen Details aus dem Vertrag: Personalnummer, Geburtsdatum, Abteilung, Berufsschluessel, Gehalt, Beschaeftigungsprozentsatz und Startdatum.",
+    "_file_contents": [
+      "[File: files/arbeidskontrakt_de_01.pdf]\nARBEIDSKONTRAKT\nArbeidsgiver: Grünfeld GmbH\nArbeidstaker: Johanna Schneider\nFodselsdato: 20.12.1990\nPersonnummer: 20129099845\nE-post: johanna.schneider@example.org\nBankkonto: 66713580709\nAnsettelsesdetaljer\nAvdeling: Produksjon\nStillingskode (STYRK): 4110\nAnsettelsesform: Fast stilling\nLonnstype: Fastlonn (manedlig)\nStillingsprosent: 80.0%\nArslonn: 960000 kr\nTiltredelse: 15.11.2026\nArbeidsforholdet reguleres av gjeldende lover og regler, herunder arbeidsmiljoloven. Arbeidstaker er underlagt\nbedriftens personalhandbok og interne retningslinjer. Arbeidsstedet er ved bedriftens kontorer med mindre annet er\navtalt skriftlig.\nDet gjelder en gjensidig provetid pa 6 maneder. I provetiden er den gjensidige oppsigelsesfristen 14 dager. Etter\nprovetiden er oppsigelsesfristen 3 maneder regnet fra forste dag i maneden etter at oppsigelsen fant sted.\nFerie og feriepenger folger ferieloven. Arbeidstaker har rett til 25 virkedagers ferie per kalender ar. Feriepenger\nutbetales i henhold til gjeldende regelverk.\n___________________________ ___________________________\nArbeidsgiver Arbeidstaker"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/arbeidskontrakt_de_01.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDkxNwo+PgpzdHJlYW0KeJyVVk1v4zYQve+vmEuBDdCyJPXdUxNsvN1N0W4TXQoEKOiSlmXJlEvS3va/99AhJUdy6mJZI4Accd684fDNozl8fENJVsDnN3c1fLtiwEpCKdQbuK/9K05zkmdQVIywFGoJb28f7+4/vHt6+Pmn+vH2ob6BejfFBji7gCcIK6FIcpJNaLNWrbRNe1Lmuwssf41lBScVW4Lfm7/1RvUS3u/XP0QRs4SUxZLYiS6aeAZ/HLZCawFPv281ZlEmhjz3PasCfjVIq3orhRviuBdYTgnj+E9Fo0jzkmQsAD8pYwetj/t97I4XYE4Zr2hVlWkWRZtmpEwC8v6bw2BdJOEM240tJvbc4u/Vn2J/6BUZTBNVAk8Iy0OuO6G7btDRzZ6ReY6nnpW0oNVrzuQKJ0YSOglbW+UcHrKyUjnR7+JEkqUVSUfu25NUfaubLxVdFoRWS+AnM8hjZ3eDjmLkOSnKAHxybe8ZbTdIBc9vn+pfHx+ebyILmPOkjEWJM6MpYfR1uzaD2UdSzviVsA7sVH8Md1oykvKA/RGnwrq/DiqOdYH0rD2isVd7oZXs2+b5Joo9K0mRXTb9YAar9BcnZSpiTuA191UUKTonPbuf9XVHcs24Kqf4gS5KyynOSDKaVt32zijpzzeSc8ayjGAMpzx/jaQz8g94oU0KfIRyUR0ljsTnF7dHaW2HHucRjGqOvTLKgjhBs8NLRGnUfD/gPQRD49dx+WvYKnPEBQNizLBv+93gozSB5RUC+BcCe9G4qU745aKsLJ3KYniNJKGstZKm3TilLRyCO4seXU+uh87X0GqnjFZYi9NeIKgSdJEXXuuU3wkSn5SERapgdQbf7/H9vtXSKEAvDbFzaXNhSXG2O3FCp8I56nwqFDM5d3y5D1qSMlwKnCSchn28w9xjE7ER2n/VtpVtA6jpk3KthIOAHMKM+B18eFnAaMTIJUjBcDhYfAYzMC3uUwP+2JCi8dh7tIlr2+B4RZajGVwmv5ItOZfiz9k3ZmMEoDhw0dNAO60j3rOBcIssGjZCe7NR8lp/eJ5MRsxJmZahPytlWuWPdOO/HJTGnSBfHx7+1TVFbYUvzzlAgwCewak1nQpNsCPIawY60atJoARWc/prHUpzko6ecXRrfymh/FuUuPZDEWjmScDGqB6HoSOLqRvzsIqTbJzN3/77s4DxMicJ/f+4iQ5v5cnqlr8Wr+T/V2Bo5DnwHxGR830KZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago2IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlIC9UeXBlMQovVHlwZSAvRm9udAo+PgplbmRvYmoKNyAwIG9iago8PAovRm9udCA8PC9GMSA1IDAgUgovRjIgNiAwIFI+PgovUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KPj4KZW5kb2JqCjggMCBvYmoKPDwKL0NyZWF0aW9uRGF0ZSAoRDoyMDI2MDMwNDE5MTgwNVopCj4+CmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDEwMiAwMDAwMCBuIAowMDAwMDAwMjA1IDAwMDAwIG4gCjAwMDAwMDAyODUgMDAwMDAgbiAKMDAwMDAwMTI3NCAwMDAwMCBuIAowMDAwMDAxMzc2IDAwMDAwIG4gCjAwMDAwMDE0NzMgMDAwMDAgbiAKMDAwMDAwMTU3MCAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDkKL1Jvb3QgMiAwIFIKL0luZm8gOCAwIFIKL0lEIFs8ODk2MkNCQkFCOUVDREE2Rjg2Qzk3OENDQjVFNjMzRDk+PDg5NjJDQkJBQjlFQ0RBNkY4NkM5NzhDQ0I1RTYzM0Q5Pl0KPj4Kc3RhcnR4cmVmCjE2MjUKJSVFT0YK",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Johanna Schneider (id=18678203)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 6.16,
+  "phase_times": {
+    "parse": 1.65,
+    "prefetch": 0.83,
+    "handler": 3.69
+  },
+  "total_api_calls": 5,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 5
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 3,
+    "wasted": 0,
+    "lookup": 1
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18678203
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2841710
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3740110
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T22:08:39.350289",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 963964,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/963964",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:08:40.491706",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Johanna",
+        "lastName": "Schneider",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 963964
+        },
+        "allowInformationRegistration": true,
+        "email": "johanna.schneider@example.org",
+        "dateOfBirth": "1990-12-20",
+        "nationalIdentityNumber": "20129099845",
+        "bankAccountNumber": "66713580709",
+        "employeeNumber": "20129099845"
+      },
+      "response_body": {
+        "value": {
+          "id": 18678203,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18678203",
+          "firstName": "Johanna",
+          "lastName": "Schneider",
+          "displayName": "Johanna Schneider",
+          "employeeNumber": "20129099845",
+          "dateOfBirth": "1990-12-20",
+          "email": "johanna.schneider@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "20129099845",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "66713580709",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 963964,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/963964"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108438024,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:08:41.250759",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18678203
+        },
+        "startDate": "2026-11-15",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2841710,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2841710",
+          "employee": {
+            "id": 18678203,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18678203"
+          },
+          "employmentId": "",
+          "startDate": "2026-11-15",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:08:41.857924",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/occupationCode",
+      "status": 200,
+      "request_params": {
+        "code": "4110",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 9,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/occupationCode/9",
+            "nameNO": "ADJUNKT (YRKESFAG)",
+            "code": "3341103"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T22:08:43.039160",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2841710
+        },
+        "date": "2026-11-15",
+        "annualSalary": 960000,
+        "percentageOfFullTimeEquivalent": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE",
+        "occupationCode": {
+          "id": 9
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 3740110,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3740110",
+          "employment": {
+            "id": 2841710,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2841710"
+          },
+          "date": "2026-11-15",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": {
+            "id": 9,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/occupationCode/9"
+          },
+          "percentageOfFullTimeEquivalent": 80.0,
+          "annualSalary": 960000,
+          "hourlyWage": 492,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 80000.0
+        }
+      }
+    }
+  ]
+}

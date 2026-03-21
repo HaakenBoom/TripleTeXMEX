@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:36:19.492118",
+  "prompt": "Fixez un prix forfaitaire de 128500 NOK sur le projet \"Mise à niveau infrastructure\" pour Forêt SARL (nº org. 846715363). Le chef de projet est Camille Martin (camille.martin@example.org). Facturez au client 33 % du prix fixe comme paiement d'étape.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Perfect! I have successfully:\n\n1. **Updated the project \"Mise à niveau infrastructure\"** to set it as a fixed-price project with **128,500 NOK**\n2. **Created an order** for the milestone payment\n3. **Added an order line** for 33% of the fixed price (**42,405 NOK** excluding VAT)\n4. **Generated an invoice** (Invoice #1) for **53,006.25 NOK** including 25% VAT\n\n## Summary:\n- ✅ Project \"Mise à niveau infrastructure\" now has fixed price: **128,500 NOK**\n- ✅ Created milestone invoice for **33% of fix",
+  "error": null,
+  "elapsed_seconds": 68.55
+}

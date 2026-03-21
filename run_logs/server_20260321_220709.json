@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T22:07:09.582603",
+  "prompt": "Erstellen Sie einen Auftrag für den Kunden Brückentor GmbH (Org.-Nr. 907980634) mit den Produkten Analysebericht (8563) zu 20400 NOK und Wartung (3063) zu 15250 NOK. Wandeln Sie den Auftrag in eine Rechnung um und registrieren Sie die vollständige Zahlung.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147643298 with payment for customer Brückentor GmbH (paymentTypeId=37490460, paidAmount=44562.5)",
+  "error": null,
+  "elapsed_seconds": 4.78
+}

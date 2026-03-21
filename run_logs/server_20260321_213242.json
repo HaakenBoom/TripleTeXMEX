@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T21:32:42.597665",
+  "prompt": "Crea una factura para el cliente Sierra SL (org. nº 861379760) con tres líneas de producto: Mantenimiento (2109) a 27500 NOK con 25 % IVA, Horas de consultoría (1175) a 3900 NOK con 15 % IVA (alimentos), y Informe de análisis (9974) a 3400 NOK con 0 % IVA (exento).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Perfect! I have successfully created the invoice for Sierra SL with the three product lines:\n\n✅ **Invoice Created Successfully**\n- **Invoice Number**: 1\n- **Customer**: Sierra SL (org. 861379760)\n- **Invoice Date**: 2024-12-19\n- **Due Date**: 2025-01-02\n- **Total Amount**: 42,260 NOK (including VAT)\n- **Amount Excluding VAT**: 34,800 NOK\n\n**Product Lines:**\n1. **Mantenimiento (2109)**: 27,500 NOK + 25% VAT = 34,375 NOK\n2. **Horas de consultoría (1175)**: 3,900 NOK + 15% VAT = 4,485 NOK  \n3. **In",
+  "error": null,
+  "elapsed_seconds": 63.09
+}

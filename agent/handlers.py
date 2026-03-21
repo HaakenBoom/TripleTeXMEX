@@ -1481,6 +1481,17 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
     due_date = entities.get("dueDate") or ""
     supplier_bank_account = entities.get("supplierBankAccount") or ""
 
+    # Fallback: extract invoice number from description or raw prompt if LLM missed it
+    if not invoice_number:
+        import re
+        raw = entities.get("description", "") + " " + task.get("raw_prompt", "")
+        inv_match = re.search(r'(?:INV|inv|faktura|fatura|factura|invoice|Rechnung|facture)[- .:]*(\d{4}[-/]\d{2,6})', raw, re.IGNORECASE)
+        if not inv_match:
+            inv_match = re.search(r'(INV-\d{4}-\d+)', raw)
+        if inv_match:
+            invoice_number = inv_match.group(0).strip()
+            logger.info("Extracted invoice number from prompt: %s", invoice_number)
+
     # Phase 0: Extract supplier info from ENTITIES first (parser already extracted these)
     supplier_name = entities.get("supplierName") or ""
     supplier_org = str(entities.get("supplierOrganizationNumber") or "").strip()

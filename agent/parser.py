@@ -310,6 +310,20 @@ def classify_task(prompt: str) -> str:
     ]):
         return "create_travel_expense"
 
+    # 16b. Outstanding/unpaid invoice + register payment → reverse_invoice_payment
+    #       This catches "facture impayée"/"fatura pendente"/"unbezahlte Rechnung" etc.
+    #       Must come BEFORE generic invoice rules to avoid misclassification.
+    _invoice_kw_early = any(kw in p for kw in [
+        "faktura", "invoice", "factura", "fatura", "rechnung", "facture",
+    ])
+    _has_outstanding_early = any(kw in p for kw in _OUTSTANDING_KW)
+    _has_register = any(kw in p for kw in [
+        "registrer", "register", "registre", "registrar", "enregistre",
+        "registrieren", "bokfør", "bokfor",
+    ])
+    if _invoice_kw_early and _has_outstanding_early and _has_register:
+        return "reverse_invoice_payment"
+
     # 17. Project fixed-price invoice (must come BEFORE generic invoice+payment)
     #     These mention "payment" loosely but are really project invoices
     _is_fixed_price = any(kw in p for kw in [
@@ -328,8 +342,11 @@ def classify_task(prompt: str) -> str:
     _payment_kw = any(kw in p for kw in [
         "registrer full betaling", "register full payment", "registre full",
         "registrer betaling", "registrar pago", "registrar pagamento",
-        "enregistrer le paiement", "zahlung registrieren",
+        "registrar o pagamento", "registe o pagamento", "registre o pagamento",
+        "enregistrer le paiement", "enregistrez le paiement",
+        "zahlung registrieren", "registrieren sie die zahlung",
         "full betaling", "full payment",
+        "registrer betalingen", "registre betalinga",
     ])
     if _invoice_kw and _payment_kw:
         # "has an outstanding/unpaid invoice" + "register payment" → find existing & pay

@@ -1385,6 +1385,24 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
             except Exception as e:
                 logger.warning("Fallback payment type fetch failed: %s", e)
 
+        # Approach 3: try incoming payment types
+        if not default_payment_type_id:
+            try:
+                pt_resp3 = client.get("/invoice/paymentType", {"count": 10})
+                pt_values3 = pt_resp3.get("values", [])
+                if pt_values3:
+                    default_payment_type_id = pt_values3[0]["id"]
+                    logger.info("Travel payment type from /invoice/paymentType: id=%s", default_payment_type_id)
+            except Exception as e:
+                logger.warning("Invoice payment type fallback failed: %s", e)
+
+        # If we STILL don't have a payment type, skip cost creation to avoid
+        # wasted 422 errors (paymentType is REQUIRED). At least we get the
+        # travel expense record created.
+        if not default_payment_type_id:
+            logger.warning("No payment type found after all fallbacks — skipping cost creation to avoid 422s")
+            costs = []  # Clear costs to skip the loop
+
         for cost in costs:
             cost_body: dict[str, Any] = {
                 "travelExpense": {"id": te_id},
@@ -1823,24 +1841,64 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
                     activity_id, activities[0].get("name"))
 
     if not activity_id:
-        # Create a project activity as fallback
         act_name = activity_name or "Generell"
-        act_body: dict[str, Any] = {
-            "name": act_name,
-            "project": {"id": project_id},
-        }
-        act_result = client.post("/project/projectActivity", act_body)
-        if isinstance(act_result, dict) and act_result.get("value"):
-            # Re-fetch activities after creation
-            act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
-            activities2 = act_resp2.get("values", [])
-            if activity_name:
+
+        # Approach 1: Create a global activity, then link to project
+        try:
+            act_create = client.post("/activity", {"name": act_name})
+            if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
+                global_act_id = act_create["value"]["id"]
+                # Link activity to project
+                client.post("/project/projectActivity", {
+                    "project": {"id": project_id},
+                    "activity": {"id": global_act_id},
+                })
+                # Re-fetch timesheet activities
+                act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                activities2 = act_resp2.get("values", [])
                 for a in activities2:
                     if a.get("name", "").strip().lower() == act_name.strip().lower():
                         activity_id = a["id"]
                         break
-            if not activity_id and activities2:
-                activity_id = activities2[0]["id"]
+                if not activity_id and activities2:
+                    activity_id = activities2[0]["id"]
+        except Exception as e:
+            logger.warning("Failed to create activity via /activity: %s", e)
+
+        # Approach 2: Try legacy project activity endpoint
+        if not activity_id:
+            try:
+                act_result = client.post("/project/projectActivity", {
+                    "name": act_name,
+                    "project": {"id": project_id},
+                })
+                if isinstance(act_result, dict) and act_result.get("value"):
+                    act_resp3 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                    activities3 = act_resp3.get("values", [])
+                    if activities3:
+                        activity_id = activities3[0]["id"]
+            except Exception as e:
+                logger.warning("Failed to create project activity: %s", e)
+
+        # Approach 3: Find ANY activity in the system
+        if not activity_id:
+            try:
+                all_acts = client.get("/activity", {"count": 10})
+                all_values = all_acts.get("values", [])
+                if all_values:
+                    # Link first available activity to our project
+                    any_act_id = all_values[0]["id"]
+                    client.post("/project/projectActivity", {
+                        "project": {"id": project_id},
+                        "activity": {"id": any_act_id},
+                    })
+                    act_resp4 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                    activities4 = act_resp4.get("values", [])
+                    if activities4:
+                        activity_id = activities4[0]["id"]
+            except Exception as e:
+                logger.warning("Failed to find any activity: %s", e)
+
         if not activity_id:
             raise RuntimeError(f"No activities found for project {project_id}")
 

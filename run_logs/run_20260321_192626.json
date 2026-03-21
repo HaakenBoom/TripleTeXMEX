@@ -1,0 +1,290 @@
+{
+  "timestamp": "2026-03-21T19:26:26.897332",
+  "prompt_fingerprint": "1d455b200113",
+  "prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+  "prompt_language": "es",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Beatriz",
+      "lastName": "Martins",
+      "email": "beatriz.martins@example.org",
+      "dateOfBirth": "1996-09-27",
+      "nationalIdentityNumber": "27099607063",
+      "bankAccountNumber": "27935644327",
+      "startDate": "2026-08-07",
+      "annualSalary": 910000,
+      "employmentPercentage": 80,
+      "occupationCode": "4110",
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+    "_file_contents": [
+      "[File: files/arbeidskontrakt_pt_01.pdf]\nARBEIDSKONTRAKT\nArbeidsgiver: Estrela Lda\nArbeidstaker: Beatriz Martins\nFodselsdato: 27.09.1996\nPersonnummer: 27099607063\nE-post: beatriz.martins@example.org\nBankkonto: 27935644327\nAnsettelsesdetaljer\nAvdeling: Innkjøp\nStillingskode (STYRK): 4110\nAnsettelsesform: Fast stilling\nLonnstype: Fastlonn (manedlig)\nStillingsprosent: 80.0%\nArslonn: 910000 kr\nTiltredelse: 07.08.2026\nArbeidsforholdet reguleres av gjeldende lover og regler, herunder arbeidsmiljoloven. Arbeidstaker er underlagt\nbedriftens personalhandbok og interne retningslinjer. Arbeidsstedet er ved bedriftens kontorer med mindre annet er\navtalt skriftlig.\nDet gjelder en gjensidig provetid pa 6 maneder. I provetiden er den gjensidige oppsigelsesfristen 14 dager. Etter\nprovetiden er oppsigelsesfristen 3 maneder regnet fra forste dag i maneden etter at oppsigelsen fant sted.\nFerie og feriepenger folger ferieloven. Arbeidstaker har rett til 25 virkedagers ferie per kalender ar. Feriepenger\nutbetales i henhold til gjeldende regelverk.\n___________________________ ___________________________\nArbeidsgiver Arbeidstaker"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/arbeidskontrakt_pt_01.pdf",
+        "content_base64": "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",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Beatriz Martins (id=18654369)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.51,
+  "phase_times": {
+    "parse": 2.15,
+    "prefetch": 0.27,
+    "handler": 1.09
+  },
+  "total_api_calls": 5,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 5
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 3,
+    "wasted": 0,
+    "lookup": 1
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18654369
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2829910
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3728765
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T19:26:25.804357",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 950670,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/950670",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:26:26.087379",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Beatriz",
+        "lastName": "Martins",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 950670
+        },
+        "allowInformationRegistration": true,
+        "email": "beatriz.martins@example.org",
+        "dateOfBirth": "1996-09-27",
+        "nationalIdentityNumber": "27099607063",
+        "bankAccountNumber": "27935644327"
+      },
+      "response_body": {
+        "value": {
+          "id": 18654369,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18654369",
+          "firstName": "Beatriz",
+          "lastName": "Martins",
+          "displayName": "Beatriz Martins",
+          "employeeNumber": "",
+          "dateOfBirth": "1996-09-27",
+          "email": "beatriz.martins@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "27099607063",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "27935644327",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 950670,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/950670"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108404508,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:26:26.361516",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18654369
+        },
+        "startDate": "2026-08-07",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2829910,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2829910",
+          "employee": {
+            "id": 18654369,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18654369"
+          },
+          "employmentId": "",
+          "startDate": "2026-08-07",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:26:26.614798",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/occupationCode",
+      "status": 200,
+      "request_params": {
+        "code": "4110",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 9,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/occupationCode/9",
+            "nameNO": "ADJUNKT (YRKESFAG)",
+            "code": "3341103"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:26:26.896601",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2829910
+        },
+        "date": "2026-08-07",
+        "annualSalary": 910000,
+        "percentageOfFullTimeEquivalent": 80,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE",
+        "occupationCode": {
+          "id": 9
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 3728765,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3728765",
+          "employment": {
+            "id": 2829910,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2829910"
+          },
+          "date": "2026-08-07",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": {
+            "id": 9,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/occupationCode/9"
+          },
+          "percentageOfFullTimeEquivalent": 80,
+          "annualSalary": 910000,
+          "hourlyWage": 467,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 75833.33
+        }
+      }
+    }
+  ]
+}

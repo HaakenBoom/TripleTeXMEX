@@ -481,6 +481,24 @@ If the task requires endpoints not listed above, TRY them — the Tripletex API 
 - /ledger/accountingDimensionName + /ledger/accountingDimensionValue for custom dimensions
 - Use Tripletex v2 API conventions: plural nouns, camelCase fields
 
+SUPPLIER INVOICES (voucher with leverandørgjeld):
+When creating vouchers for supplier invoices, postings on account 2400 (Leverandørgjeld/Accounts Payable) REQUIRE a supplier reference.
+Steps: 1) GET /supplier?organizationNumber=X or name=X 2) If not found, POST /supplier with name and organizationNumber 3) Add "supplier": {"id": N} to the AP posting in the voucher.
+Every voucher must have balanced postings (debits = credits). For expense receipts, the counter-posting is usually on bank account 1920.
+
+EXCHANGE RATE (FX) CORRECTIONS:
+When an invoice was sent in EUR but payment received in NOK at a different rate:
+1) Find the invoice: GET /invoice with customer and date range
+2) Register the payment: PUT /invoice/{id}/:payment with the NOK amount received
+3) Post the exchange difference as a voucher: loss→account 8160 (Disagio), gain→account 8060 (Agio)
+
+OVERDUE INVOICES / LATE FEES:
+1) Find overdue invoices: GET /invoice with invoiceDateFrom/To, check if outstanding balance > 0
+2) Create a reminder fee voucher: debit customer receivable (1500), credit income (3900 or similar)
+
+PROJECT LIFECYCLE:
+Multi-step: create customer → create project → log timesheet hours → create order → create invoice → register payment. Do each step sequentially.
+
 Be MINIMAL — every extra call or error hurts scoring. Respond with a short summary when done."""
 
 # Append the full API reference to the system prompt at runtime

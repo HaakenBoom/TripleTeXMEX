@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-03-21T19:01:08.665845",
+  "prompt_fingerprint": "0e679f607f32",
+  "prompt": "Nous avons envoyé une facture de 9273 EUR à Montagne SARL (nº org. 941382142) lorsque le taux de change était de 10.34 NOK/EUR. Le client a maintenant payé, mais le taux est de 10.83 NOK/EUR. Enregistrez le paiement et comptabilisez l'écart de change (agio) sur le bon compte.",
+  "prompt_language": "fr",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "unknown",
+    "entities": {},
+    "raw_prompt": "Nous avons envoyé une facture de 9273 EUR à Montagne SARL (nº org. 941382142) lorsque le taux de change était de 10.34 NOK/EUR. Le client a maintenant payé, mais le taux est de 10.83 NOK/EUR. Enregistrez le paiement et comptabilisez l'écart de change (agio) sur le bon compte.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 35.49,
+  "phase_times": {
+    "parse": 0.64,
+    "prefetch": 0.06,
+    "agent_loop": 34.78
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 1,
+  "status_counts": {
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 0,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T19:00:33.880653",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 403,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "error": "Invalid or expired proxy token. Each submission receives a unique token - do not reuse tokens from previous submissions.",
+        "source": "nmiai-proxy"
+      }
+    }
+  ]
+}

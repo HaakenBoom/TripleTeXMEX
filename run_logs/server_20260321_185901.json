@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T18:59:01.675959",
+  "prompt": "Crie uma fatura para o cliente Montanha Lda (org. nº 869972401) com três linhas de produto: Sessão de formação (7733) a 22950 NOK com 25 % IVA, Licença de software (6106) a 10250 NOK com 15 % IVA (alimentos), e Manutenção (1351) a 3150 NOK com 0 % IVA (isento).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147627214 for customer Montanha Lda",
+  "error": null,
+  "elapsed_seconds": 21.13
+}

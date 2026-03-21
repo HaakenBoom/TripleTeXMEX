@@ -1,0 +1,437 @@
+{
+  "timestamp": "2026-03-21T19:22:03.564106",
+  "prompt_fingerprint": "89c5d55f67b3",
+  "prompt": "Recebemos a fatura INV-2026-3088 do fornecedor Luz do Sol Lda (org. nº 895339016) no valor de 35200 NOK com IVA incluído. O montante refere-se a serviços de escritório (conta 7100). Registe a fatura do fornecedor com o IVA dedutível correto (25 %).",
+  "prompt_language": "pt",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_voucher",
+    "entities": {
+      "date": "2026-03-21",
+      "description": "Fatura INV-2026-3088 - Luz do Sol Lda (org. nº 895339016) - Serviços de escritório",
+      "postings": [
+        {
+          "accountNumber": 7100,
+          "amount": 28160,
+          "description": "Serviços de escritório - excl. IVA"
+        },
+        {
+          "accountNumber": 1920,
+          "amount": 7040,
+          "description": "IVA dedutível 25%"
+        },
+        {
+          "accountNumber": 2700,
+          "amount": -35200,
+          "description": "Contas a pagar - Luz do Sol Lda"
+        }
+      ]
+    },
+    "raw_prompt": "Recebemos a fatura INV-2026-3088 do fornecedor Luz do Sol Lda (org. nº 895339016) no valor de 35200 NOK com IVA incluído. O montante refere-se a serviços de escritório (conta 7100). Registe a fatura do fornecedor com o IVA dedutível correto (25 %).",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created voucher (id=609107407)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 11.8,
+  "phase_times": {
+    "parse": 3.55,
+    "prefetch": 0.0,
+    "handler": 8.25
+  },
+  "total_api_calls": 4,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 4
+  },
+  "call_phases": {
+    "prefetch": 3,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609107407
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T19:21:57.760488",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 7100,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 374188321,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/374188321",
+            "number": 7100,
+            "numberPretty": "7100",
+            "name": "Bilgodtgjørelse oppgavepliktig",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "71",
+            "groupingCode": "7155",
+            "displayName": "7100 Bilgodtgjørelse oppgavepliktig",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:21:59.468772",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 1920,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 374188020,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/374188020",
+            "number": 1920,
+            "numberPretty": "1920",
+            "name": "Bankinnskudd",
+            "description": "",
+            "type": "ASSETS",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": true,
+            "isInactive": false,
+            "isBankAccount": true,
+            "isInvoiceAccount": true,
+            "bankAccountNumber": "",
+            "bankAccountCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "19",
+            "groupingCode": "1920",
+            "displayName": "1920 Bankinnskudd",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:22:01.205540",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 2700,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 374188093,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/374188093",
+            "number": 2700,
+            "numberPretty": "2700",
+            "name": "Utgående merverdiavgift, høy sats",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": true,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "27",
+            "groupingCode": "2740",
+            "displayName": "2700 Utgående merverdiavgift, høy sats",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:22:03.563274",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2026-03-21",
+        "description": "Fatura INV-2026-3088 - Luz do Sol Lda (org. nº 895339016) - Serviços de escritório",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 374188321
+            },
+            "date": "2026-03-21",
+            "amountGross": -7040,
+            "amountGrossCurrency": -7040,
+            "vatType": {
+              "id": 0
+            },
+            "description": "Serviços de escritório - excl. IVA"
+          },
+          {
+            "row": 2,
+            "account": {
+              "id": 374188020
+            },
+            "date": "2026-03-21",
+            "amountGross": 7040,
+            "amountGrossCurrency": 7040,
+            "description": "IVA dedutível 25%"
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609107407,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609107407",
+          "date": "2026-03-21",
+          "number": 1,
+          "tempNumber": 0,
+          "year": 2026,
+          "description": "Fatura INV-2026-3088 - Luz do Sol Lda (org. nº 895339016) - Serviços de escritório",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845689409,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845689409",
+              "voucher": {
+                "id": 609107407,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609107407"
+              },
+              "date": "2026-03-21",
+              "description": "IVA dedutível 25%",
+              "account": {
+                "id": 374188020,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/374188020"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 7040.0,
+              "amountCurrency": 7040.0,
+              "amountGross": 7040,
+              "amountGrossCurrency": 7040,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 2,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845689408,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845689408",
+              "voucher": {
+                "id": 609107407,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609107407"
+              },
+              "date": "2026-03-21",
+              "description": "Serviços de escritório - excl. IVA",
+              "account": {
+                "id": 374188321,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/374188321"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -7040.0,
+              "amountCurrency": -7040.0,
+              "amountGross": -7040.0,
+              "amountGrossCurrency": -7040.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "1-2026"
+        }
+      }
+    }
+  ]
+}

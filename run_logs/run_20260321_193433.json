@@ -1,0 +1,195 @@
+{
+  "timestamp": "2026-03-21T19:34:33.081881",
+  "prompt_fingerprint": "cbf7529d28ad",
+  "prompt": "Wir haben einen neuen Mitarbeiter namens Anna Schneider, geboren am 6. August 2000. Bitte legen Sie ihn als Mitarbeiter mit der E-Mail anna.schneider@example.org und dem Startdatum 17. March 2026 an.",
+  "prompt_language": "de",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Anna",
+      "lastName": "Schneider",
+      "email": "anna.schneider@example.org",
+      "dateOfBirth": "2000-08-06",
+      "startDate": "2026-03-17"
+    },
+    "raw_prompt": "Wir haben einen neuen Mitarbeiter namens Anna Schneider, geboren am 6. August 2000. Bitte legen Sie ihn als Mitarbeiter mit der E-Mail anna.schneider@example.org und dem Startdatum 17. March 2026 an.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Anna Schneider (id=18655530)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 11.33,
+  "phase_times": {
+    "parse": 0.87,
+    "prefetch": 3.78,
+    "handler": 6.68
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 3
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 2,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18655530
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2830492
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T19:34:26.401227",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 737554,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/737554",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:34:29.785585",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Anna",
+        "lastName": "Schneider",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 737554
+        },
+        "allowInformationRegistration": true,
+        "email": "anna.schneider@example.org",
+        "dateOfBirth": "2000-08-06"
+      },
+      "response_body": {
+        "value": {
+          "id": 18655530,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18655530",
+          "firstName": "Anna",
+          "lastName": "Schneider",
+          "displayName": "Anna Schneider",
+          "employeeNumber": "",
+          "dateOfBirth": "2000-08-06",
+          "email": "anna.schneider@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 737554,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/737554"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107912977,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T19:34:33.081117",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18655530
+        },
+        "startDate": "2026-03-17",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2830492,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2830492",
+          "employee": {
+            "id": 18655530,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18655530"
+          },
+          "employmentId": "",
+          "startDate": "2026-03-17",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    }
+  ]
+}

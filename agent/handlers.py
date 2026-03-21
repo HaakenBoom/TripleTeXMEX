@@ -2304,12 +2304,16 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
     }
     sal_result = client.post("/salary/transaction", sal_body)
     _check_response(sal_result, "POST /salary/transaction")
-    sal_id = sal_result["value"]["id"]
+    sal_value = sal_result["value"]
+    sal_id = sal_value["id"]
     logger.info("Created salary transaction %d for %d-%02d", sal_id, payroll_year, payroll_month)
 
-    # Step 5: If bonus specified, find the payslip and add bonus specification
+    # Extract payslip IDs directly from the transaction response (GET query often returns empty)
+    transaction_payslips = sal_value.get("payslips", [])
+
+    # Step 5: If bonus specified, add bonus specification to the payslip
     bonus = entities.get("bonus", 0)
-    if bonus:
+    if bonus and transaction_payslips:
         # Find salary types to get the bonus type ID
         type_resp = client.get("/salary/type", {"count": 1000})
         salary_types = type_resp.get("values", [])
@@ -2318,32 +2322,22 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
         for st in salary_types:
             st_name = st.get("name", "").lower()
             st_number = str(st.get("number", ""))
-            # Common bonus salary type numbers/names in Norwegian Tripletex
-            if "bonus" in st_name or "tillegg" in st_name or "engangstillegg" in st_name:
+            # Salary type 2002 = "Bonus" in Norwegian Tripletex
+            if st_number == "2002":
                 bonus_type_id = st["id"]
                 break
-            # Salary type 130 is commonly "Bonus/tillegg" in Tripletex
-            if st_number in ("130", "131", "132", "133"):
-                bonus_type_id = st["id"]
-                break
-
         if not bonus_type_id:
-            # Fall back to first available salary type that looks like a supplement
             for st in salary_types:
-                if st.get("number") and not st.get("isInactive"):
+                st_name = st.get("name", "").lower()
+                if st_name == "bonus" or "bonus" in st_name:
                     bonus_type_id = st["id"]
                     break
 
-        # Find the payslip for this employee in this salary transaction
-        payslip_resp = client.get("/salary/payslip", {
-            "wageTransactionId": sal_id,
-            "employeeId": emp_id,
-            "count": 10,
-        })
-        payslips = payslip_resp.get("values", [])
+        # Use payslip ID from the transaction creation response
+        payslip_id = transaction_payslips[0]["id"]
+        logger.info("Using payslip %d from transaction response", payslip_id)
 
-        if payslips and bonus_type_id:
-            payslip_id = payslips[0]["id"]
+        if bonus_type_id:
             # Add bonus as a salary specification on the payslip
             spec_body: dict[str, Any] = {
                 "payslip": {"id": payslip_id},
@@ -2367,8 +2361,7 @@ def _handle_run_payroll(task: dict, client: TripletexClient, context: dict) -> s
             else:
                 logger.info("Added bonus specification to payslip %d", payslip_id)
         else:
-            logger.warning("Could not add bonus: payslips=%d, bonus_type_id=%s",
-                         len(payslips), bonus_type_id)
+            logger.warning("Could not find bonus salary type")
 
     result_parts = [
         f"Ran payroll for employee {emp_name or emp_id} ({payroll_year}-{payroll_month:02d})",

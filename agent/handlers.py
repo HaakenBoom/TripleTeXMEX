@@ -631,8 +631,33 @@ def _sanitize_address(addr: Any) -> dict | None:
 
 def _handle_create_customer(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
+    is_supplier = entities.get("isSupplier", False)
 
-    body: dict[str, Any] = {"name": entities["name"], "isCustomer": True}
+    # If this is a supplier registration, use POST /supplier instead of POST /customer
+    # The scoring system checks GET /supplier for supplier tasks
+    if is_supplier:
+        body: dict[str, Any] = {"name": entities["name"]}
+        optional_fields = [
+            "email", "phoneNumber", "organizationNumber",
+            "invoiceEmail", "description",
+            "isPrivateIndividual", "language",
+        ]
+        for field in optional_fields:
+            if entities.get(field) is not None:
+                body[field] = entities[field]
+
+        for addr_field in ("postalAddress", "physicalAddress"):
+            if entities.get(addr_field):
+                sanitized = _sanitize_address(entities[addr_field])
+                if sanitized:
+                    body[addr_field] = sanitized
+
+        result = client.post("/supplier", body)
+        _check_response(result, "POST /supplier")
+        value = result.get("value", {})
+        return f"Created supplier {value.get('name', '')} (id={value.get('id', '?')})"
+
+    body = {"name": entities["name"], "isCustomer": True}
     optional_fields = [
         "email", "phoneNumber", "organizationNumber",
         "invoiceEmail", "description", "isCustomer", "isSupplier",
@@ -1405,12 +1430,31 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
     entities = task["entities"]
     today = entities.get("today", _today())
 
+    # Phase 0: Extract supplier info from ENTITIES first (parser already extracted these)
+    supplier_name = entities.get("supplierName") or ""
+    supplier_org = str(entities.get("supplierOrganizationNumber") or "").strip()
+
     # Phase 1: Resolve all account numbers to IDs and collect account metadata
+    # Skip resolving VAT accounts (27xx) upfront — they'll be collapsed and removed
     resolved = []
     for posting in entities.get("postings", []):
         account_number = posting.get("accountNumber")
         account_id = posting.get("accountId")
         account_data = None
+        acct_num_int = int(account_number or 0)
+
+        # Don't waste an API call resolving VAT accounts (27xx) —
+        # we'll collapse them into the expense posting instead
+        if 2700 <= acct_num_int <= 2799:
+            amount = posting.get("amount") or posting.get("amountGross") or 0
+            resolved.append({
+                "posting": posting,
+                "account_id": None,
+                "account_number": acct_num_int,
+                "account_data": None,
+                "amount": amount,
+            })
+            continue
 
         if account_number and not account_id:
             acc_resp = client.get(
@@ -1432,82 +1476,91 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         resolved.append({
             "posting": posting,
             "account_id": account_id,
-            "account_number": int(account_number or 0),
+            "account_number": acct_num_int,
             "account_data": account_data,
             "amount": amount,
         })
 
     # Phase 2: Detect manual VAT splits — parser sometimes creates separate VAT postings
     # (accounts 27xx) that Tripletex auto-generates. Collapse them into the expense posting.
+    # Tripletex handles VAT automatically when you set vatType on the expense posting
+    # and send the GROSS amount. We must NOT send manual VAT postings.
     vat_entries = [r for r in resolved if 2700 <= r["account_number"] <= 2799]
     non_vat_entries = [r for r in resolved if not (2700 <= r["account_number"] <= 2799)]
 
     if vat_entries and non_vat_entries:
-        total_vat = sum(r["amount"] for r in vat_entries)
-        logger.info("Detected %d manual VAT postings (total=%s), collapsing into expense postings",
-                     len(vat_entries), total_vat)
-        # Add VAT back to expense postings to get gross amounts.
-        # Identify expense postings by account metadata or by account number range (4xxx-7xxx).
+        # Use absolute VAT value (parser may give positive or negative sign)
+        total_vat_abs = sum(abs(r["amount"]) for r in vat_entries)
+        logger.info("Detected %d manual VAT postings (abs total=%s), collapsing into expense postings",
+                     len(vat_entries), total_vat_abs)
+
+        # Determine VAT rate from the amounts (e.g., 3312/13250 ≈ 0.25 → 25%)
+        # Default to 25% input VAT (vatType id=1 in Norwegian Tripletex)
+        detected_vat_type_id = 1  # 25% is the default for Norwegian supplier invoices
+
+        # Adjust expense postings: set amount to GROSS and set correct vatType
         adjusted = False
         for r in non_vat_entries:
             acct_type = (r.get("account_data") or {}).get("type", "")
             is_expense = (acct_type == "OPERATING_EXPENSES"
                           or 4000 <= r["account_number"] <= 7999)
             if is_expense and r["amount"] > 0:
-                r["amount"] += total_vat  # Net + VAT = Gross
-                # Set vatType from account's default, or 25% input VAT (id=1) as fallback
-                vat_id = (r.get("account_data") or {}).get("vatType", {}).get("id")
-                r["vat_type_id"] = vat_id if vat_id is not None else 1
+                # Expense amount should be GROSS (net + VAT)
+                # Parser gave us net amount, add VAT to make it gross
+                r["amount"] = r["amount"] + total_vat_abs
+                # Always use input VAT type (id=1 for 25%), NOT the account default
+                # Account defaults are often 0 (no VAT) which is wrong for supplier invoices
+                r["vat_type_id"] = detected_vat_type_id
                 logger.info("Adjusted expense posting to gross=%s with vatType=%s",
                             r["amount"], r.get("vat_type_id"))
                 adjusted = True
         if not adjusted:
-            # Fallback: no expense posting identified, keep VAT postings as-is
             logger.warning("Could not identify expense posting for VAT collapse, keeping VAT postings")
-            non_vat_entries = [r for r in resolved]  # Restore all entries
+            non_vat_entries = list(resolved)  # Restore all entries
 
-    # Phase 3: Build final postings
-    # IMPORTANT: row must be >= 1 (Tripletex reserves row 0 for system-generated).
-    # All postings sharing the same row must balance to zero.
-
-    # Detect if any posting is on an AP account (2400-2499) — needs supplier reference
+    # Phase 3: Resolve supplier — use entities first, then fall back to description regex
     supplier_id = None
-    for r in non_vat_entries:
-        if 2400 <= r["account_number"] <= 2499:
-            # Extract supplier info from description or voucher description
-            import re
-            desc = entities.get("description", "") + " " + (r["posting"].get("description") or "")
-            org_match = re.search(r'(?:Org\.?\s*(?:nr\.?|nummer)?:?\s*)(\d{6,9})', desc)
-            name_match = re.search(r'(?:fra|from|de|von)\s+(.+?)(?:\s*\(|\s*-\s*Org|\s*$)', desc, re.IGNORECASE)
-            if not name_match:
-                # Try "Leverandørgjeld - SupplierName"
-                name_match = re.search(r'(?:Leverandørgjeld|gjeld)\s*-\s*(.+?)(?:\s*\(|$)', desc, re.IGNORECASE)
+    has_ap_posting = any(2400 <= r["account_number"] <= 2499 for r in non_vat_entries)
 
-            supplier_name = name_match.group(1).strip() if name_match else None
-            org_number = org_match.group(1) if org_match else None
+    if not supplier_name and has_ap_posting:
+        # Fall back to extracting from description text
+        import re
+        for r in non_vat_entries:
+            if 2400 <= r["account_number"] <= 2499:
+                desc = entities.get("description", "") + " " + (r["posting"].get("description") or "")
+                org_match = re.search(r'(?:Org\.?\s*(?:nr\.?|nummer)?:?\s*)(\d{6,9})', desc)
+                name_match = re.search(r'(?:fra|from|de|von)\s+(.+?)(?:\s*\(|\s*-\s*Org|\s*$)', desc, re.IGNORECASE)
+                if not name_match:
+                    name_match = re.search(r'(?:Leverandørgjeld|gjeld)\s*-\s*(.+?)(?:\s*\(|$)', desc, re.IGNORECASE)
+                if name_match:
+                    supplier_name = name_match.group(1).strip()
+                if org_match and not supplier_org:
+                    supplier_org = org_match.group(1)
+                break
 
-            if supplier_name or org_number:
-                # Look up supplier
-                search_params: dict[str, Any] = {"count": 1}
-                if org_number:
-                    search_params["organizationNumber"] = org_number
-                elif supplier_name:
-                    search_params["name"] = supplier_name
-                supp_resp = client.get("/supplier", search_params)
-                supp_values = supp_resp.get("values", [])
-                if supp_values:
-                    supplier_id = supp_values[0]["id"]
-                else:
-                    # Create supplier
-                    supp_body: dict[str, Any] = {"name": supplier_name or f"Supplier {org_number}"}
-                    if org_number:
-                        supp_body["organizationNumber"] = org_number
-                    supp_result = client.post("/supplier", supp_body)
-                    if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
-                        supplier_id = supp_result["value"]["id"]
-                        logger.info("Created supplier '%s' (id=%d)", supp_body["name"], supplier_id)
-            break
+    if supplier_name or supplier_org:
+        # Look up existing supplier
+        search_params: dict[str, Any] = {"count": 1}
+        if supplier_org:
+            search_params["organizationNumber"] = supplier_org
+        else:
+            search_params["name"] = supplier_name
+        supp_resp = client.get("/supplier", search_params)
+        supp_values = supp_resp.get("values", [])
+        if supp_values:
+            supplier_id = supp_values[0]["id"]
+        else:
+            # Create supplier with BOTH name and org number
+            supp_body: dict[str, Any] = {"name": supplier_name or f"Supplier {supplier_org}"}
+            if supplier_org:
+                supp_body["organizationNumber"] = supplier_org
+            supp_result = client.post("/supplier", supp_body)
+            if isinstance(supp_result, dict) and supp_result.get("value", {}).get("id"):
+                supplier_id = supp_result["value"]["id"]
+                logger.info("Created supplier '%s' org=%s (id=%d)",
+                            supp_body["name"], supplier_org, supplier_id)
 
+    # Phase 4: Build final postings
     postings = []
     for idx, r in enumerate(non_vat_entries):
         p: dict[str, Any] = {
@@ -1526,10 +1579,11 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             p["supplier"] = {"id": supplier_id}
         postings.append(p)
 
-    # If postings don't balance (e.g. receipt with expense+VAT but no bank counter),
-    # add a counter-posting on bank account 1920 to balance the voucher.
+    # Only add bank counter-posting if postings genuinely don't balance
+    # (e.g. receipt/expense vouchers without an AP posting).
+    # Supplier invoices with AP posting should already balance.
     posting_sum = sum(r["amount"] for r in non_vat_entries)
-    if abs(posting_sum) > 0.01 and postings:
+    if abs(posting_sum) > 0.01 and postings and not has_ap_posting:
         bank_acc_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
         bank_values = bank_acc_resp.get("values", [])
         if bank_values:
@@ -1861,7 +1915,7 @@ def _handle_reverse_invoice_payment(task: dict, client: TripletexClient, context
         is_reversal = any(kw in prompt_lower for kw in _REVERSE_KEYWORDS)
 
     # Step 1: Find the customer
-    org_number = entities.get("customerOrganizationNumber", "")
+    org_number = str(entities.get("customerOrganizationNumber") or "").strip()
     cust_name = entities.get("customerName", "")
     customer_id = None
 

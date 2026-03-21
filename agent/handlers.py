@@ -407,7 +407,39 @@ def _resolve_product_in_order_line(line: dict, client: TripletexClient, context:
 def _handle_create_employee(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
     emp = entities.get("employee", entities)
-    dept_id = _ensure_department(client, context)
+
+    # Flatten nested "employment" sub-dict into emp (LLM sometimes nests these)
+    if isinstance(emp.get("employment"), dict):
+        for k, v in emp["employment"].items():
+            if k not in emp or emp[k] is None:
+                emp[k] = v
+
+    # Resolve department: use specific department name if provided, else default
+    dept_name = emp.get("department") or emp.get("departmentName")
+    # Also check comments for "Department: X" pattern
+    if not dept_name and emp.get("comments"):
+        import re
+        dept_match = re.search(r'(?:Department|Avdeling|Abteilung|Departamento|Département):\s*(.+)', emp.get("comments", ""))
+        if dept_match:
+            dept_name = dept_match.group(1).strip()
+
+    if dept_name:
+        # Look for existing department or create it
+        dept_resp = client.get("/department", {"name": dept_name, "count": 5})
+        dept_values = dept_resp.get("values", [])
+        dept_id = None
+        for dv in dept_values:
+            if dv.get("name", "").strip().lower() == dept_name.strip().lower():
+                dept_id = dv["id"]
+                break
+        if not dept_id:
+            dept_result = client.post("/department", {"name": dept_name})
+            if isinstance(dept_result, dict) and dept_result.get("value", {}).get("id"):
+                dept_id = dept_result["value"]["id"]
+            else:
+                dept_id = _ensure_department(client, context)
+    else:
+        dept_id = _ensure_department(client, context)
 
     body: dict[str, Any] = {
         "firstName": emp["firstName"],

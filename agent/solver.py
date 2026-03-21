@@ -740,14 +740,20 @@ def _fix_voucher_postings(body: dict) -> dict:
     """Auto-fix common LLM mistakes in voucher posting bodies.
 
     - Convert 'amount' → 'amountGross'/'amountGrossCurrency' (amount is read-only)
+    - Add 'row' >= 1 if missing (row 0 is reserved for system-generated postings)
+    - Add vatType if missing
     """
     if not body or "postings" not in body:
         return body
-    for posting in body.get("postings", []):
+    for idx, posting in enumerate(body.get("postings", [])):
         if "amount" in posting and "amountGross" not in posting:
             posting["amountGross"] = posting.pop("amount")
         if "amountGross" in posting and "amountGrossCurrency" not in posting:
             posting["amountGrossCurrency"] = posting["amountGross"]
+        # Ensure row >= 1 (row 0 is reserved for system-generated postings)
+        if "row" not in posting or posting.get("row") == 0:
+            posting["row"] = idx + 1
+            logger.info("Auto-fix: added row=%d to voucher posting", idx + 1)
     return body
 
 

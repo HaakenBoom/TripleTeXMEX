@@ -1,0 +1,2918 @@
+{
+  "timestamp": "2026-03-21T17:41:20.408000",
+  "prompt_fingerprint": "206bfbad9b52",
+  "prompt": "Reconcilie o extrato bancario (CSV anexo) com as faturas em aberto no Tripletex. Relacione os pagamentos recebidos com as faturas de clientes e os pagamentos efetuados com as faturas de fornecedores. Trate os pagamentos parciais corretamente.",
+  "prompt_language": "pt",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "bank_reconciliation",
+    "entities": {},
+    "raw_prompt": "Reconcilie o extrato bancario (CSV anexo) com as faturas em aberto no Tripletex. Relacione os pagamentos recebidos com as faturas de clientes e os pagamentos efetuados com as faturas de fornecedores. Trate os pagamentos parciais corretamente.",
+    "_file_contents": [
+      "[File: files/bankutskrift_pt_08.csv]\nDato;Forklaring;Inn;Ut;Saldo\r\n2026-01-18;Innbetaling fra Costa Lda / Faktura 1001;9562.50;;109562.50\r\n2026-01-21;Innbetaling fra Pereira Lda / Faktura 1002;16625.00;;126187.50\r\n2026-01-22;Innbetaling fra Costa Lda / Faktura 1003;4625.00;;130812.50\r\n2026-01-23;Innbetaling fra Silva Lda / Faktura 1004;13500.00;;144312.50\r\n2026-01-24;Innbetaling fra Costa Lda / Faktura 1005;5500.00;;149812.50\r\n2026-01-25;Betaling Fornecedor Oliveira Lda;;-9550.00;140262.50\r\n2026-01-27;Betaling Fornecedor Santos Lda;;-10200.00;130062.50\r\n2026-01-28;Betaling Fornecedor Santos Lda;;-6250.00;123812.50\r\n2026-01-29;Renteinntekter;1040.55;;124853.05\r\n2026-01-31;Bankgebyr;539.06;;125392.11\r\n"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/bankutskrift_pt_08.csv",
+        "content_base64": "RGF0bztGb3JrbGFyaW5nO0lubjtVdDtTYWxkbw0KMjAyNi0wMS0xODtJbm5iZXRhbGluZyBmcmEgQ29zdGEgTGRhIC8gRmFrdHVyYSAxMDAxOzk1NjIuNTA7OzEwOTU2Mi41MA0KMjAyNi0wMS0yMTtJbm5iZXRhbGluZyBmcmEgUGVyZWlyYSBMZGEgLyBGYWt0dXJhIDEwMDI7MTY2MjUuMDA7OzEyNjE4Ny41MA0KMjAyNi0wMS0yMjtJbm5iZXRhbGluZyBmcmEgQ29zdGEgTGRhIC8gRmFrdHVyYSAxMDAzOzQ2MjUuMDA7OzEzMDgxMi41MA0KMjAyNi0wMS0yMztJbm5iZXRhbGluZyBmcmEgU2lsdmEgTGRhIC8gRmFrdHVyYSAxMDA0OzEzNTAwLjAwOzsxNDQzMTIuNTANCjIwMjYtMDEtMjQ7SW5uYmV0YWxpbmcgZnJhIENvc3RhIExkYSAvIEZha3R1cmEgMTAwNTs1NTAwLjAwOzsxNDk4MTIuNTANCjIwMjYtMDEtMjU7QmV0YWxpbmcgRm9ybmVjZWRvciBPbGl2ZWlyYSBMZGE7Oy05NTUwLjAwOzE0MDI2Mi41MA0KMjAyNi0wMS0yNztCZXRhbGluZyBGb3JuZWNlZG9yIFNhbnRvcyBMZGE7Oy0xMDIwMC4wMDsxMzAwNjIuNTANCjIwMjYtMDEtMjg7QmV0YWxpbmcgRm9ybmVjZWRvciBTYW50b3MgTGRhOzstNjI1MC4wMDsxMjM4MTIuNTANCjIwMjYtMDEtMjk7UmVudGVpbm50ZWt0ZXI7MTA0MC41NTs7MTI0ODUzLjA1DQoyMDI2LTAxLTMxO0JhbmtnZWJ5cjs1MzkuMDY7OzEyNTM5Mi4xMQ0K",
+        "mime_type": "text/csv"
+      }
+    ]
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": "No valid transactions found in CSV",
+  "handler_returned_none": false,
+  "elapsed_seconds": 54.07,
+  "phase_times": {
+    "parse": 0.73,
+    "prefetch": 0.68,
+    "handler": 0.0,
+    "repair": 0.0,
+    "agent_loop": 52.33
+  },
+  "total_api_calls": 18,
+  "errors_4xx": 1,
+  "status_counts": {
+    "2xx": 17,
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 6,
+    "action": 5,
+    "wasted": 1,
+    "lookup": 6
+  },
+  "mutations": [
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147617389/:payment",
+      "status": 200,
+      "entity_id": 2147617389
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147617391/:payment",
+      "status": 200,
+      "entity_id": 2147617391
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147617399/:payment",
+      "status": 200,
+      "entity_id": 2147617399
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147617402/:payment",
+      "status": 200,
+      "entity_id": 2147617402
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147617408/:payment",
+      "status": 200,
+      "entity_id": 2147617408
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T17:40:27.416276",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/token/session/>whoAmI",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "employeeId": 18643033,
+          "actualEmployeeId": 18643034,
+          "employee": {
+            "id": 18643033,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18643033"
+          },
+          "companyId": 108385830,
+          "company": {
+            "id": 108385830,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/company/108385830"
+          },
+          "language": "no",
+          "loggedInWithConnect": false,
+          "employeeIsProxy": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:27.749662",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": "1920",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 466780745,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780745",
+            "number": 1920,
+            "numberPretty": "1920",
+            "name": "Bankinnskudd",
+            "description": "",
+            "type": "ASSETS",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": true,
+            "isInactive": false,
+            "isBankAccount": true,
+            "isInvoiceAccount": true,
+            "bankAccountNumber": "12345678903",
+            "bankAccountCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "19",
+            "groupingCode": "1920",
+            "displayName": "1920 Bankinnskudd",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:28.082212",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/vatType",
+      "status": 200,
+      "request_params": {
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 56,
+        "from": 0,
+        "count": 56,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 1,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1",
+            "name": "Fradrag inngående avgift, høy sats",
+            "number": "1",
+            "displayName": "1: (25%) Fradrag inngående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 2,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/2",
+            "name": "Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-2",
+            "displayName": "UT-2: (100%) Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 3,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3",
+            "name": "Utgående avgift, høy sats",
+            "number": "3",
+            "displayName": "3: (25%) Utgående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 4,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/4",
+            "name": "Direktepostert utgående avgift, høy sats",
+            "number": "4",
+            "displayName": "4: (100%) Direktepostert utgående avgift, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 5,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5",
+            "name": "Ingen utgående avgift (innenfor mva-loven)",
+            "number": "5",
+            "displayName": "5: (0%) Ingen utgående avgift (innenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 6,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/6",
+            "name": "Ingen utgående avgift (utenfor mva-loven)",
+            "number": "6",
+            "displayName": "6: (0%) Ingen utgående avgift (utenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 7,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/7",
+            "name": "Ingen avgiftsbehandling (inntekter)",
+            "number": "7",
+            "displayName": "7: (0%) Ingen avgiftsbehandling (inntekter)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 11,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11",
+            "name": "Fradrag inngående avgift, middels sats",
+            "number": "11",
+            "displayName": "11: (15%) Fradrag inngående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 12,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12",
+            "name": "Fradrag inngående avgift, lav sats",
+            "number": "13",
+            "displayName": "13: (12%) Fradrag inngående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 13,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13",
+            "name": "Grunnlag inngående avgift ved innførsel, høy sats",
+            "number": "21",
+            "displayName": "21: (0%) Grunnlag inngående avgift ved innførsel, høy sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 14,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14",
+            "name": "Grunnlag inngående avgift ved innførsel, middels sats",
+            "number": "22",
+            "displayName": "22: (0%) Grunnlag inngående avgift ved innførsel, middels sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 21,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/21",
+            "name": "Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-21",
+            "displayName": "UT-21: (100%) Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 22,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/22",
+            "name": "Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-22",
+            "displayName": "UT-22: (100%) Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 23,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/23",
+            "name": "Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "number": "14",
+            "displayName": "14: (100%) Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 24,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/24",
+            "name": "Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "number": "15",
+            "displayName": "15: (100%) Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 31,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31",
+            "name": "Utgående avgift, middels sats",
+            "number": "31",
+            "displayName": "31: (15%) Utgående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 32,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32",
+            "name": "Utgående avgift, lav sats",
+            "number": "33",
+            "displayName": "33: (12%) Utgående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 34,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "number": "86",
+            "displayName": "86: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 35,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "number": "87",
+            "displayName": "87: (25%) Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 41,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/41",
+            "name": "Direktepostert utgående avgift, middels sats",
+            "number": "41",
+            "displayName": "41: (100%) Direktepostert utgående avgift, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 42,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/42",
+            "name": "Direktepostert utgående avgift, lav sats",
+            "number": "42",
+            "displayName": "42: (100%) Direktepostert utgående avgift, lav sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 51,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/51",
+            "name": "Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "number": "51",
+            "displayName": "51: (0%) Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 52,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/52",
+            "name": "Avgiftsfri utførsel av varer og tjenester",
+            "number": "52",
+            "displayName": "52: (0%) Avgiftsfri utførsel av varer og tjenester",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 81,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats",
+            "number": "81",
+            "displayName": "81: (25%) Fradrag inngående avgift ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 82,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/82",
+            "name": "Inngående avgift uten fradrag ved innførsel, høy sats",
+            "number": "82",
+            "displayName": "82: (25%) Inngående avgift uten fradrag ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 83,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/83",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats",
+            "number": "83",
+            "displayName": "83: (15%) Fradrag inngående avgift ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 84,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/84",
+            "name": "Inngående avgift uten fradrag ved innførsel, middels sats",
+            "number": "84",
+            "displayName": "84: (15%) Inngående avgift uten fradrag ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 85,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/85",
+            "name": "Grunnlag, avgiftsfri innførsel",
+            "number": "85",
+            "displayName": "85: (0%) Grunnlag, avgiftsfri innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 88,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/88",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "number": "88",
+            "displayName": "88: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 89,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/89",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "number": "89",
+            "displayName": "89: (12%) Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 91,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/91",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "number": "91",
+            "displayName": "91: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 92,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/92",
+            "name": "Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "number": "92",
+            "displayName": "92: (25%) Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 111,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111",
+            "name": "Fradrag inngående avgift, råfisk",
+            "number": "12",
+            "displayName": "12: (11,11%) Fradrag inngående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 230,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230",
+            "name": "Grunnlag, ingen inngående avgift ved innførsel",
+            "number": "20",
+            "displayName": "20: (0%) Grunnlag, ingen inngående avgift ved innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 311,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311",
+            "name": "Utgående avgift, råfisk",
+            "number": "32",
+            "displayName": "32: (11,11%) Utgående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/500",
+            "name": "Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "number": "URED-13",
+            "displayName": "URED-13: (12%) Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 501,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/501",
+            "name": "Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "number": "RED-13",
+            "displayName": "RED-13: (6%) Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "percentage": 6,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 550,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550",
+            "name": "Tap på krav - kode 1",
+            "number": "TAP-1",
+            "displayName": "TAP-1: (25%) Tap på krav - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 551,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551",
+            "name": "Tap på krav - kode 11",
+            "number": "TAP-11",
+            "displayName": "TAP-11: (15%) Tap på krav - kode 11",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            }
+          },
+          {
+            "id": 552,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/552",
+            "name": "Tap på krav - kode 12",
+            "number": "TAP-12",
+            "displayName": "TAP-12: (11,11%) Tap på krav - kode 12",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 111,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111"
+            }
+          },
+          {
+            "id": 553,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553",
+            "name": "Tap på krav - kode 13",
+            "number": "TAP-13",
+            "displayName": "TAP-13: (12%) Tap på krav - kode 13",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            }
+          },
+          {
+            "id": 554,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/554",
+            "name": "Uttak - kode 3",
+            "number": "UTTAK-3",
+            "displayName": "UTTAK-3: (25%) Uttak - kode 3",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            }
+          },
+          {
+            "id": 555,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/555",
+            "name": "Uttak - kode 5",
+            "number": "UTTAK-5",
+            "displayName": "UTTAK-5: (0%) Uttak - kode 5",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 5,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5"
+            }
+          },
+          {
+            "id": 556,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/556",
+            "name": "Uttak - kode 31",
+            "number": "UTTAK-31",
+            "displayName": "UTTAK-31: (15%) Uttak - kode 31",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 31,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31"
+            }
+          },
+          {
+            "id": 557,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/557",
+            "name": "Uttak - kode 32",
+            "number": "UTTAK-32",
+            "displayName": "UTTAK-32: (11,11%) Uttak - kode 32",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 311,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311"
+            }
+          },
+          {
+            "id": 558,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/558",
+            "name": "Uttak - kode 33",
+            "number": "UTTAK-33",
+            "displayName": "UTTAK-33: (12%) Uttak - kode 33",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 32,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32"
+            }
+          },
+          {
+            "id": 559,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559",
+            "name": "Mva-justering for kapitalvarer - kode 1",
+            "number": "JUST-1",
+            "displayName": "JUST-1: (25%) Mva-justering for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 560,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 1",
+            "number": "TILB-1",
+            "displayName": "TILB-1: (25%) Tilbakeføring av mva for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 561,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/561",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 81",
+            "number": "TILB-81",
+            "displayName": "TILB-81: (25%) Tilbakeføring av mva for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 562,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/562",
+            "name": "Mva-justering for kapitalvarer - kode 81",
+            "number": "JUST-81",
+            "displayName": "JUST-81: (25%) Mva-justering for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 600,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/600",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "number": "81-K",
+            "displayName": "81-K: (25%) Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 601,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/601",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "number": "83-K",
+            "displayName": "83-K: (15%) Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 602,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/602",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "number": "86-K",
+            "displayName": "86-K: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 603,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/603",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "number": "88-K",
+            "displayName": "88-K: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 604,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/604",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "number": "91-K",
+            "displayName": "91-K: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 0,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0",
+            "name": "Ingen avgiftsbehandling",
+            "number": "0",
+            "displayName": "0: (0%) Ingen avgiftsbehandling",
+            "percentage": 0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:31.628572",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2025-01-01",
+        "invoiceDateTo": "2026-12-31"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 5,
+        "from": 0,
+        "count": 5,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 2147617389,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617389",
+            "invoiceNumber": 1,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385843,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385843"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023017,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023017"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561875,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561875"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783064,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783064"
+              }
+            ],
+            "voucher": {
+              "id": 609064190,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064190"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 15937.5,
+            "amountCurrency": 15937.5,
+            "amountExcludingVat": 12750.0,
+            "amountExcludingVatCurrency": 12750.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 15937.5,
+            "amountCurrencyOutstanding": 15937.5,
+            "amountOutstandingTotal": 15937.5,
+            "amountCurrencyOutstandingTotal": 15937.5,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573135,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573135"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266323
+          },
+          {
+            "id": 2147617391,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617391",
+            "invoiceNumber": 2,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385848,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385848"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023019,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023019"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561876,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561876"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783065,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783065"
+              }
+            ],
+            "voucher": {
+              "id": 609064220,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064220"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 16625.0,
+            "amountCurrency": 16625.0,
+            "amountExcludingVat": 13300.0,
+            "amountExcludingVatCurrency": 13300.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 16625.0,
+            "amountCurrencyOutstanding": 16625.0,
+            "amountOutstandingTotal": 16625.0,
+            "amountCurrencyOutstandingTotal": 16625.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573214,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573214"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266327
+          },
+          {
+            "id": 2147617399,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617399",
+            "invoiceNumber": 3,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385859,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385859"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023024,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023024"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561880,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561880"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783069,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783069"
+              }
+            ],
+            "voucher": {
+              "id": 609064254,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064254"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 4625.0,
+            "amountCurrency": 4625.0,
+            "amountExcludingVat": 3700.0,
+            "amountExcludingVatCurrency": 3700.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 4625.0,
+            "amountCurrencyOutstanding": 4625.0,
+            "amountOutstandingTotal": 4625.0,
+            "amountCurrencyOutstandingTotal": 4625.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573306,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573306"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266337
+          },
+          {
+            "id": 2147617402,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617402",
+            "invoiceNumber": 4,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385862,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385862"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023026,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023026"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561881,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561881"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783070,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783070"
+              }
+            ],
+            "voucher": {
+              "id": 609064287,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064287"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 13500.0,
+            "amountCurrency": 13500.0,
+            "amountExcludingVat": 10800.0,
+            "amountExcludingVatCurrency": 10800.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 13500.0,
+            "amountCurrencyOutstanding": 13500.0,
+            "amountOutstandingTotal": 13500.0,
+            "amountCurrencyOutstandingTotal": 13500.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573399,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573399"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266345
+          },
+          {
+            "id": 2147617408,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617408",
+            "invoiceNumber": 5,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385867,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385867"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023031,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023031"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561884,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561884"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783072,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783072"
+              }
+            ],
+            "voucher": {
+              "id": 609064315,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064315"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 5500.0,
+            "amountCurrency": 5500.0,
+            "amountExcludingVat": 4400.0,
+            "amountExcludingVatCurrency": 4400.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 5500.0,
+            "amountCurrencyOutstanding": 5500.0,
+            "amountOutstandingTotal": 5500.0,
+            "amountCurrencyOutstandingTotal": 5500.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573476,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573476"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266349
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:34.315635",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "id": "108385843,108385848,108385859,108385862,108385867"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 5,
+        "from": 0,
+        "count": 5,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108385843,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385843",
+            "name": "Costa Lda",
+            "organizationNumber": "917334455",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Costa Lda (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620953,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620953"
+            },
+            "physicalAddress": {
+              "id": 405620952,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620952"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385848,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385848",
+            "name": "Pereira Lda",
+            "organizationNumber": "984995717",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10002,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Pereira Lda (10002)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620963,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620963"
+            },
+            "physicalAddress": {
+              "id": 405620962,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620962"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385859,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385859",
+            "name": "Costa Lda",
+            "organizationNumber": "873752092",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10003,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Costa Lda (10003)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620985,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620985"
+            },
+            "physicalAddress": {
+              "id": 405620984,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620984"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385862,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385862",
+            "name": "Silva Lda",
+            "organizationNumber": "810116773",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10004,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Silva Lda (10004)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620991,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620991"
+            },
+            "physicalAddress": {
+              "id": 405620990,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620990"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385867,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385867",
+            "name": "Costa Lda",
+            "organizationNumber": "977323975",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10005,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Costa Lda (10005)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405621001,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405621001"
+            },
+            "physicalAddress": {
+              "id": 405621000,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405621000"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:39.313155",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/paymentType",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 2,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 36757958,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/paymentType/36757958",
+            "description": "Kontant",
+            "displayName": "Kontant",
+            "debitAccount": {
+              "id": 466780742,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780742"
+            },
+            "creditAccount": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "sequence": 1,
+            "customer": null,
+            "supplier": null,
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          },
+          {
+            "id": 36757959,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/paymentType/36757959",
+            "description": "Betalt til bank",
+            "displayName": "Betalt til bank",
+            "debitAccount": {
+              "id": 466780745,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780745"
+            },
+            "creditAccount": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "sequence": 2,
+            "customer": null,
+            "supplier": null,
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:46.480208",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147617389/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-18",
+        "paymentTypeId": 36757959,
+        "paidAmount": 9562.5
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147617389,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617389",
+          "invoiceNumber": 1,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108385843,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385843"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402023017,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023017"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607561875,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561875"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965783064,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783064"
+            }
+          ],
+          "voucher": {
+            "id": 609064190,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064190"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 15937.5,
+          "amountCurrency": 15937.5,
+          "amountExcludingVat": 12750.0,
+          "amountExcludingVatCurrency": 12750.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 6375.0,
+          "amountCurrencyOutstanding": 6375.0,
+          "amountOutstandingTotal": 6375.0,
+          "amountCurrencyOutstandingTotal": 6375.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3845573135,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573135"
+            },
+            {
+              "id": 3845574090,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845574090"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024266323
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:49.089892",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147617390/:payment",
+      "status": 422,
+      "request_params": {
+        "paymentDate": "2026-01-21",
+        "paymentTypeId": 36757959,
+        "paidAmount": 16625.0
+      },
+      "request_body": null,
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": null,
+            "message": "Ugyldig fakturanummer.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "3c683457-9b59-4e07-96f5-85fa8c5b4add"
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:51.892170",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2025-01-01",
+        "invoiceDateTo": "2026-12-31",
+        "invoiceNumber": 2
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 2147617391,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617391",
+            "invoiceNumber": 2,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385848,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385848"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023019,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023019"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561876,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561876"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783065,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783065"
+              }
+            ],
+            "voucher": {
+              "id": 609064220,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064220"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 16625.0,
+            "amountCurrency": 16625.0,
+            "amountExcludingVat": 13300.0,
+            "amountExcludingVatCurrency": 13300.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 16625.0,
+            "amountCurrencyOutstanding": 16625.0,
+            "amountOutstandingTotal": 16625.0,
+            "amountCurrencyOutstandingTotal": 16625.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573214,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573214"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266327
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:54.818968",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147617391/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-21",
+        "paymentTypeId": 36757959,
+        "paidAmount": 16625.0
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147617391,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617391",
+          "invoiceNumber": 2,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108385848,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385848"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402023019,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023019"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607561876,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561876"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965783065,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783065"
+            }
+          ],
+          "voucher": {
+            "id": 609064220,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064220"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 16625.0,
+          "amountCurrency": 16625.0,
+          "amountExcludingVat": 13300.0,
+          "amountExcludingVatCurrency": 13300.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3845573214,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573214"
+            },
+            {
+              "id": 3845574344,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845574344"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024266327
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:40:57.349284",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2025-01-01",
+        "invoiceDateTo": "2026-12-31",
+        "invoiceNumber": 3
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 2147617399,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617399",
+            "invoiceNumber": 3,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385859,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385859"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023024,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023024"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561880,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561880"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783069,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783069"
+              }
+            ],
+            "voucher": {
+              "id": 609064254,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064254"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 4625.0,
+            "amountCurrency": 4625.0,
+            "amountExcludingVat": 3700.0,
+            "amountExcludingVatCurrency": 3700.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 4625.0,
+            "amountCurrencyOutstanding": 4625.0,
+            "amountOutstandingTotal": 4625.0,
+            "amountCurrencyOutstandingTotal": 4625.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573306,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573306"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266337
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:00.602107",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer/108385859",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 108385859,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385859",
+          "name": "Costa Lda",
+          "organizationNumber": "873752092",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10003,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Costa Lda (10003)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405620985,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620985"
+          },
+          "physicalAddress": {
+            "id": 405620984,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620984"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 466780689,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0.0,
+          "website": ""
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:03.724216",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147617399/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-22",
+        "paymentTypeId": 36757959,
+        "paidAmount": 4625.0
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147617399,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617399",
+          "invoiceNumber": 3,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108385859,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385859"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402023024,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023024"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607561880,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561880"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965783069,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783069"
+            }
+          ],
+          "voucher": {
+            "id": 609064254,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064254"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 4625.0,
+          "amountCurrency": 4625.0,
+          "amountExcludingVat": 3700.0,
+          "amountExcludingVatCurrency": 3700.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3845573306,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573306"
+            },
+            {
+              "id": 3845574547,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845574547"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024266337
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:07.060032",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2025-01-01",
+        "invoiceDateTo": "2026-12-31",
+        "invoiceNumber": "4,5"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 2147617402,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617402",
+            "invoiceNumber": 4,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385862,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385862"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023026,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023026"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561881,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561881"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783070,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783070"
+              }
+            ],
+            "voucher": {
+              "id": 609064287,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064287"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 13500.0,
+            "amountCurrency": 13500.0,
+            "amountExcludingVat": 10800.0,
+            "amountExcludingVatCurrency": 10800.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 13500.0,
+            "amountCurrencyOutstanding": 13500.0,
+            "amountOutstandingTotal": 13500.0,
+            "amountCurrencyOutstandingTotal": 13500.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573399,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573399"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266345
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:09.957068",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2025-01-01",
+        "invoiceDateTo": "2026-12-31",
+        "invoiceNumber": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 2147617408,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617408",
+            "invoiceNumber": 5,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108385867,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385867"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402023031,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023031"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607561884,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561884"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965783072,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783072"
+              }
+            ],
+            "voucher": {
+              "id": 609064315,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064315"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 5500.0,
+            "amountCurrency": 5500.0,
+            "amountExcludingVat": 4400.0,
+            "amountExcludingVatCurrency": 4400.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 5500.0,
+            "amountCurrencyOutstanding": 5500.0,
+            "amountOutstandingTotal": 5500.0,
+            "amountCurrencyOutstandingTotal": 5500.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3845573476,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573476"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024266349
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:12.976300",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147617402/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-23",
+        "paymentTypeId": 36757959,
+        "paidAmount": 13500.0
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147617402,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617402",
+          "invoiceNumber": 4,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108385862,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385862"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402023026,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023026"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607561881,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561881"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965783070,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783070"
+            }
+          ],
+          "voucher": {
+            "id": 609064287,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064287"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 13500.0,
+          "amountCurrency": 13500.0,
+          "amountExcludingVat": 10800.0,
+          "amountExcludingVatCurrency": 10800.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3845573399,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573399"
+            },
+            {
+              "id": 3845574850,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845574850"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024266345
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:15.844569",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147617408/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-24",
+        "paymentTypeId": 36757959,
+        "paidAmount": 5500.0
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147617408,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147617408",
+          "invoiceNumber": 5,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108385867,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385867"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402023031,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402023031"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607561884,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607561884"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965783072,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965783072"
+            }
+          ],
+          "voucher": {
+            "id": 609064315,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609064315"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 5500.0,
+          "amountCurrency": 5500.0,
+          "amountExcludingVat": 4400.0,
+          "amountExcludingVatCurrency": 4400.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3845573476,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845573476"
+            },
+            {
+              "id": 3845574929,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845574929"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024266349
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T17:41:20.407018",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "name": "Oliveira Lda",
+        "isSupplier": true
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 5,
+        "from": 0,
+        "count": 5,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108385843,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385843",
+            "name": "Costa Lda",
+            "organizationNumber": "917334455",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Costa Lda (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620953,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620953"
+            },
+            "physicalAddress": {
+              "id": 405620952,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620952"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385848,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385848",
+            "name": "Pereira Lda",
+            "organizationNumber": "984995717",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10002,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Pereira Lda (10002)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620963,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620963"
+            },
+            "physicalAddress": {
+              "id": 405620962,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620962"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385859,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385859",
+            "name": "Costa Lda",
+            "organizationNumber": "873752092",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10003,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Costa Lda (10003)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620985,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620985"
+            },
+            "physicalAddress": {
+              "id": 405620984,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620984"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385862,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385862",
+            "name": "Silva Lda",
+            "organizationNumber": "810116773",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10004,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Silva Lda (10004)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405620991,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620991"
+            },
+            "physicalAddress": {
+              "id": 405620990,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405620990"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          },
+          {
+            "id": 108385867,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108385867",
+            "name": "Costa Lda",
+            "organizationNumber": "977323975",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10005,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Costa Lda (10005)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405621001,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405621001"
+            },
+            "physicalAddress": {
+              "id": 405621000,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405621000"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 466780689,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/466780689"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T17:38:40.166724",
+  "prompt": "Opprett en ordre for kunden Bergvik AS (org.nr 873675926) med produktene Skylagring (2961) til 12000 kr og Analyserapport (3475) til 23100 kr. Konverter ordren til faktura og registrer full betaling.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147617206 with payment for customer Bergvik AS (paymentTypeId=28118420, paidAmount=43875.0)",
+  "error": null,
+  "elapsed_seconds": 36.85
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T17:13:47.122081",
+  "prompt": "Crie uma fatura para o cliente Oceano Lda (org. nº 825975497) com três linhas de produto: Design web (9142) a 5650 NOK com 25 % IVA, Sessão de formação (6419) a 14650 NOK com 15 % IVA (alimentos), e Serviço de rede (7216) a 1000 NOK com 0 % IVA (isento).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147614042 for customer Oceano Lda",
+  "error": null,
+  "elapsed_seconds": 34.31
+}

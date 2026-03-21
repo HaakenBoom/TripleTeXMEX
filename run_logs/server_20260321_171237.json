@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T17:12:37.898485",
+  "prompt": "Has recibido un contrato de trabajo (ver PDF adjunto). Crea el empleado en Tripletex con todos los datos del contrato: numero de identidad, fecha de nacimiento, departamento, codigo de ocupacion, salario, porcentaje de empleo y fecha de inicio.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Carmen Pérez (id=18640997)",
+  "error": null,
+  "elapsed_seconds": 6.63
+}

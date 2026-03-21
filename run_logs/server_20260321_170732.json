@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T17:07:32.338413",
+  "prompt": "Wir haben einen neuen Mitarbeiter namens Anna Richter, geboren am 24. July 1991. Bitte legen Sie ihn als Mitarbeiter mit der E-Mail anna.richter@example.org und dem Startdatum 22. August 2026 an.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Anna Richter (id=18640642)",
+  "error": null,
+  "elapsed_seconds": 6.82
+}

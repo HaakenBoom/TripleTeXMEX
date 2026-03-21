@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-03-21T16:46:13.561511",
+  "prompt_fingerprint": "95efdd091b7d",
+  "prompt": "Realice el cierre mensual de marzo de 2026. Registre la periodificación (12500 NOK por mes de la cuenta 1720 a gasto). Contabilice la depreciación mensual de un activo fijo con costo de adquisición 61400 NOK y vida útil 10 años (depreciación lineal a cuenta 6020). Verifique que el balance de saldos sea cero. También registre una provisión salarial (débito cuenta de gastos salariales 5000, crédito cuenta de salarios acumulados 2900).",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "annual_closure",
+    "entities": {
+      "closureType": "monthly",
+      "month": 3,
+      "year": 2026,
+      "entries": [
+        {
+          "description": "Periodificación marzo 2026",
+          "amount": 12500,
+          "debitAccount": 1720,
+          "creditAccount": null,
+          "type": "accrual"
+        },
+        {
+          "description": "Depreciación mensual activo fijo",
+          "acquisitionCost": 61400,
+          "usefulLife": 10,
+          "depreciationType": "linear",
+          "monthlyDepreciation": 511.67,
+          "debitAccount": 6020,
+          "creditAccount": null,
+          "type": "depreciation"
+        },
+        {
+          "description": "Provisión salarial marzo 2026",
+          "amount": 5000,
+          "debitAccount": 5000,
+          "creditAccount": 2900,
+          "type": "provision"
+        }
+      ],
+      "verifyTrialBalance": true
+    },
+    "raw_prompt": "Realice el cierre mensual de marzo de 2026. Registre la periodificación (12500 NOK por mes de la cuenta 1720 a gasto). Contabilice la depreciación mensual de un activo fijo con costo de adquisición 61400 NOK y vida útil 10 años (depreciación lineal a cuenta 6020). Verifique que el balance de saldos sea cero. También registre una provisión salarial (débito cuenta de gastos salariales 5000, crédito cuenta de salarios acumulados 2900).",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Annual closure completed: 0 vouchers created. ",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 2.07,
+  "phase_times": {
+    "parse": 2.07,
+    "prefetch": 0.0,
+    "handler": 0.0
+  },
+  "total_api_calls": 0,
+  "errors_4xx": 0,
+  "status_counts": {},
+  "call_phases": {
+    "prefetch": 0,
+    "action": 0,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": []
+}

@@ -452,13 +452,12 @@ def _create_employment(emp: dict, emp_id: int, client: TripletexClient):
     start_date = emp.get("startDate", _today())
 
     # Step 1: POST /employee/employment
+    # NOTE: occupationCode belongs on employmentDetails, not employment.
     employment_body: dict[str, Any] = {
         "employee": {"id": emp_id},
         "startDate": start_date,
         "isMainEmployer": True,
     }
-    if emp.get("occupationCode"):
-        employment_body["occupationCode"] = str(emp["occupationCode"])
 
     try:
         emp_result = client.post("/employee/employment", employment_body)
@@ -472,9 +471,10 @@ def _create_employment(emp: dict, emp_id: int, client: TripletexClient):
     if not employment_id:
         return
 
-    # Step 2: POST /employee/employment/details (salary, percentage, type)
+    # Step 2: POST /employee/employment/details (salary, percentage, type, occupationCode)
     has_details = any(emp.get(f) for f in (
         "annualSalary", "employmentPercentage", "employmentType", "remunerationType",
+        "occupationCode",
     ))
     if has_details:
         details_body: dict[str, Any] = {
@@ -489,6 +489,23 @@ def _create_employment(emp: dict, emp_id: int, client: TripletexClient):
             details_body["employmentType"] = emp["employmentType"]
         if emp.get("remunerationType"):
             details_body["remunerationType"] = emp["remunerationType"]
+
+        # Resolve occupationCode string (e.g. "3512") to a ref object {"id": N}
+        if emp.get("occupationCode"):
+            occ_code = str(emp["occupationCode"])
+            try:
+                occ_resp = client.get(
+                    "/employee/employment/occupationCode",
+                    {"code": occ_code, "count": 1},
+                )
+                occ_values = occ_resp.get("values", [])
+                if occ_values:
+                    details_body["occupationCode"] = {"id": occ_values[0]["id"]}
+                    logger.info("Resolved occupationCode %s → id %d", occ_code, occ_values[0]["id"])
+                else:
+                    logger.warning("occupationCode '%s' not found, skipping", occ_code)
+            except Exception as e:
+                logger.warning("Failed to look up occupationCode '%s': %s", occ_code, e)
 
         try:
             det_result = client.post("/employee/employment/details", details_body)
@@ -1294,8 +1311,8 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
         if cost.get("date"):
             cost_body["date"] = cost["date"]
         if cost.get("amount") is not None:
-            cost_body["amount"] = cost["amount"]
-            cost_body["amountNOK"] = cost.get("amountNOK", cost["amount"])
+            cost_body["amountCurrencyIncVat"] = cost["amount"]
+            cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
         if cost.get("description"):
             cost_body["description"] = cost["description"]
         if cost.get("category"):
@@ -1407,9 +1424,12 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                             r["amount"], r.get("vat_type_id"))
 
     # Phase 3: Build final postings
+    # IMPORTANT: row must be >= 1 (Tripletex reserves row 0 for system-generated).
+    # All postings sharing the same row must balance to zero.
     postings = []
-    for r in non_vat_entries:
+    for idx, r in enumerate(non_vat_entries):
         p: dict[str, Any] = {
+            "row": idx + 1,
             "account": {"id": r["account_id"]},
             "date": r["posting"].get("date", today),
             "amountGross": r["amount"],
@@ -2352,14 +2372,16 @@ def _handle_bank_reconciliation(task: dict, client: TripletexClient, context: di
     )
 
 
-def _make_closure_posting(account_id: int, amount: float, posting_date: str) -> dict[str, Any]:
+def _make_closure_posting(account_id: int, amount: float, posting_date: str,
+                          *, row: int = 1) -> dict[str, Any]:
     """Build a single voucher posting with explicit vatType 0 (no VAT).
 
     Annual closure postings (depreciation, prepaid reversals, tax provisions)
-    never involve VAT. Setting vatType explicitly prevents Tripletex from
-    treating the posting as 'system-generated' on vatLocked accounts (422 error).
+    never involve VAT.  ``row`` must be >= 1 (Tripletex reserves row 0 for
+    system-generated postings and rejects external postings on row 0).
     """
     return {
+        "row": row,
         "account": {"id": account_id},
         "amountGross": amount,
         "amountGrossCurrency": amount,

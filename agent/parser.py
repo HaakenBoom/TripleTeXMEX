@@ -255,6 +255,29 @@ def _post_validate_classification(prompt: str, parsed: dict) -> dict:
         parsed["task_type"] = "annual_closure"
         return parsed
 
+    # Rule 6: supplier_invoice → create_voucher (our handler supports suppliers now)
+    _SUPPLIER_INVOICE_KEYWORDS = [
+        "leverandørfaktura", "leverandorfaktura", "supplier invoice",
+        "factura de proveedor", "factura del proveedor", "fatura do fornecedor",
+        "facture fournisseur", "lieferantenrechnung", "eingangsrechnung",
+        "facture du fournisseur",
+    ]
+    if any(kw in p for kw in _SUPPLIER_INVOICE_KEYWORDS) and task_type in ("unknown",):
+        parsed = dict(parsed)
+        parsed["task_type"] = "create_voucher"
+        return parsed
+
+    # Rule 7: project fixed-price invoice → create_invoice
+    # "Sett fastpris", "Set a fixed price", "Fixez un prix forfaitaire", "Festpreis"
+    _FIXED_PRICE_KEYWORDS = [
+        "fastpris", "fixed price", "prix forfaitaire", "festpreis",
+        "precio fijo", "preço fixo",
+    ]
+    if any(kw in p for kw in _FIXED_PRICE_KEYWORDS) and task_type in ("unknown",):
+        parsed = dict(parsed)
+        parsed["task_type"] = "create_invoice"
+        return parsed
+
     # Rule 5: register payment on EXISTING invoice (misclassified as create_invoice_with_payment)
     # Pattern: prompt says customer HAS an outstanding invoice + register payment
     # This is NOT "create new invoice + payment" — it's "find existing + register payment"

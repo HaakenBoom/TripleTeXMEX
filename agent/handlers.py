@@ -1494,6 +1494,23 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             p["supplier"] = {"id": supplier_id}
         postings.append(p)
 
+    # If postings don't balance (e.g. receipt with expense+VAT but no bank counter),
+    # add a counter-posting on bank account 1920 to balance the voucher.
+    posting_sum = sum(r["amount"] for r in non_vat_entries)
+    if abs(posting_sum) > 0.01 and postings:
+        bank_acc_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
+        bank_values = bank_acc_resp.get("values", [])
+        if bank_values:
+            bank_id = bank_values[0]["id"]
+            postings.append({
+                "row": len(postings) + 1,
+                "account": {"id": bank_id},
+                "date": postings[0].get("date", today),
+                "amountGross": -posting_sum,
+                "amountGrossCurrency": -posting_sum,
+            })
+            logger.info("Added bank counter-posting on 1920 for %.2f to balance voucher", -posting_sum)
+
     body: dict[str, Any] = {
         "date": entities.get("date", today),
         "description": entities.get("description", "Voucher"),

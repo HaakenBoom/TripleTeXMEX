@@ -195,13 +195,17 @@ def classify_task(prompt: str) -> str:
     #    es: errores en el libro mayor, pt: erros no livro razão, de: Fehler im Hauptbuch,
     #    fr: erreurs dans le grand livre
     if any(kw in p for kw in [
-        "feil i hovudboka", "feil i hovedboka", "oppdaga feil", "oppdaget feil",
+        "feil i hovudboka", "feil i hovedboka", "feil i hovedboken",
+        "oppdaga feil", "oppdaget feil", "oppdaga ein feil", "oppdaga 4 feil",
+        "finn dei 4 feila", "finn de 4 feilene", "find the 4 errors",
         "errors in the general ledger", "discovered errors", "find the errors",
         "errores en el libro mayor", "errores en el mayor", "descubierto errores",
+        "hemos descubierto errores", "encontrar los errores",
         "erros no livro razão", "erros no livro-razão", "erros no razão",
-        "descobrimos erros", "encontrar os erros",
+        "descobrimos erros", "encontrar os erros", "encontre os 4 erros",
         "fehler im hauptbuch", "fehler entdeckt", "fehler gefunden",
         "erreurs dans le grand livre", "erreurs découvertes",
+        "we have discovered errors", "gå gjennom alle bilag og finn",
     ]):
         return "error_correction"
 
@@ -210,7 +214,8 @@ def classify_task(prompt: str) -> str:
     #    es: factura vencida/cargo por mora, pt: fatura vencida/taxa de atraso,
     #    de: überfällige Rechnung/Mahngebühr, fr: facture en retard/frais de retard
     if any(kw in p for kw in [
-        "forfallen faktura", "forfalne fakturaen", "purregebyr", "inkassogebyr",
+        "forfallen faktura", "forfalne fakturaen", "forfalt faktura", "forfalte fakturaen",
+        "purregebyr", "inkassogebyr",
         "overdue invoice", "late fee", "reminder fee", "past due",
         "factura vencida", "cargo por mora", "recargo por retraso",
         "fatura vencida", "taxa de atraso", "multa por atraso",
@@ -223,12 +228,19 @@ def classify_task(prompt: str) -> str:
     #    All languages: EUR + exchange rate keywords + NOK/EUR pattern
     if any(kw in p for kw in [
         "valutakurs", "exchange rate", "taxa de câmbio", "taux de change",
-        "tipo de cambio", "wechselkurs",
+        "tipo de cambio", "wechselkurs", "kursdifferanse", "currency difference",
+        "différence de change", "diferencia de cambio", "diferença cambial",
     ]) and "EUR" in prompt:
         return "fx_correction"
     if "EUR" in prompt and "NOK/EUR" in prompt and any(kw in p for kw in [
         "kursen", "the rate", "la tasa", "a taxa", "le taux", "der kurs",
         "la cotización", "o câmbio",
+    ]):
+        return "fx_correction"
+    # Scenario: sent invoice in EUR, customer paid at different rate
+    if "EUR" in prompt and any(kw in p for kw in [
+        "nok/eur", "eur/nok", "kursen var", "the rate was", "le taux était",
+        "la tasa era", "a taxa era", "der kurs war", "kurs var",
     ]):
         return "fx_correction"
 
@@ -311,7 +323,7 @@ def classify_task(prompt: str) -> str:
     #     NOTE: actual payment REVERSALS are already caught by rule 7 (reverse verbs).
     #     If we get here, it's about creating/registering payment, not reversing.
     _invoice_kw = any(kw in p for kw in [
-        "faktura", "invoice", "factura", "fatura", "rechnung",
+        "faktura", "invoice", "factura", "fatura", "rechnung", "facture",
     ])
     _payment_kw = any(kw in p for kw in [
         "registrer full betaling", "register full payment", "registre full",
@@ -486,7 +498,8 @@ Extract: name, number (product number), priceExcludingVat (number), priceIncludi
         "create_invoice": base + """
 Extract: customer ({name, organizationNumber, email}), orderLines (array of {description, product (product number string), count (default 1), unitPrice (excl VAT), unitPriceIncludingVat, vatType, discount}), invoiceDate, invoiceDueDate, comment.
 For project invoices: also extract projectName, projectManagerName, projectManagerEmail, fixedPrice (total project price), invoicePercentage (% to bill).
-isPrioritizeAmountsIncludingVat: true only if prices are stated INCLUDING VAT.""",
+isPrioritizeAmountsIncludingVat: true only if prices are stated INCLUDING VAT.
+sendToCustomer: true if the prompt says to "send" the invoice to the customer ("send", "envie", "enviar", "envoyer", "senden").""",
 
         "create_invoice_with_payment": base + """
 Extract: customer ({name, organizationNumber}), orderLines (array of {description, product (product number string), count, unitPrice}), paidAmount, paymentTypeDescription ("Kontant"/"Cash"/"Kort"/"Card"/"Bank").

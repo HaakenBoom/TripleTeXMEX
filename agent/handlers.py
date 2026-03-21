@@ -1423,7 +1423,10 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         account_number = posting.get("accountNumber")
         account_id = posting.get("accountId")
         account_data = None
-        acct_num_int = int(account_number or 0)
+        try:
+            acct_num_int = int(account_number or 0)
+        except (ValueError, TypeError):
+            acct_num_int = 0
 
         # Don't waste an API call resolving VAT accounts (27xx) —
         # we'll collapse them into the expense posting instead
@@ -1578,6 +1581,9 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 "amountGrossCurrency": -posting_sum,
             })
             logger.info("Added bank counter-posting on 1920 for %.2f to balance voucher", -posting_sum)
+
+    if not postings:
+        raise RuntimeError("No postings could be resolved for voucher creation")
 
     body: dict[str, Any] = {
         "date": entities.get("date", today),
@@ -3496,6 +3502,473 @@ def _handle_overdue_invoice(task: dict, client: TripletexClient, context: dict) 
     return f"Overdue invoice handled: " + "; ".join(results)
 
 
+def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle full project lifecycle: create project, log hours, register supplier invoice, bill customer."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+    results: list[str] = []
+
+    # Step 1: Find or create customer
+    cust_name = e.get("customerName", "")
+    cust_org = e.get("customerOrganizationNumber", "")
+    customer_id = None
+    if cust_name or cust_org:
+        cust_data: dict[str, Any] = {}
+        if cust_name:
+            cust_data["name"] = cust_name
+        if cust_org:
+            cust_data["organizationNumber"] = cust_org
+        customer_id = _find_or_create_customer(cust_data, client, context)
+
+    # Step 2: Find or create project manager
+    pm_name = e.get("projectManagerName", "")
+    pm_email = e.get("projectManagerEmail", "")
+    pm_id = None
+    if pm_email:
+        resp = client.get("/employee", {"email": pm_email, "count": 1})
+        values = resp.get("values", [])
+        if values:
+            pm_id = values[0]["id"]
+    if not pm_id and pm_name:
+        pm_id = _find_or_create_employee_by_name(pm_name, client, context)
+    if not pm_id:
+        pm_id = _ensure_employee(client, context)
+
+    # Step 3: Create project
+    proj_body: dict[str, Any] = {
+        "name": e.get("projectName", "Project"),
+        "projectManager": {"id": pm_id},
+        "isInternal": False,
+        "startDate": e.get("startDate", "2024-01-01"),
+    }
+    if customer_id:
+        proj_body["customer"] = {"id": customer_id}
+
+    proj = client.post("/project", proj_body)
+    _check_response(proj, "POST /project (lifecycle)")
+    project_id = proj["value"]["id"]
+    results.append(f"Project {project_id} created")
+
+    # Step 4: Log timesheet entries
+    timesheet_entries = e.get("timesheetEntries", [])
+    if timesheet_entries:
+        # Get activities for the project
+        act_resp = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+        activities = act_resp.get("values", [])
+
+        for ts in timesheet_entries:
+            # Find employee for this entry
+            ts_email = ts.get("employeeEmail", "")
+            ts_name = ts.get("employeeName", "")
+            ts_emp_id = None
+            if ts_email:
+                resp = client.get("/employee", {"email": ts_email, "count": 1})
+                vals = resp.get("values", [])
+                if vals:
+                    ts_emp_id = vals[0]["id"]
+            if not ts_emp_id and ts_name:
+                ts_emp_id = _find_or_create_employee_by_name(ts_name, client, context)
+            if not ts_emp_id:
+                ts_emp_id = pm_id
+
+            # Find activity
+            act_name = ts.get("activityName", "")
+            act_id = None
+            if act_name:
+                for a in activities:
+                    if a.get("name", "").strip().lower() == act_name.strip().lower():
+                        act_id = a["id"]
+                        break
+            if not act_id and activities:
+                act_id = activities[0]["id"]
+
+            if act_id:
+                entry_body: dict[str, Any] = {
+                    "employee": {"id": ts_emp_id},
+                    "project": {"id": project_id},
+                    "activity": {"id": act_id},
+                    "date": ts.get("date", today),
+                    "hours": ts.get("hours", 0),
+                }
+                if ts.get("hourlyRate"):
+                    entry_body["hourlyCharge"] = ts["hourlyRate"]
+                ts_result = client.post("/timesheet/entry", entry_body)
+                if isinstance(ts_result, dict) and ts_result.get("value"):
+                    results.append(f"Timesheet {ts.get('hours', 0)}h logged")
+
+    # Step 5: Register supplier invoice (if specified)
+    supplier_inv = e.get("supplierInvoice")
+    if supplier_inv:
+        supp_name = supplier_inv.get("supplierName", "")
+        supp_org = supplier_inv.get("supplierOrganizationNumber", "")
+        supp_amount = supplier_inv.get("amount", 0)
+        supp_desc = supplier_inv.get("description", "Supplier invoice")
+        expense_acct = str(supplier_inv.get("accountNumber", "4300"))
+
+        # Find or create supplier
+        supplier_id = None
+        if supp_name or supp_org:
+            search_params: dict[str, Any] = {"count": 1}
+            if supp_org:
+                search_params["organizationNumber"] = supp_org
+            elif supp_name:
+                search_params["name"] = supp_name
+            supp_resp = client.get("/supplier", search_params)
+            supp_values = supp_resp.get("values", [])
+            if supp_values:
+                supplier_id = supp_values[0]["id"]
+            else:
+                # Try customer endpoint (some suppliers are also customers)
+                cust_search: dict[str, Any] = {"count": 1}
+                if supp_org:
+                    cust_search["organizationNumber"] = supp_org
+                elif supp_name:
+                    cust_search["name"] = supp_name
+                cust_resp = client.get("/customer", cust_search)
+                cust_vals = cust_resp.get("values", [])
+                if cust_vals:
+                    # Create supplier from customer info
+                    supp_body: dict[str, Any] = {"name": cust_vals[0].get("name", supp_name)}
+                    if supp_org:
+                        supp_body["organizationNumber"] = supp_org
+                    supp_result = client.post("/supplier", supp_body)
+                    if isinstance(supp_result, dict) and supp_result.get("value"):
+                        supplier_id = supp_result["value"]["id"]
+                else:
+                    supp_body = {"name": supp_name or f"Supplier {supp_org}"}
+                    if supp_org:
+                        supp_body["organizationNumber"] = supp_org
+                    supp_result = client.post("/supplier", supp_body)
+                    if isinstance(supp_result, dict) and supp_result.get("value"):
+                        supplier_id = supp_result["value"]["id"]
+
+        expense_id = _get_or_create_account(client, expense_acct)
+        ap_id = _get_or_create_account(client, "2400")
+
+        postings = [
+            {
+                "row": 1,
+                "account": {"id": expense_id},
+                "amountGross": supp_amount,
+                "amountGrossCurrency": supp_amount,
+                "date": today,
+                "vatType": {"id": 1},  # 25% input VAT
+            },
+            {
+                "row": 2,
+                "account": {"id": ap_id},
+                "amountGross": -supp_amount,
+                "amountGrossCurrency": -supp_amount,
+                "date": today,
+            },
+        ]
+        if supplier_id:
+            postings[1]["supplier"] = {"id": supplier_id}
+
+        v_body: dict[str, Any] = {
+            "date": today,
+            "description": supp_desc,
+            "postings": postings,
+        }
+        v_result = client.post("/ledger/voucher", v_body)
+        if isinstance(v_result, dict) and v_result.get("value"):
+            results.append(f"Supplier invoice voucher created")
+
+    # Step 6: Create customer invoice for a percentage of budget
+    budget = e.get("budget", 0)
+    inv_pct = e.get("customerInvoicePercentage", 0)
+    if budget and inv_pct and customer_id:
+        inv_amount = round(budget * inv_pct / 100, 2)
+
+        # Create product for the invoice
+        prod_body: dict[str, Any] = {
+            "name": f"{e.get('projectName', 'Project')} - Delbetaling",
+            "priceExcludingVatCurrency": inv_amount,
+            "vatType": {"id": 3},  # 25% output VAT
+        }
+        prod = client.post("/product", prod_body)
+        _check_response(prod, "POST /product (lifecycle invoice)")
+        product_id = prod["value"]["id"]
+
+        # Create order
+        order_body: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "orderDate": today,
+            "deliveryDate": today,
+            "orderLines": [{
+                "product": {"id": product_id},
+                "count": 1,
+                "unitPriceExcludingVatCurrency": inv_amount,
+                "vatType": {"id": 3},
+            }],
+        }
+        order = client.post("/order", order_body)
+        _check_response(order, "POST /order (lifecycle invoice)")
+        order_id = order["value"]["id"]
+
+        # Create invoice
+        inv_body: dict[str, Any] = {
+            "invoiceDate": today,
+            "invoiceDueDate": today,
+            "orders": [{"id": order_id}],
+        }
+        inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+
+        # Retry with bank account if needed
+        if isinstance(inv, dict) and inv.get("status", 0) >= 400:
+            error_msg = str(inv.get("message", "")) + str(inv.get("validationMessages", ""))
+            if "bank" in error_msg.lower():
+                context["_bank_account_checked"] = False
+                _ensure_company_bank_account(client, context)
+                inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+
+        if isinstance(inv, dict) and inv.get("value"):
+            results.append(f"Customer invoice for {inv_pct}% ({inv_amount} kr) created")
+
+    return f"Project lifecycle completed: " + "; ".join(results)
+
+
+def _handle_cost_analysis(task: dict, client: TripletexClient, context: dict) -> str:
+    """Analyze ledger to find top cost accounts with largest increase, then create projects for them."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+
+    months = e.get("analysisMonths", [])
+    num_accounts = e.get("numberOfAccounts", 3)
+
+    # Default to Jan and Feb of current year if not specified
+    year = int(today[:4])
+    if len(months) >= 2:
+        month1 = months[0]
+        month2 = months[1]
+        y1 = month1.get("year", year)
+        m1 = month1.get("month", 1)
+        y2 = month2.get("year", year)
+        m2 = month2.get("month", 2)
+    else:
+        y1, m1 = year, 1
+        y2, m2 = year, 2
+
+    # Fetch postings for month 1
+    m1_start = f"{y1}-{m1:02d}-01"
+    m1_end = f"{y1}-{m1:02d}-28"  # Approximate end
+    resp1 = client.get("/ledger/posting", {
+        "dateFrom": m1_start, "dateTo": m1_end, "count": 10000,
+    })
+    postings1 = resp1.get("values", [])
+
+    # Fetch postings for month 2
+    m2_start = f"{y2}-{m2:02d}-01"
+    m2_end = f"{y2}-{m2:02d}-28"
+    resp2 = client.get("/ledger/posting", {
+        "dateFrom": m2_start, "dateTo": m2_end, "count": 10000,
+    })
+    postings2 = resp2.get("values", [])
+
+    # Sum amounts by account for cost accounts (4000-7999)
+    def sum_by_account(postings: list) -> dict[int, float]:
+        sums: dict[int, float] = {}
+        for p in postings:
+            acct_id = p.get("account", {}).get("id", 0)
+            amount = p.get("amount", 0)
+            # We need the account number — fetch it from posting or cache
+            sums[acct_id] = sums.get(acct_id, 0) + amount
+        return sums
+
+    sums1 = sum_by_account(postings1)
+    sums2 = sum_by_account(postings2)
+
+    # Get all accounts to map IDs to numbers/names
+    all_acct_ids = set(sums1.keys()) | set(sums2.keys())
+    acct_info: dict[int, dict] = {}
+
+    # Fetch account details for all unique accounts
+    acct_resp = client.get("/ledger/account", {"count": 1000})
+    for a in acct_resp.get("values", []):
+        acct_info[a["id"]] = a
+
+    # Calculate increases for cost accounts (4000-7999)
+    increases: list[tuple[int, str, str, float, float, float]] = []
+    for acct_id in all_acct_ids:
+        info = acct_info.get(acct_id, {})
+        acct_num = info.get("number", 0)
+        acct_name = info.get("name", "Unknown")
+        try:
+            acct_num_int = int(acct_num)
+        except (ValueError, TypeError):
+            continue
+
+        if 4000 <= acct_num_int <= 7999:
+            val1 = sums1.get(acct_id, 0)
+            val2 = sums2.get(acct_id, 0)
+            increase = val2 - val1
+            if increase > 0:
+                increases.append((acct_id, str(acct_num), acct_name, val1, val2, increase))
+
+    # Sort by increase (descending) and take top N
+    increases.sort(key=lambda x: x[5], reverse=True)
+    top = increases[:num_accounts]
+
+    if not top:
+        return "No cost account increases found between the analyzed periods."
+
+    # Create a project for each top account
+    pm_id = _ensure_employee(client, context)
+    results: list[str] = []
+
+    for acct_id, acct_num, acct_name, val1, val2, increase in top:
+        proj_body: dict[str, Any] = {
+            "name": acct_name,
+            "projectManager": {"id": pm_id},
+            "isInternal": True,
+            "startDate": today,
+        }
+        proj = client.post("/project", proj_body)
+        if isinstance(proj, dict) and proj.get("value"):
+            pid = proj["value"]["id"]
+            results.append(f"{acct_name} ({acct_num}): +{increase:.0f} kr (project {pid})")
+            # Also create a project activity
+            act_body: dict[str, Any] = {
+                "name": f"Analyse {acct_name}",
+                "project": {"id": pid},
+            }
+            client.post("/project/projectActivity", act_body)
+
+    return f"Cost analysis complete. Top {len(results)} accounts: " + "; ".join(results)
+
+
+def _handle_fx_correction(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle FX correction: find invoice in foreign currency, calculate and post exchange rate difference."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+
+    cust_name = e.get("customerName", "")
+    cust_org = e.get("customerOrganizationNumber", "")
+    inv_amount_eur = e.get("invoiceAmountEUR", 0)
+    original_rate = e.get("originalRate", 0)
+    current_rate = e.get("currentRate", 0)
+    inv_desc = e.get("invoiceDescription", "")
+
+    if not original_rate or not current_rate:
+        raise RuntimeError("FX correction requires both originalRate and currentRate")
+
+    # Calculate the FX difference
+    original_nok = inv_amount_eur * original_rate
+    current_nok = inv_amount_eur * current_rate
+    fx_diff = current_nok - original_nok  # Positive = loss (customer paid less), negative = gain
+
+    # Find customer
+    customer_id = None
+    if cust_name or cust_org:
+        cust_data: dict[str, Any] = {}
+        if cust_name:
+            cust_data["name"] = cust_name
+        if cust_org:
+            cust_data["organizationNumber"] = cust_org
+        customer_id = _find_or_create_customer(cust_data, client, context)
+
+    # Find the invoice
+    inv_resp = client.get("/invoice", {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": today,
+        "count": 100,
+    })
+    invoices = inv_resp.get("values", [])
+
+    target_inv = None
+    for inv in invoices:
+        inv_cust_id = inv.get("customer", {}).get("id")
+        if customer_id and inv_cust_id != customer_id:
+            continue
+        # Match by amount (original NOK amount)
+        inv_amount = inv.get("amountExcludingVat", 0)
+        if abs(inv_amount - original_nok) < 1:
+            target_inv = inv
+            break
+        # Also try matching by EUR amount * rate
+        if abs(inv.get("amount", 0) - original_nok) < 1:
+            target_inv = inv
+            break
+
+    # Determine accounts for FX gain/loss
+    # 8060 = Agiotap (currency loss), 8160 = Agiogevinst (currency gain)
+    if fx_diff < 0:
+        # Gain: we receive more NOK than expected
+        fx_account = "8160"  # Agiogevinst
+        fx_desc = "Agiogevinst"
+    else:
+        # Loss: we receive less NOK than expected
+        fx_account = "8060"  # Agiotap
+        fx_desc = "Agiotap"
+
+    fx_acct_id = _get_or_create_account(client, fx_account)
+    ar_acct_id = _get_or_create_account(client, "1500")  # Kundefordringer
+
+    # Post the FX correction voucher
+    # If loss (positive fx_diff): debit 8060 (expense), credit 1500 (reduce AR)
+    # If gain (negative fx_diff): debit 1500 (increase AR), credit 8160 (income)
+    abs_diff = abs(fx_diff)
+
+    postings = [
+        {
+            "row": 1,
+            "account": {"id": fx_acct_id},
+            "amountGross": abs_diff if fx_diff > 0 else -abs_diff,
+            "amountGrossCurrency": abs_diff if fx_diff > 0 else -abs_diff,
+            "date": today,
+        },
+        {
+            "row": 2,
+            "account": {"id": ar_acct_id},
+            "amountGross": -abs_diff if fx_diff > 0 else abs_diff,
+            "amountGrossCurrency": -abs_diff if fx_diff > 0 else abs_diff,
+            "date": today,
+        },
+    ]
+    if customer_id:
+        postings[1]["customer"] = {"id": customer_id}
+
+    v_body: dict[str, Any] = {
+        "date": today,
+        "description": f"{fx_desc} - {cust_name} ({inv_amount_eur} EUR, {original_rate}→{current_rate} NOK/EUR)",
+        "postings": postings,
+    }
+    result = client.post("/ledger/voucher", v_body)
+    _check_response(result, "POST /ledger/voucher (FX correction)")
+    vid = result.get("value", {}).get("id", "?")
+
+    # Register payment on the invoice at the new rate
+    if target_inv:
+        inv_id = target_inv["id"]
+        pt_resp = client.get("/invoice/paymentType", {"count": 100})
+        payment_types = pt_resp.get("values", [])
+        if payment_types:
+            payment_type_id = payment_types[0]["id"]
+            pay_params: dict[str, Any] = {
+                "paymentDate": today,
+                "paymentTypeId": payment_type_id,
+                "paidAmount": current_nok,
+                "paidAmountCurrency": current_nok,
+            }
+            pay_result = client.put(f"/invoice/{inv_id}/:payment", params=pay_params)
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                pay_result = client.put(
+                    f"/invoice/{inv_id}/:payment",
+                    json_body={
+                        "paymentDate": today,
+                        "paymentTypeId": payment_type_id,
+                        "paidAmount": current_nok,
+                        "paidAmountCurrency": current_nok,
+                    },
+                )
+
+    return (
+        f"FX correction posted: {fx_desc} {abs_diff:.2f} kr "
+        f"({inv_amount_eur} EUR × ({current_rate}-{original_rate}) NOK/EUR). "
+        f"Voucher {vid}."
+    )
+
+
 _HANDLERS = {
     "create_employee": _handle_create_employee,
     "update_employee": _handle_update_employee,
@@ -3520,4 +3993,7 @@ _HANDLERS = {
     "annual_closure": _handle_annual_closure,
     "error_correction": _handle_error_correction,
     "overdue_invoice": _handle_overdue_invoice,
+    "project_lifecycle": _handle_project_lifecycle,
+    "cost_analysis": _handle_cost_analysis,
+    "fx_correction": _handle_fx_correction,
 }

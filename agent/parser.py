@@ -54,7 +54,7 @@ KNOWN_TASK_TYPES = [
 
 # Compiled regex for timesheet: verb + number + hour-word
 _TIMESHEET_RE = re.compile(
-    r'(?:registrer|registe|log|logg|registre|erfasse|enregistre[rz]?)\s+\d+\s+'
+    r'(?:registrer|registe|log|logg|registre|erfasse[n]?|enregistre[rz]?)\s+(?:\S+\s+)?\d+\s+'
     r'(?:timer|timar|horas|hours|heures|stunden)',
     re.IGNORECASE,
 )
@@ -95,7 +95,8 @@ def classify_task(prompt: str) -> str:
 
     # 2. Custom accounting dimension
     if any(kw in p for kw in [
-        "regnskapsdimensjon", "dimensão contabilística", "dimensión contable",
+        "regnskapsdimensjon", "rekneskapsdimensjon",
+        "dimensão contabilística", "dimensión contable",
         "dimension comptable", "buchungsdimension", "accounting dimension",
         "dimensão contabil",
     ]):
@@ -111,9 +112,10 @@ def classify_task(prompt: str) -> str:
 
     # 4. Bank reconciliation
     if any(kw in p for kw in [
-        "reconcil", "avstem", "rapprocher", "bankabstimmung",
+        "reconcil", "avstem", "rapproch", "bankabstimmung",
         "bankavstemming", "bank reconciliation", "bank statement",
         "extrato bancario", "extracto bancario", "relevé bancaire",
+        "releve bancaire",
     ]):
         return "bank_reconciliation"
 
@@ -160,8 +162,9 @@ def classify_task(prompt: str) -> str:
     if any(kw in p for kw in [
         "feil i hovudboka", "errors in the general ledger",
         "errores en el libro mayor", "erros no razão geral",
+        "erros no livro razão", "erros no livro-razão",
         "erreurs dans le grand livre", "fehler im hauptbuch",
-        "oppdaga feil", "discovered errors",
+        "oppdaga feil", "discovered errors", "descobrimos erros",
     ]):
         return "error_correction"
 
@@ -178,6 +181,11 @@ def classify_task(prompt: str) -> str:
         "valutakurs", "exchange rate", "taxa de câmbio", "taux de change",
         "tipo de cambio", "wechselkurs",
     ]) and "EUR" in prompt:
+        return "fx_correction"
+    # Also match: invoice in EUR + "kursen"/"rate" + NOK/EUR pattern
+    if "EUR" in prompt and "NOK/EUR" in prompt and any(kw in p for kw in [
+        "kursen", "the rate", "la tasa", "a taxa", "le taux", "der kurs",
+    ]):
         return "fx_correction"
 
     # 12. Supplier invoice → create_voucher
@@ -242,11 +250,15 @@ def classify_task(prompt: str) -> str:
         "full betaling", "full payment",
     ])
     if _invoice_kw and _payment_kw:
+        # "has an outstanding/unpaid invoice" + "register payment" → find existing & pay
+        _has_outstanding = any(kw in p for kw in _OUTSTANDING_KW)
+        if _has_outstanding:
+            return "reverse_invoice_payment"
         return "create_invoice_with_payment"
     # Order + invoice + payment
     if _invoice_kw and any(kw in p for kw in [
-        "ordre", "orden", "order", "pedido", "commande", "bestellung",
-    ]) and any(kw in p for kw in ["betaling", "payment", "pago", "pagamento"]):
+        "ordre", "orden", "order", "pedido", "commande", "bestellung", "auftrag",
+    ]) and any(kw in p for kw in ["betaling", "payment", "pago", "pagamento", "zahlung"]):
         return "create_invoice_with_payment"
 
     # 19. Regular invoice
@@ -327,11 +339,13 @@ def classify_task(prompt: str) -> str:
 
     # 28. Generic voucher (receipt, expense registration)
     if any(kw in p for kw in [
-        "bilag", "voucher", "reçu", "recibo", "receipt",
+        "bilag", "voucher", "reçu", "recibo", "receipt", "quittung",
         "registree au departement", "registrado en el departamento",
         "depense de ce recu", "gasto de este recibo", "despesa deste recibo",
         "faktura inv-", "invoice inv-",
         "enregistree au departement",
+        "ausgabe aus dieser quittung", "in der abteilung",
+        "depense", "cette quittance",
     ]):
         return "create_voucher"
 

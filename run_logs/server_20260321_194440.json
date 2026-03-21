@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:44:40.918258",
+  "prompt": "Crie um pedido para o cliente Estrela Lda (org. nº 842487803) com os produtos Design web (1851) a 24050 NOK e Consultoria de dados (5065) a 13450 NOK. Converta o pedido em fatura e registe o pagamento total.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147630808 with payment for customer Estrela Lda (paymentTypeId=28277573, paidAmount=46875.0)",
+  "error": null,
+  "elapsed_seconds": 23.64
+}

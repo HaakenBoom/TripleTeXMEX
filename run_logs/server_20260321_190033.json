@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:00:33.176930",
+  "prompt": "Betalinga frå Vestfjord AS (org.nr 880860666) for fakturaen \"Analyserapport\" (16000 kr ekskl. MVA) vart returnert av banken. Reverser betalinga slik at fakturaen igjen viser uteståande beløp.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Reversed payment of 20000.0 on invoice 2147568276. Outstanding amount restored to 20000.0.",
+  "error": null,
+  "elapsed_seconds": 7.89
+}

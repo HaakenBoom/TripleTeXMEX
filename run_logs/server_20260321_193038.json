@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:30:38.159476",
+  "prompt": "Wir benotigen die Forretningslunsj-Ausgabe aus dieser Quittung in der Abteilung Salg. Verwenden Sie das richtige Aufwandskonto und stellen Sie die korrekte MwSt.-Behandlung sicher.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Max iterations reached",
+  "error": null,
+  "elapsed_seconds": 54.28
+}

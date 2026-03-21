@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:26:26.898228",
+  "prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Beatriz Martins (id=18654369)",
+  "error": null,
+  "elapsed_seconds": 3.51
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:03:06.717825",
+  "prompt": "Créez le produit \"Service réseau\" avec le numéro de produit 2003. Le prix est de 28300 NOK hors TVA, avec le taux standard de 25 %.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created product Service réseau (id=84418804)",
+  "error": null,
+  "elapsed_seconds": 4.73
+}

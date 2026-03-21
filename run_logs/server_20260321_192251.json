@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:22:51.899825",
+  "prompt": "El cliente Viento SL (org. nº 997137310) ha reclamado sobre la factura por \"Desarrollo de sistemas\" (47700 NOK sin IVA). Emita una nota de crédito completa que revierta toda la factura.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created credit note for invoice 2147572618",
+  "error": null,
+  "elapsed_seconds": 10.39
+}

@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-03-21T19:25:08.512063",
+  "prompt_fingerprint": "074e4ff8c3a5",
+  "prompt": "Opprett kunden Nordhav AS med organisasjonsnummer 980461912. Adressen er Solveien 7, 4006 Stavanger. E-post: post@nordhav.no.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_customer",
+    "entities": {
+      "name": "Nordhav AS",
+      "organizationNumber": "980461912",
+      "email": "post@nordhav.no",
+      "postalAddress": {
+        "addressLine1": "Solveien 7",
+        "postalCode": "4006",
+        "city": "Stavanger",
+        "country": {
+          "id": 161
+        }
+      }
+    },
+    "raw_prompt": "Opprett kunden Nordhav AS med organisasjonsnummer 980461912. Adressen er Solveien 7, 4006 Stavanger. E-post: post@nordhav.no.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created customer Nordhav AS (id=108404287)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 2.97,
+  "phase_times": {
+    "parse": 1.25,
+    "prefetch": 0.0,
+    "handler": 1.72
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/customer",
+      "status": 201,
+      "entity_id": 108404287
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T19:25:08.511437",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Nordhav AS",
+        "isCustomer": true,
+        "email": "post@nordhav.no",
+        "organizationNumber": "980461912",
+        "postalAddress": {
+          "addressLine1": "Solveien 7",
+          "postalCode": "4006",
+          "city": "Stavanger",
+          "country": {
+            "id": 161
+          }
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 108404287,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108404287",
+          "name": "Nordhav AS",
+          "organizationNumber": "980461912",
+          "globalLocationNumber": 0,
+          "supplierNumber": 0,
+          "customerNumber": 10001,
+          "isSupplier": false,
+          "isCustomer": true,
+          "isInactive": false,
+          "accountManager": null,
+          "department": null,
+          "email": "post@nordhav.no",
+          "invoiceEmail": "",
+          "overdueNoticeEmail": "",
+          "phoneNumber": "",
+          "phoneNumberMobile": "",
+          "description": "",
+          "language": "NO",
+          "displayName": "Nordhav AS (10001)",
+          "isPrivateIndividual": false,
+          "singleCustomerInvoice": false,
+          "invoiceSendMethod": "EMAIL",
+          "emailAttachmentType": "ATTACHMENT",
+          "postalAddress": {
+            "id": 405657472,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405657472",
+            "addressLine1": "Solveien 7",
+            "addressLine2": "",
+            "postalCode": "4006",
+            "city": "Stavanger",
+            "country": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "displayName": "Nordhav AS, Solveien 7, 4006 Stavanger, Norge",
+            "addressAsString": "Solveien 7, 4006 Stavanger, Norge",
+            "displayNameInklMatrikkel": "Nordhav AS, Solveien 7, 4006 Stavanger, Norge",
+            "knr": 0,
+            "gnr": 0,
+            "bnr": 0,
+            "fnr": 0,
+            "snr": 0,
+            "unitNumber": ""
+          },
+          "physicalAddress": {
+            "id": 405657471,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405657471"
+          },
+          "deliveryAddress": null,
+          "category1": null,
+          "category2": null,
+          "category3": null,
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "bankAccountPresentation": [],
+          "ledgerAccount": {
+            "id": 374024503,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/374024503"
+          },
+          "isFactoring": false,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "isAutomaticSoftReminderEnabled": false,
+          "isAutomaticReminderEnabled": false,
+          "isAutomaticNoticeOfDebtCollectionEnabled": false,
+          "discountPercentage": 0,
+          "website": ""
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:25:08.512823",
+  "prompt": "Opprett kunden Nordhav AS med organisasjonsnummer 980461912. Adressen er Solveien 7, 4006 Stavanger. E-post: post@nordhav.no.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created customer Nordhav AS (id=108404287)",
+  "error": null,
+  "elapsed_seconds": 2.97
+}

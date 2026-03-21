@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:03:56.708825",
+  "prompt": "Erfassen Sie 18 Stunden für Mia Meyer (mia.meyer@example.org) auf der Aktivität \"Testing\" im Projekt \"Sicherheitsaudit\" für Nordlicht GmbH (Org.-Nr. 934651995). Stundensatz: 1400 NOK/h. Erstellen Sie eine Projektrechnung an den Kunden basierend auf den erfassten Stunden.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Logged 18 hours for employee Mia Meyer on project 'Sicherheitsaudit' activity 'Testing' (entry id=175910131)",
+  "error": null,
+  "elapsed_seconds": 16.73
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T19:34:33.082826",
+  "prompt": "Wir haben einen neuen Mitarbeiter namens Anna Schneider, geboren am 6. August 2000. Bitte legen Sie ihn als Mitarbeiter mit der E-Mail anna.schneider@example.org und dem Startdatum 17. March 2026 an.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Anna Schneider (id=18655530)",
+  "error": null,
+  "elapsed_seconds": 11.33
+}

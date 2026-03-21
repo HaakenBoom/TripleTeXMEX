@@ -817,8 +817,8 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
 
     order_body: dict[str, Any] = {
         "customer": {"id": customer_id},
-        "orderDate": e.get("orderDate", today),
-        "deliveryDate": e.get("deliveryDate", today),
+        "orderDate": e.get("orderDate") or today,
+        "deliveryDate": e.get("deliveryDate") or today,
     }
     if order_lines:
         order_body["orderLines"] = order_lines
@@ -831,20 +831,16 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
 
     # Step 3: Create invoice
     inv_body: dict[str, Any] = {
-        "invoiceDate": e.get("invoiceDate", today),
-        "invoiceDueDate": e.get("invoiceDueDate", today),
+        "invoiceDate": e.get("invoiceDate") or today,
+        "invoiceDueDate": e.get("invoiceDueDate") or today,
         "orders": [{"id": order_id}],
     }
     if e.get("comment"):
         inv_body["comment"] = e["comment"]
 
-    params: dict[str, Any] = {}
-    if e.get("sendToCustomer") is not None:
-        params["sendToCustomer"] = e["sendToCustomer"]
-    else:
-        params["sendToCustomer"] = False
+    params: dict[str, Any] = {"sendToCustomer": e.get("sendToCustomer", False)}
 
-    inv = client.post("/invoice", inv_body, params if params else None)
+    inv = client.post("/invoice", inv_body, params)
 
     # If invoice fails due to bank account, try setting it up and retry
     if isinstance(inv, dict) and inv.get("status", 0) >= 400:
@@ -853,7 +849,7 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
             logger.info("Invoice failed due to bank account, setting up and retrying...")
             context["_bank_account_checked"] = False
             _ensure_company_bank_account(client, context)
-            inv = client.post("/invoice", inv_body, params if params else None)
+            inv = client.post("/invoice", inv_body, params)
 
     _check_response(inv, "POST /invoice")
     inv_id = inv["value"]["id"]
@@ -898,8 +894,8 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
 
     order_body: dict[str, Any] = {
         "customer": {"id": customer_id},
-        "orderDate": e.get("orderDate", today),
-        "deliveryDate": e.get("deliveryDate", today),
+        "orderDate": e.get("orderDate") or today,
+        "deliveryDate": e.get("deliveryDate") or today,
     }
     if order_lines:
         order_body["orderLines"] = order_lines
@@ -913,8 +909,8 @@ def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, con
     # Step 3: Create invoice WITH payment in a single POST call
     # POST /invoice accepts paymentTypeId and paidAmount as query params
     inv_body: dict[str, Any] = {
-        "invoiceDate": e.get("invoiceDate", today),
-        "invoiceDueDate": e.get("invoiceDueDate", today),
+        "invoiceDate": e.get("invoiceDate") or today,
+        "invoiceDueDate": e.get("invoiceDueDate") or today,
         "orders": [{"id": order_id}],
     }
     if e.get("comment"):
@@ -1435,7 +1431,7 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
 
     # Deliver the travel expense (mark as completed)
     try:
-        deliver_result = client.put(f"/travelExpense/{te_id}/:deliver")
+        deliver_result = client.put("/travelExpense/:deliver", params={"id": te_id})
         logger.info("Delivered travel expense %d: %s", te_id, deliver_result)
     except Exception as e:
         logger.warning("Failed to deliver travel expense %d: %s", te_id, e)
@@ -1913,9 +1909,8 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
         "date": entry_date,
         "hours": hours,
     }
-    # Set hourly rate on the entry if provided (some Tripletex setups support this)
-    if entities.get("hourlyRate"):
-        entry_body["hourlyCharge"] = entities["hourlyRate"]
+    # Note: hourly rate is NOT a field on TimesheetEntry — it's set via project hourly rates.
+    # Do NOT send hourlyCharge/hourlyRate on the entry body (causes 422 "field does not exist").
     if entities.get("comment"):
         entry_body["comment"] = entities["comment"]
 

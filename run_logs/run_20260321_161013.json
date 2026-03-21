@@ -1,0 +1,237 @@
+{
+  "timestamp": "2026-03-21T16:10:13.520652",
+  "prompt_fingerprint": "bcf3118ac9ab",
+  "prompt": "Nous avons besoin de la depense Tastatur de ce recu enregistree au departement Utvikling. Utilisez le bon compte de charges et assurez le traitement correct de la TVA.",
+  "prompt_language": "unknown",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_voucher",
+    "entities": {
+      "date": "2026-05-19",
+      "description": "Tastatur fra Elkjøp - Utvikling",
+      "postings": [
+        {
+          "accountNumber": 6010,
+          "amount": 5520.0,
+          "description": "Tastatur (ekskl. mva)"
+        },
+        {
+          "accountNumber": 2700,
+          "amount": 1380.0,
+          "description": "Inngående MVA 25% på Tastatur"
+        }
+      ]
+    },
+    "raw_prompt": "Nous avons besoin de la depense Tastatur de ce recu enregistree au departement Utvikling. Utilisez le bon compte de charges et assurez le traitement correct de la TVA.",
+    "_file_contents": [
+      "[File: files/kvittering_fr_03.pdf]\nElkjøp\nTorggata 29, 8006 Bodø\nOrg.nr: 907971791\nKVITTERING - 19.05.2026\nVare Pris\nTastatur 6900.00 kr\nForretningslunsj 430.00 kr\nSkrivebordlampe 450.00 kr\nTotalt: 7780.00 kr\n  herav MVA 25%: 1945.00 kr\nBetalt med: Bedriftskort"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/kvittering_fr_03.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDQwNgo+PgpzdHJlYW0KeJx1kk1P40AMhu/8Cl+QFgnMeL4809tWahGgBQRR71kldNumDZoE+Oscd5qmdPrB0aP3fex5bQl3ZwINw+fZMIPrMQFpFAKyVxhl6yfJFq0C9gaJISvg16hazL/eLiCb95LrsQS/b9IOnQVmhd53pqwO02ne5iD9JTghLAzr4iuBSOPRMbCxW8tjmOIqDMAL9kzsaa/l8aCbmkkgqQ5wP7nNstHz7cMNXAHFCQ1KIe0hRuww0qEyYK1CRbAEpSPLbusKXiB6FCE5sCxQbtpM8lBumfuOJRgbv6MOCEavB0kRT2HWHASajrXragSqPtC8afP2PSQ2QxadSUXWiw6zSGU9SsW16041rkMo29VsNW2q91UzT5FSoqZUrNWPxDgyi070sgizj/JvHYoqX76VJ4A7rTYHwM0SjHdISYR9HSP8XhydSMiwRs/9ybV51Q72AhLofKphdsff+TF+Y+KJUWcE+FeG/AP+TH7H0z0fHK8hEZOPGz8d2joPtzmCYbmeF5ZlMYBhWYTZa9ss6tBuPf8B96rb0wplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EtQm9sZAovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZSAvVHlwZTEKL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjYgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago3IDAgb2JqCjw8Ci9Gb250IDw8L0YxIDUgMCBSCi9GMiA2IDAgUj4+Ci9Qcm9jU2V0IFsvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJXQo+PgplbmRvYmoKOCAwIG9iago8PAovQ3JlYXRpb25EYXRlIChEOjIwMjYwMzE4MDk0MDUwWikKPj4KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMTAyIDAwMDAwIG4gCjAwMDAwMDAyMDUgMDAwMDAgbiAKMDAwMDAwMDI4NSAwMDAwMCBuIAowMDAwMDAwNzYzIDAwMDAwIG4gCjAwMDAwMDA4NjUgMDAwMDAgbiAKMDAwMDAwMDk2MiAwMDAwMCBuIAowMDAwMDAxMDU5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgOQovUm9vdCAyIDAgUgovSW5mbyA4IDAgUgovSUQgWzxBNTIwNTkzRUEwNzFFRTY2NUUzQjU5RTM1QjI0RDc3Nj48QTUyMDU5M0VBMDcxRUU2NjVFM0I1OUUzNUIyNEQ3NzY+XQo+PgpzdGFydHhyZWYKMTExNAolJUVPRgo=",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created voucher (id=?)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.9,
+  "phase_times": {
+    "parse": 2.75,
+    "prefetch": 0.0,
+    "handler": 0.95
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 1,
+  "status_counts": {
+    "2xx": 2,
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 0,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T16:10:12.908519",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 6010,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 465586405,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/465586405",
+            "number": 6010,
+            "numberPretty": "6010",
+            "name": "Avskriving på transportmidler",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "60",
+            "groupingCode": "6000",
+            "displayName": "6010 Avskriving på transportmidler",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T16:10:13.195732",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 2700,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 465586239,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/465586239",
+            "number": 2700,
+            "numberPretty": "2700",
+            "name": "Utgående merverdiavgift, høy sats",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": false,
+            "requireReconciliation": false,
+            "isInactive": true,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "27",
+            "groupingCode": "2740",
+            "displayName": "2700 Utgående merverdiavgift, høy sats",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T16:10:13.519899",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "date": "2026-05-19",
+        "description": "Tastatur fra Elkjøp - Utvikling",
+        "postings": [
+          {
+            "account": {
+              "id": 465586405
+            },
+            "date": "2026-03-21",
+            "amountGross": 6900.0,
+            "amountGrossCurrency": 6900.0,
+            "vatType": {
+              "id": 0
+            },
+            "description": "Tastatur (ekskl. mva)"
+          }
+        ]
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": "postings.row",
+            "message": "Posteringene på rad 0 (guiRow 0) er systemgenererte og kan ikke opprettes eller endres på utsiden av Tripletex.",
+            "path": null,
+            "rootId": null
+          },
+          {
+            "field": "postings",
+            "message": "Et bilag kan ikke registreres uten posteringer.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "73f91e62-e76d-42ca-bfe6-40aca8b720b0"
+      }
+    }
+  ]
+}

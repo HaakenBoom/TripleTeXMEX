@@ -1,0 +1,201 @@
+{
+  "timestamp": "2026-03-21T16:12:38.534677",
+  "prompt_fingerprint": "1d455b200113",
+  "prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+  "prompt_language": "es",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Miguel",
+      "lastName": "Silva",
+      "email": "miguel.silva@example.org",
+      "dateOfBirth": "1989-12-06",
+      "nationalIdentityNumber": "06128996972",
+      "bankAccountNumber": "55572921971",
+      "startDate": "2026-04-22",
+      "employmentPercentage": 80,
+      "occupationCode": "3512",
+      "annualSalary": 850000,
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+    "_file_contents": [
+      "[File: files/arbeidskontrakt_pt_03.pdf]\nARBEIDSKONTRAKT\nArbeidsgiver: Horizonte Lda\nArbeidstaker: Miguel Silva\nFodselsdato: 06.12.1989\nPersonnummer: 06128996972\nE-post: miguel.silva@example.org\nBankkonto: 55572921971\nAnsettelsesdetaljer\nAvdeling: Utvikling\nStillingskode (STYRK): 3512\nAnsettelsesform: Fast stilling\nLonnstype: Fastlonn (manedlig)\nStillingsprosent: 80.0%\nArslonn: 850000 kr\nTiltredelse: 22.04.2026\nArbeidsforholdet reguleres av gjeldende lover og regler, herunder arbeidsmiljoloven. Arbeidstaker er underlagt\nbedriftens personalhandbok og interne retningslinjer. Arbeidsstedet er ved bedriftens kontorer med mindre annet er\navtalt skriftlig.\nDet gjelder en gjensidig provetid pa 6 maneder. I provetiden er den gjensidige oppsigelsesfristen 14 dager. Etter\nprovetiden er oppsigelsesfristen 3 maneder regnet fra forste dag i maneden etter at oppsigelsen fant sted.\nFerie og feriepenger folger ferieloven. Arbeidstaker har rett til 25 virkedagers ferie per kalender ar. Feriepenger\nutbetales i henhold til gjeldende regelverk.\n___________________________ ___________________________\nArbeidsgiver Arbeidstaker"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/arbeidskontrakt_pt_03.pdf",
+        "content_base64": "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",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Miguel Silva (id=18637101)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 6.34,
+  "phase_times": {
+    "parse": 1.65,
+    "prefetch": 1.51,
+    "handler": 3.18
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 1,
+  "status_counts": {
+    "2xx": 2,
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 1,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18637101
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T16:12:35.350592",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 707506,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/707506",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T16:12:37.017916",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Miguel",
+        "lastName": "Silva",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 707506
+        },
+        "allowInformationRegistration": true,
+        "email": "miguel.silva@example.org",
+        "dateOfBirth": "1989-12-06",
+        "nationalIdentityNumber": "06128996972",
+        "bankAccountNumber": "55572921971"
+      },
+      "response_body": {
+        "value": {
+          "id": 18637101,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18637101",
+          "firstName": "Miguel",
+          "lastName": "Silva",
+          "displayName": "Miguel Silva",
+          "employeeNumber": "",
+          "dateOfBirth": "1989-12-06",
+          "email": "miguel.silva@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "06128996972",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "55572921971",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 707506,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/707506"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107854459,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T16:12:38.533920",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18637101
+        },
+        "startDate": "2026-04-22",
+        "isMainEmployer": true,
+        "occupationCode": "3512"
+      },
+      "response_body": {
+        "status": 422,
+        "code": 16000,
+        "message": "Request mapping failed",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": [
+          {
+            "field": "occupationCode",
+            "message": "Feltet eksisterer ikke i objektet.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "58f2220f-da41-4d8d-8b24-cc815ed0d6fd"
+      }
+    }
+  ]
+}

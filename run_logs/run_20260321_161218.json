@@ -1,0 +1,195 @@
+{
+  "timestamp": "2026-03-21T16:12:18.445275",
+  "prompt_fingerprint": "c56a7afc493d",
+  "prompt": "Me har ein ny tilsett som heiter Geir Stølsvik, fødd 6. March 1990. Opprett vedkomande som tilsett med e-post geir.stlsvik@example.org og startdato 14. November 2026.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Geir",
+      "lastName": "Stølsvik",
+      "email": "geir.stlsvik@example.org",
+      "dateOfBirth": "1990-03-06",
+      "startDate": "2026-11-14"
+    },
+    "raw_prompt": "Me har ein ny tilsett som heiter Geir Stølsvik, fødd 6. March 1990. Opprett vedkomande som tilsett med e-post geir.stlsvik@example.org og startdato 14. November 2026.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Geir Stølsvik (id=18637091)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 5.81,
+  "phase_times": {
+    "parse": 0.84,
+    "prefetch": 1.66,
+    "handler": 3.32
+  },
+  "total_api_calls": 3,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 3
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 2,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18637091
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2821614
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T16:12:15.127748",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 733348,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/733348",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T16:12:16.837613",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Geir",
+        "lastName": "Stølsvik",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 733348
+        },
+        "allowInformationRegistration": true,
+        "email": "geir.stlsvik@example.org",
+        "dateOfBirth": "1990-03-06"
+      },
+      "response_body": {
+        "value": {
+          "id": 18637091,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18637091",
+          "firstName": "Geir",
+          "lastName": "Stølsvik",
+          "displayName": "Geir Stølsvik",
+          "employeeNumber": "",
+          "dateOfBirth": "1990-03-06",
+          "email": "geir.stlsvik@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 733348,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/733348"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 107904565,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T16:12:18.444548",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18637091
+        },
+        "startDate": "2026-11-14",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2821614,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2821614",
+          "employee": {
+            "id": 18637091,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18637091"
+          },
+          "employmentId": "",
+          "startDate": "2026-11-14",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T16:13:56.122987",
+  "prompt": "Gjennomfør heile prosjektsyklusen for 'Skymigrering Skogheim' (Skogheim AS, org.nr 916506112): 1) Prosjektet har budsjett 279150 kr. 2) Registrer timar: Turid Aasen (prosjektleiar, turid.aasen@example.org) 51 timar og Olav Eide (konsulent, olav.eide@example.org) 142 timar. 3) Registrer leverandørkostnad 38750 kr frå Elvdal AS (org.nr 800443865). 4) Opprett kundefaktura for prosjektet.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Max iterations reached",
+  "error": null,
+  "elapsed_seconds": 55.13
+}

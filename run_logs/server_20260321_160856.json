@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T16:08:56.278846",
+  "prompt": "Erstellen Sie das Produkt \"Softwarelizenz\" mit der Produktnummer 7986. Der Preis beträgt 24900 NOK ohne MwSt., mit dem Standardsatz von 25 %.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created product Softwarelizenz (id=84416949)",
+  "error": null,
+  "elapsed_seconds": 5.75
+}

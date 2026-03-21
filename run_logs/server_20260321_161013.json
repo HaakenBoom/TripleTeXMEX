@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T16:10:13.522097",
+  "prompt": "Nous avons besoin de la depense Tastatur de ce recu enregistree au departement Utvikling. Utilisez le bon compte de charges et assurez le traitement correct de la TVA.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=?)",
+  "error": null,
+  "elapsed_seconds": 3.9
+}

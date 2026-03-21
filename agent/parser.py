@@ -544,7 +544,7 @@ Extract: errors (array of {description, wrongAccount, correctAccount, amount, vo
 Extract all specific error details mentioned in the prompt.""",
 
         "overdue_invoice": base + """
-Extract: feeAmount (NOK), debitAccount (default 1500), creditAccount (default 3400), invoiceFee (boolean — whether to also create invoice for the fee).""",
+Extract: feeAmount (NOK), debitAccount (default 1500), creditAccount (default 3400), invoiceFee (boolean — whether to also create invoice for the fee), partialPaymentAmount (NOK amount of partial payment if mentioned, null otherwise), sendInvoice (boolean — whether to send the invoice to customer).""",
     }
 
     return prompts.get(task_type, base + "\nExtract all relevant fields as a flat JSON object.")

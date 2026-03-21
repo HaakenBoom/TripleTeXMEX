@@ -3330,6 +3330,172 @@ def _handle_error_correction(task: dict, client: TripletexClient, context: dict)
     return f"Error correction completed: {len(corrections_made)} corrections. " + "; ".join(corrections_made)
 
 
+def _handle_overdue_invoice(task: dict, client: TripletexClient, context: dict) -> str:
+    """Handle overdue_invoice: find overdue invoice, post late fee, create fee invoice, register partial payment."""
+    e = task.get("entities", {})
+    today = e.get("today", _today())
+    fee_amount = e.get("feeAmount", 70)
+    debit_acct = str(e.get("debitAccount", "1500"))
+    credit_acct = str(e.get("creditAccount", "3400"))
+    create_fee_invoice = e.get("invoiceFee", False)
+    send_invoice = e.get("sendInvoice", False)
+    partial_payment = e.get("partialPaymentAmount")
+
+    # Step 1: Find the overdue invoice
+    inv_resp = client.get("/invoice", {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": today,
+        "count": 100,
+    })
+    invoices = inv_resp.get("values", [])
+
+    # Find overdue: invoiceDueDate < today AND amountOutstanding > 0
+    overdue = None
+    for inv in invoices:
+        due = inv.get("invoiceDueDate", "")
+        outstanding = inv.get("amountOutstanding", 0)
+        if due and due < today and outstanding > 0:
+            if overdue is None or due < overdue.get("invoiceDueDate", ""):
+                overdue = inv  # Pick the most overdue one
+
+    if not overdue:
+        raise RuntimeError("No overdue invoice found")
+
+    overdue_id = overdue["id"]
+    customer_id = overdue.get("customer", {}).get("id")
+    overdue_amount = overdue.get("amount", 0)
+    logger.info("Found overdue invoice %d (due %s, outstanding %.2f) for customer %s",
+                overdue_id, overdue.get("invoiceDueDate"), overdue.get("amountOutstanding", 0), customer_id)
+
+    results: list[str] = []
+
+    # Step 2: Post late fee voucher (debit 1500 kundefordringer, credit 3400 purregebyr)
+    debit_id = _get_or_create_account(client, debit_acct)
+    credit_id = _get_or_create_account(client, credit_acct)
+
+    voucher_body = {
+        "date": today,
+        "description": f"Purregebyr faktura {overdue.get('invoiceNumber', overdue_id)}",
+        "postings": [
+            {
+                "row": 1,
+                "account": {"id": debit_id},
+                "customer": {"id": customer_id} if customer_id else None,
+                "amountGross": fee_amount,
+                "amountGrossCurrency": fee_amount,
+                "date": today,
+            },
+            {
+                "row": 2,
+                "account": {"id": credit_id},
+                "amountGross": -fee_amount,
+                "amountGrossCurrency": -fee_amount,
+                "date": today,
+            },
+        ],
+    }
+    # Remove None customer references
+    for p in voucher_body["postings"]:
+        if p.get("customer") is None:
+            p.pop("customer", None)
+
+    v_result = client.post("/ledger/voucher", voucher_body)
+    _check_response(v_result, "POST /ledger/voucher (late fee)")
+    vid = v_result.get("value", {}).get("id", "?")
+    results.append(f"Late fee voucher {vid} ({fee_amount} kr)")
+
+    # Step 3: Create invoice for the fee (if requested)
+    if create_fee_invoice and customer_id:
+        # Create product for the fee
+        prod_resp = client.get("/product", {"name": "Purregebyr", "count": 1})
+        products = prod_resp.get("values", [])
+        if products:
+            product_id = products[0]["id"]
+        else:
+            prod = client.post("/product", {
+                "name": "Purregebyr",
+                "priceExcludingVatCurrency": fee_amount,
+                "vatType": {"id": 6},  # 0% VAT (utenfor mva-loven)
+            })
+            _check_response(prod, "POST /product (late fee)")
+            product_id = prod["value"]["id"]
+
+        # Create order
+        order_body: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "orderDate": today,
+            "deliveryDate": today,
+            "orderLines": [{
+                "product": {"id": product_id},
+                "count": 1,
+                "unitPriceExcludingVatCurrency": fee_amount,
+                "vatType": {"id": 6},
+            }],
+        }
+        order_result = client.post("/order", order_body)
+        _check_response(order_result, "POST /order (late fee)")
+        order_id = order_result["value"]["id"]
+
+        # Create and send invoice
+        inv_body: dict[str, Any] = {
+            "invoiceDate": today,
+            "invoiceDueDate": today,
+            "orders": [{"id": order_id}],
+        }
+        inv_params: dict[str, Any] = {"sendToCustomer": bool(send_invoice)}
+        inv_result = client.post("/invoice", inv_body, inv_params)
+
+        # Retry with bank account setup if needed
+        if isinstance(inv_result, dict) and inv_result.get("status", 0) >= 400:
+            error_msg = str(inv_result.get("message", "")) + str(inv_result.get("validationMessages", ""))
+            if "bank" in error_msg.lower():
+                context["_bank_account_checked"] = False
+                _ensure_company_bank_account(client, context)
+                inv_result = client.post("/invoice", inv_body, inv_params)
+
+        _check_response(inv_result, "POST /invoice (late fee)")
+        fee_inv_id = inv_result.get("value", {}).get("id", "?")
+        results.append(f"Fee invoice {fee_inv_id} created" + (" and sent" if send_invoice else ""))
+
+    # Step 4: Register partial payment on the overdue invoice (if requested)
+    if partial_payment and partial_payment > 0:
+        # Get payment type
+        pt_resp = client.get("/invoice/paymentType", {"count": 100})
+        payment_types = pt_resp.get("values", [])
+        payment_type_id = payment_types[0]["id"] if payment_types else None
+
+        if payment_type_id is not None:
+            pay_params: dict[str, Any] = {
+                "paymentDate": today,
+                "paymentTypeId": payment_type_id,
+                "paidAmount": partial_payment,
+                "paidAmountCurrency": partial_payment,
+            }
+            pay_result = client.put(f"/invoice/{overdue_id}/:payment", params=pay_params)
+
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                # Try JSON body approach
+                pay_result = client.put(
+                    f"/invoice/{overdue_id}/:payment",
+                    json_body={
+                        "paymentDate": today,
+                        "paymentTypeId": payment_type_id,
+                        "paidAmount": partial_payment,
+                        "paidAmountCurrency": partial_payment,
+                    },
+                )
+
+            if isinstance(pay_result, dict) and pay_result.get("status", 0) >= 400:
+                logger.warning("Partial payment registration failed: %s", pay_result)
+                results.append(f"Partial payment {partial_payment} kr FAILED")
+            else:
+                results.append(f"Partial payment {partial_payment} kr registered on invoice {overdue_id}")
+        else:
+            logger.warning("No payment types found, cannot register partial payment")
+
+    return f"Overdue invoice handled: " + "; ".join(results)
+
+
 _HANDLERS = {
     "create_employee": _handle_create_employee,
     "update_employee": _handle_update_employee,
@@ -3353,4 +3519,5 @@ _HANDLERS = {
     "bank_reconciliation": _handle_bank_reconciliation,
     "annual_closure": _handle_annual_closure,
     "error_correction": _handle_error_correction,
+    "overdue_invoice": _handle_overdue_invoice,
 }

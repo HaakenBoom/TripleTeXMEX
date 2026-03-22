@@ -63,7 +63,8 @@ _NEEDS_DEPARTMENT = {
 # — these resolve department inline only when needed
 _NEEDS_EMPLOYEES = {
     "update_employee", "update_employee_role",
-    "delete_travel_expense",
+    "delete_travel_expense", "create_travel_expense",
+    "project_lifecycle",
     "run_payroll",
 }
 # Removed: create_project, create_travel_expense, log_timesheet_hours
@@ -1346,8 +1347,21 @@ def _handle_create_department(task: dict, client: TripletexClient, context: dict
 def _handle_create_travel_expense(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
 
-    # Determine employee — by ID, by name, or default
+    # Determine employee — by ID, by email, by name, or default
     emp_id = entities.get("employeeId")
+    if not emp_id and entities.get("employeeEmail"):
+        # Search by email first (most precise match)
+        email = entities["employeeEmail"]
+        # Check prefetched employees cache
+        for emp in context.get("employees", []):
+            if emp.get("email", "").lower() == email.lower():
+                emp_id = emp["id"]
+                break
+        if not emp_id:
+            resp = client.get("/employee", {"email": email, "count": 1})
+            vals = resp.get("values", [])
+            if vals:
+                emp_id = vals[0]["id"]
     if not emp_id and entities.get("employeeName"):
         emp_id = _find_or_create_employee_by_name(entities["employeeName"], client, context)
     if not emp_id:
@@ -1395,53 +1409,32 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
     costs = entities.get("costs", [])
     if costs:
         # Fetch a default payment type for travel expenses (REQUIRED by API)
-        # Try multiple approaches to ensure we always have a payment type
-        default_payment_type_id = None
+        # Use cached value from context if available (saves 1-3 GET calls)
+        default_payment_type_id = context.get("_travel_payment_type_id")
 
-        # Approach 1: dedicated travel payment type endpoint
-        try:
-            pt_resp = client.get("/travelExpense/paymentType", {"count": 100})
-            pt_values = pt_resp.get("values", [])
-            if pt_values:
-                # Prefer active payment types shown on employee expenses
-                for pt in pt_values:
-                    if not pt.get("isInactive", False) and pt.get("showOnEmployeeExpenses", True):
-                        default_payment_type_id = pt["id"]
-                        break
-                if not default_payment_type_id:
-                    default_payment_type_id = pt_values[0]["id"]
-                logger.info("Travel payment type from /travelExpense/paymentType: id=%s", default_payment_type_id)
-        except Exception as e:
-            logger.warning("Failed to fetch travel payment types: %s", e)
-
-        # Approach 2: try outgoing payment types as fallback
         if not default_payment_type_id:
+            # Try the dedicated travel payment type endpoint
             try:
-                pt_resp2 = client.get("/ledger/paymentTypeOut", {"count": 100})
-                pt_values2 = pt_resp2.get("values", [])
-                if pt_values2:
-                    default_payment_type_id = pt_values2[0]["id"]
-                    logger.info("Travel payment type from /ledger/paymentTypeOut: id=%s", default_payment_type_id)
+                pt_resp = client.get("/travelExpense/paymentType", {"count": 100})
+                pt_values = pt_resp.get("values", [])
+                if pt_values:
+                    for pt in pt_values:
+                        if not pt.get("isInactive", False) and pt.get("showOnEmployeeExpenses", True):
+                            default_payment_type_id = pt["id"]
+                            break
+                    if not default_payment_type_id:
+                        default_payment_type_id = pt_values[0]["id"]
+                    logger.info("Travel payment type from /travelExpense/paymentType: id=%s", default_payment_type_id)
             except Exception as e:
-                logger.warning("Fallback payment type fetch failed: %s", e)
+                logger.warning("Failed to fetch travel payment types: %s", e)
 
-        # Approach 3: try incoming payment types
-        if not default_payment_type_id:
-            try:
-                pt_resp3 = client.get("/invoice/paymentType", {"count": 10})
-                pt_values3 = pt_resp3.get("values", [])
-                if pt_values3:
-                    default_payment_type_id = pt_values3[0]["id"]
-                    logger.info("Travel payment type from /invoice/paymentType: id=%s", default_payment_type_id)
-            except Exception as e:
-                logger.warning("Invoice payment type fallback failed: %s", e)
+            # Cache the result (even None) to avoid retrying failed lookups
+            if default_payment_type_id:
+                context["_travel_payment_type_id"] = default_payment_type_id
 
-        # If we STILL don't have a payment type, skip cost creation to avoid
-        # wasted 422 errors (paymentType is REQUIRED). At least we get the
-        # travel expense record created.
         if not default_payment_type_id:
-            logger.warning("No payment type found after all fallbacks — skipping cost creation to avoid 422s")
-            costs = []  # Clear costs to skip the loop
+            logger.warning("No payment type found — skipping cost creation to avoid 422s")
+            costs = []
 
         for cost in costs:
             cost_body: dict[str, Any] = {
@@ -2038,19 +2031,28 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
         value_id_map[val_name] = val_result["value"]["id"]
         logger.info("Created dimension value '%s' -> id=%d", val_name, val_result["value"]["id"])
 
-    # Step 3: Look up the account
+    # Step 3: Look up (or auto-create) the account
     account_number = e.get("accountNumber")
     if not account_number:
         raise RuntimeError("No account number specified for voucher posting")
 
-    acct_resp = client.get("/ledger/account", {"number": account_number, "count": 1})
+    acct_resp = client.get("/ledger/account", {"number": str(account_number), "count": 1})
     acct_values = acct_resp.get("values", [])
     if not acct_values:
-        raise RuntimeError(f"Account {account_number} not found")
-    account_id = acct_values[0]["id"]
-    # Use the account's default VAT type, or id=0 (no VAT) if it's a balance account
-    acct_vat_id = acct_values[0].get("vatType", {}).get("id", 0)
-    acct_legal_vats = [v.get("id") for v in acct_values[0].get("legalVatTypes", [])]
+        # Auto-create missing account instead of crashing
+        logger.info("Account %s not found, auto-creating for dimension voucher", account_number)
+        create_resp = client.post("/ledger/account", {
+            "number": int(account_number),
+            "name": f"Account {account_number}",
+        })
+        _check_response(create_resp, f"POST /ledger/account ({account_number})")
+        account_id = create_resp["value"]["id"]
+        acct_vat_id = 0
+        acct_legal_vats = []
+    else:
+        account_id = acct_values[0]["id"]
+        acct_vat_id = acct_values[0].get("vatType", {}).get("id", 0)
+        acct_legal_vats = [v.get("id") for v in acct_values[0].get("legalVatTypes", [])]
 
     # Step 4: Determine which dimension value to link
     linked_value_name = e.get("linkedDimensionValue", "")
@@ -2080,12 +2082,7 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
         posting_vat_id = 0
 
     # Find bank account (1920) for the counter-posting
-    bank_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
-    bank_values = bank_resp.get("values", [])
-    bank_id = bank_values[0]["id"] if bank_values else None
-
-    if not bank_id:
-        raise RuntimeError("Bank account 1920 not found for counter-posting")
+    bank_id = _get_or_create_account(client, "1920", "Bank")
 
     postings = [
         {
@@ -3966,14 +3963,18 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
             "postings": postings,
         }
         v_result = client.post("/ledger/voucher", v_body)
-        if isinstance(v_result, dict) and v_result.get("value"):
-            results.append(f"Supplier invoice voucher created")
+        _check_response(v_result, "POST /ledger/voucher (supplier invoice)")
+        results.append(f"Supplier invoice voucher created")
 
     # Step 6: Create customer invoice for a percentage of budget
     budget = e.get("budget", 0)
     inv_pct = e.get("customerInvoicePercentage", 0)
     if budget and inv_pct and customer_id:
         inv_amount = round(budget * inv_pct / 100, 2)
+
+        # Pre-ensure bank account before invoice creation (avoids retry loop)
+        if not context.get("_bank_account_checked"):
+            _ensure_company_bank_account(client, context)
 
         # Create product for the invoice
         prod_body: dict[str, Any] = {
@@ -4008,17 +4009,8 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
             "orders": [{"id": order_id}],
         }
         inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
-
-        # Retry with bank account if needed
-        if isinstance(inv, dict) and inv.get("status", 0) >= 400:
-            error_msg = str(inv.get("message", "")) + str(inv.get("validationMessages", ""))
-            if "bank" in error_msg.lower():
-                context["_bank_account_checked"] = False
-                _ensure_company_bank_account(client, context)
-                inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
-
-        if isinstance(inv, dict) and inv.get("value"):
-            results.append(f"Customer invoice for {inv_pct}% ({inv_amount} kr) created")
+        _check_response(inv, "POST /invoice (lifecycle)")
+        results.append(f"Customer invoice for {inv_pct}% ({inv_amount} kr) created")
 
     return f"Project lifecycle completed: " + "; ".join(results)
 

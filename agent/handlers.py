@@ -47,6 +47,14 @@ def _check_response(result: dict, operation: str) -> dict:
     """Check API response for errors. Raises RuntimeError on 4xx."""
     if isinstance(result, dict) and result.get("status") and result["status"] >= 400:
         msg = result.get("message", result.get("developerMessage", str(result)))
+        # Include validationMessages details so targeted repair can match specific fields
+        val_msgs = result.get("validationMessages") or []
+        if val_msgs:
+            details = "; ".join(
+                f"[{v.get('field', '?')}] {v.get('message', '')}" for v in val_msgs if isinstance(v, dict)
+            )
+            if details:
+                msg = f"{msg} — {details}"
         raise RuntimeError(f"{operation} failed ({result['status']}): {msg}")
     return result
 
@@ -192,8 +200,13 @@ def _ensure_employee(client: TripletexClient, context: dict) -> int:
     })
     _check_response(result, "POST /employee (default)")
     emp = result["value"]
+    emp_id = emp["id"]
     context["employees"] = [emp]
-    return emp["id"]
+
+    # Create a basic employment record — required for timesheet entries
+    _create_employment({"startDate": _today()}, emp_id, client)
+
+    return emp_id
 
 
 def _resolve_vat_type(vat_str: str | None, context: dict) -> dict | None:
@@ -1252,8 +1265,13 @@ def _find_or_create_employee_by_name(name: str, client: TripletexClient, context
     })
     _check_response(result, "POST /employee (for reference)")
     emp = result["value"]
+    emp_id = emp["id"]
     context["employees"].append(emp)
-    return emp["id"]
+
+    # Create a basic employment record — required for timesheet entries
+    _create_employment({"startDate": _today()}, emp_id, client)
+
+    return emp_id
 
 
 def _handle_create_project(task: dict, client: TripletexClient, context: dict) -> str:

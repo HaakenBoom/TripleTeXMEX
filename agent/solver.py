@@ -206,6 +206,25 @@ def _try_targeted_repair(error: str, task: dict, client: TripletexClient, contex
             logger.warning("Targeted repair (account) retry failed: %s", e2)
         return None
 
+    # Invoice/order date validation errors → likely null dates, retry (handler defaults to today)
+    if "kan ikke være null" in error_lower or "cannot be null" in error_lower:
+        # The handler already defaults invoiceDueDate/deliveryDate/invoiceDate to today.
+        # A retry should succeed now that the handler code applies defaults properly.
+        logger.info("Targeted repair: null field validation — retrying with handler defaults")
+        # Also ensure bank account is set up in case it's a compound error
+        context["_bank_account_checked"] = False
+        from agent.handlers import _ensure_company_bank_account, execute_task
+        if not context.get("company_id"):
+            _lazy_fetch_company_id(client, context)
+        _ensure_company_bank_account(client, context)
+        try:
+            result = execute_task(task, client, context)
+            if result is not None:
+                return result
+        except Exception as e2:
+            logger.warning("Targeted repair (null field) retry failed: %s", e2)
+        return None
+
     logger.info("No targeted repair available for error: %s", error[:200])
     return None
 

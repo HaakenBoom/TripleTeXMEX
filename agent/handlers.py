@@ -1632,22 +1632,51 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         # Default to 25% input VAT (vatType id=1 in Norwegian Tripletex)
         detected_vat_type_id = 1  # 25% is the default for Norwegian supplier invoices
 
+        # Check if amounts already include VAT (parser may signal this)
+        amounts_incl_vat = entities.get("amountsIncludeVat", False)
+
         # Adjust expense postings: set amount to GROSS and set correct vatType
+        # Distribute VAT proportionally across expense postings (not total to each!)
         adjusted = False
-        for r in non_vat_entries:
-            acct_type = (r.get("account_data") or {}).get("type", "")
-            is_expense = (acct_type == "OPERATING_EXPENSES"
-                          or 4000 <= r["account_number"] <= 7999)
-            if is_expense and r["amount"] > 0:
-                # Expense amount should be GROSS (net + VAT)
-                # Parser gave us net amount, add VAT to make it gross
-                r["amount"] = r["amount"] + total_vat_abs
-                # Always use input VAT type (id=1 for 25%), NOT the account default
-                # Account defaults are often 0 (no VAT) which is wrong for supplier invoices
-                r["vat_type_id"] = detected_vat_type_id
-                logger.info("Adjusted expense posting to gross=%s with vatType=%s",
-                            r["amount"], r.get("vat_type_id"))
-                adjusted = True
+        expense_entries = [
+            r for r in non_vat_entries
+            if ((r.get("account_data") or {}).get("type", "") == "OPERATING_EXPENSES"
+                or 4000 <= r["account_number"] <= 7999)
+            and r["amount"] > 0
+        ]
+        total_expense_net = sum(r["amount"] for r in expense_entries)
+
+        # Auto-detect: if expense amounts + VAT ≈ |AP amount|, amounts are excl-VAT
+        # If expense amounts alone ≈ |AP amount|, amounts are incl-VAT
+        ap_entries = [r for r in non_vat_entries if 2400 <= r["account_number"] <= 2499]
+        ap_total = abs(sum(r["amount"] for r in ap_entries)) if ap_entries else 0
+        if ap_total > 0 and total_expense_net > 0:
+            # Check: if excl-VAT amounts + VAT ≈ AP total → amounts are excl-VAT
+            if abs((total_expense_net + total_vat_abs) - ap_total) < 1.0:
+                amounts_incl_vat = False
+                logger.info("Auto-detected: amounts are EXCL VAT (net + VAT = AP total)")
+            # Check: if amounts ≈ AP total → amounts are incl-VAT
+            elif abs(total_expense_net - ap_total) < 1.0:
+                amounts_incl_vat = True
+                logger.info("Auto-detected: amounts are INCL VAT (amounts ≈ AP total)")
+
+        for r in expense_entries:
+            if amounts_incl_vat:
+                # Amounts already include VAT — use as-is for amountGross
+                # (don't add VAT again)
+                pass
+            else:
+                # Amounts are excl-VAT — add VAT proportionally to get gross
+                if total_expense_net > 0:
+                    vat_share = total_vat_abs * (r["amount"] / total_expense_net)
+                else:
+                    vat_share = total_vat_abs
+                r["amount"] = round(r["amount"] + vat_share, 2)
+                logger.info("Adjusted expense posting acct %d to gross=%s (vat_share=%.2f)",
+                            r["account_number"], r["amount"], vat_share)
+            # Always use input VAT type (id=1 for 25%), NOT the account default
+            r["vat_type_id"] = detected_vat_type_id
+            adjusted = True
         if not adjusted:
             logger.warning("Could not identify expense posting for VAT collapse, keeping VAT postings")
             non_vat_entries = list(resolved)  # Restore all entries
@@ -1728,6 +1757,27 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             supplier_id = supp_result["value"]["id"]
             logger.info("Created fallback supplier (id=%d)", supplier_id)
 
+    # Phase 3b: Resolve department if specified
+    dept_id = None
+    dept_name = entities.get("departmentName") or entities.get("department") or ""
+    if dept_name:
+        # Search context first
+        for d in context.get("departments", []):
+            if d.get("name", "").strip().lower() == dept_name.strip().lower():
+                dept_id = d["id"]
+                break
+        # If not in context, search via API
+        if not dept_id:
+            dept_resp = client.get("/department", {"name": dept_name, "count": 5})
+            for d in dept_resp.get("values", []):
+                if d.get("name", "").strip().lower() == dept_name.strip().lower():
+                    dept_id = d["id"]
+                    break
+            if not dept_id and dept_resp.get("values"):
+                dept_id = dept_resp["values"][0]["id"]
+        if dept_id:
+            logger.info("Resolved department '%s' → id=%d", dept_name, dept_id)
+
     # Phase 4: Build final postings (skip entries with unresolved account_id)
     postings = []
     row_num = 0
@@ -1747,6 +1797,9 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             p["vatType"] = {"id": r["vat_type_id"]}
         if r["posting"].get("description"):
             p["description"] = r["posting"]["description"]
+        # Set department on expense postings
+        if dept_id and 4000 <= r["account_number"] <= 7999:
+            p["department"] = {"id": dept_id}
         # Add supplier reference to AP postings
         if supplier_id and 2400 <= r["account_number"] <= 2499:
             p["supplier"] = {"id": supplier_id}

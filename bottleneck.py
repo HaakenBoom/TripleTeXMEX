@@ -4,6 +4,8 @@ Usage:
   python bottleneck.py              # T2+T3 tasks only (default)
   python bottleneck.py --all        # All tiers
   python bottleneck.py --task X     # Single task type
+  python bottleneck.py --since N    # Only runs from last N hours (e.g. --since 1)
+  python bottleneck.py --last N     # Only the last N runs
 """
 import json
 import sys
@@ -23,17 +25,39 @@ TASK_TIERS = {
 MAX_SCORE = {1: 2.0, 2: 4.0, 3: 6.0}
 
 
-def load_runs():
+def load_runs(since_hours=None, last_n=None):
+    from datetime import datetime, timedelta, timezone
     log_dir = Path("run_logs")
     runs = []
+
+    cutoff = None
+    if since_hours is not None:
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=since_hours)
+
     for f in sorted(log_dir.glob("run_*.json")):
         try:
             with open(f) as fh:
                 d = json.load(fh)
             d["_file"] = f.name
+
+            # Filter by timestamp if --since is set
+            if cutoff and d.get("timestamp"):
+                try:
+                    ts = datetime.fromisoformat(d["timestamp"].replace("Z", "+00:00"))
+                    if ts.tzinfo is None:
+                        ts = ts.replace(tzinfo=timezone.utc)
+                    if ts < cutoff:
+                        continue
+                except (ValueError, TypeError):
+                    pass
+
             runs.append(d)
         except Exception:
             pass
+
+    if last_n is not None and last_n > 0:
+        runs = runs[-last_n:]
+
     return runs
 
 
@@ -242,14 +266,35 @@ def main():
     args = sys.argv[1:]
     show_all_tiers = "--all" in args or "-a" in args
     task_filter = None
+    since_hours = None
+    last_n = None
     for i, a in enumerate(args):
         if a == "--task" and i + 1 < len(args):
             task_filter = args[i + 1]
+        if a == "--since" and i + 1 < len(args):
+            since_hours = float(args[i + 1])
+        if a == "--last" and i + 1 < len(args):
+            last_n = int(args[i + 1])
 
-    runs = load_runs()
+    runs = load_runs(since_hours=since_hours, last_n=last_n)
     if not runs:
-        print("No run_*.json files found in run_logs/")
+        print("No matching run_*.json files found in run_logs/")
         return
+
+    filter_desc = []
+    if since_hours:
+        filter_desc.append(f"last {since_hours}h")
+    if last_n:
+        filter_desc.append(f"last {last_n} runs")
+    if task_filter:
+        filter_desc.append(f"task={task_filter}")
+    filter_str = f" ({', '.join(filter_desc)})" if filter_desc else ""
+
+    # Show time range
+    timestamps = [r.get("timestamp", "") for r in runs if r.get("timestamp")]
+    time_range = ""
+    if timestamps:
+        time_range = f" | {timestamps[0][:16]} → {timestamps[-1][:16]}"
 
     # Get all task types seen
     task_types = set()
@@ -263,7 +308,7 @@ def main():
     elif not show_all_tiers:
         task_types = {t for t in task_types if TASK_TIERS.get(t, 0) in (2, 3)}
 
-    print(f"Analyzing {len(runs)} runs across {len(task_types)} task types...")
+    print(f"Analyzing {len(runs)} runs across {len(task_types)} task types{filter_str}{time_range}")
 
     # Sort by tier (highest first), then by name
     sorted_types = sorted(task_types, key=lambda t: (-TASK_TIERS.get(t, 0), t))

@@ -207,13 +207,13 @@ def _ensure_employee(client: TripletexClient, context: dict) -> int:
     employees = context.get("employees", [])
     if employees:
         return employees[0].get("id")
-    # No employee — create a minimal one
+    # No employee — create a minimal one with EXTENDED access for project management
     logger.info("No employee found, creating default for references...")
     dept_id = _ensure_department(client, context)
     result = client.post("/employee", {
         "firstName": "System",
         "lastName": "Bruker",
-        "userType": "NO_ACCESS",
+        "userType": "EXTENDED",
         "department": {"id": dept_id},
         "allowInformationRegistration": True,
     })

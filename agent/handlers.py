@@ -64,7 +64,7 @@ _NEEDS_DEPARTMENT = {
 _NEEDS_EMPLOYEES = {
     "update_employee", "update_employee_role",
     "delete_travel_expense", "create_travel_expense",
-    "project_lifecycle",
+    "project_lifecycle", "log_timesheet_hours",
     "run_payroll",
 }
 # Removed: create_project, create_travel_expense, log_timesheet_hours
@@ -1850,34 +1850,8 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
             # Accept first result if it's close enough
             project_id = resp["values"][0]["id"]
 
-    # Helper: create a global activity and link it to a project
-    def _create_and_link_activity(act_name: str, proj_id: int) -> int | None:
-        """Create a global activity, link to project, return timesheet activity id."""
-        try:
-            act_create = client.post("/activity", {"name": act_name, "isProjectActivity": True})
-            if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
-                global_act_id = act_create["value"]["id"]
-                logger.info("Created global activity '%s' id=%d", act_name, global_act_id)
-                # Link to project
-                link = client.post("/project/projectActivity", {
-                    "project": {"id": proj_id},
-                    "activity": {"id": global_act_id},
-                })
-                logger.info("Linked activity to project: %s", link)
-                # Re-fetch timesheet activities
-                act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": proj_id, "count": 100})
-                for a in act_resp2.get("values", []):
-                    if a.get("name", "").strip().lower() == act_name.strip().lower():
-                        return a["id"]
-                if act_resp2.get("values"):
-                    return act_resp2["values"][0]["id"]
-        except Exception as e:
-            logger.warning("Failed to create+link activity '%s': %s", act_name, e)
-        return None
-
     if not project_id:
-        # Create project — try including generalProjectActivitiesPerProjectOnly=True
-        # to allow adding project-specific activities
+        # Create project
         proj_body: dict[str, Any] = {
             "name": project_name or "Project",
             "projectManager": {"id": emp_id},
@@ -1890,7 +1864,7 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
         _check_response(proj, "POST /project (for timesheet)")
         project_id = proj["value"]["id"]
 
-    # Step 4: Find activity for the project
+    # Step 4: Find or create activity for the project
     activity_name = entities.get("activityName", "")
     activity_id = None
 
@@ -1899,11 +1873,13 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
     logger.info("Activities for project %d: %s", project_id,
                 [(a.get("id"), a.get("name")) for a in activities[:10]])
 
+    # Try exact name match first
     if activity_name:
         for a in activities:
             if a.get("name", "").strip().lower() == activity_name.strip().lower():
                 activity_id = a["id"]
                 break
+    # Fall back to first available activity
     if not activity_id and activities:
         activity_id = activities[0]["id"]
         logger.info("Using first available activity: id=%d name=%s",
@@ -1912,55 +1888,58 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
     if not activity_id:
         act_name = activity_name or "Generell"
 
-        # Approach 1: Create global activity and link to our project
-        activity_id = _create_and_link_activity(act_name, project_id)
+        # Step 4a: Find or create a global activity, then link it to the project
+        # First check if a global activity with this name already exists
+        global_act_id = None
+        try:
+            existing = client.get("/activity", {"name": act_name, "count": 5})
+            for a in existing.get("values", []):
+                if a.get("name", "").strip().lower() == act_name.strip().lower():
+                    global_act_id = a["id"]
+                    logger.info("Found existing global activity '%s' id=%d", act_name, global_act_id)
+                    break
+        except Exception as e:
+            logger.warning("Failed to search global activities: %s", e)
 
-        # Approach 2: Enable general activities on the project, then retry
-        if not activity_id:
+        if not global_act_id:
+            # Create new global activity
             try:
-                # Fetch project and enable general activities
-                proj_data = client.get(f"/project/{project_id}")
-                if isinstance(proj_data, dict) and proj_data.get("value"):
-                    pv = proj_data["value"]
-                    pv["generalProjectActivitiesPerProjectOnly"] = False
-                    client.put(f"/project/{project_id}", pv)
-                    logger.info("Enabled general activities on project %d", project_id)
-                    # Re-fetch timesheet activities
-                    act_resp3 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
-                    activities3 = act_resp3.get("values", [])
-                    if activities3:
-                        if activity_name:
-                            for a in activities3:
-                                if a.get("name", "").strip().lower() == act_name.strip().lower():
-                                    activity_id = a["id"]
-                                    break
-                        if not activity_id:
-                            activity_id = activities3[0]["id"]
-                    # Still no activities? Create one and link
-                    if not activity_id:
-                        activity_id = _create_and_link_activity(act_name, project_id)
+                act_create = client.post("/activity", {"name": act_name, "isProjectActivity": True})
+                if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
+                    global_act_id = act_create["value"]["id"]
+                    logger.info("Created global activity '%s' id=%d", act_name, global_act_id)
             except Exception as e:
-                logger.warning("Failed to enable general activities: %s", e)
+                logger.warning("Failed to create activity '%s': %s", act_name, e)
 
-        # Approach 3: Find ANY existing activity and link it
-        if not activity_id:
+        # If we still don't have a global activity, grab any existing one
+        if not global_act_id:
             try:
-                all_acts = client.get("/activity", {"count": 50})
-                all_values = all_acts.get("values", [])
-                for a in all_values:
-                    try:
-                        client.post("/project/projectActivity", {
-                            "project": {"id": project_id},
-                            "activity": {"id": a["id"]},
-                        })
-                        act_resp4 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
-                        if act_resp4.get("values"):
-                            activity_id = act_resp4["values"][0]["id"]
-                            break
-                    except Exception:
-                        continue
+                all_acts = client.get("/activity", {"count": 10})
+                for a in all_acts.get("values", []):
+                    global_act_id = a["id"]
+                    logger.info("Using fallback global activity id=%d name=%s", a["id"], a.get("name"))
+                    break
             except Exception as e:
-                logger.warning("Failed to find any activity: %s", e)
+                logger.warning("Failed to fetch any activity: %s", e)
+
+        # Link the global activity to the project
+        if global_act_id:
+            try:
+                client.post("/project/projectActivity", {
+                    "project": {"id": project_id},
+                    "activity": {"id": global_act_id},
+                })
+            except Exception:
+                pass  # May already be linked — that's fine
+
+            # Fetch the timesheet-specific activity ID
+            act_resp2 = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+            for a in act_resp2.get("values", []):
+                if activity_name and a.get("name", "").strip().lower() == activity_name.strip().lower():
+                    activity_id = a["id"]
+                    break
+            if not activity_id and act_resp2.get("values"):
+                activity_id = act_resp2["values"][0]["id"]
 
         if not activity_id:
             raise RuntimeError(f"No activities found for project {project_id}")
@@ -1983,17 +1962,73 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
 
     result = client.post("/timesheet/entry", entry_body)
     _check_response(result, "POST /timesheet/entry")
-    value = result.get("value", {})
-    return (
+    ts_value = result.get("value", {})
+    results = [
         f"Logged {hours} hours for employee {emp_name or emp_id} "
         f"on project '{project_name}' activity '{activity_name}' "
-        f"(entry id={value.get('id', '?')})"
-    )
+        f"(entry id={ts_value.get('id', '?')})"
+    ]
+
+    # Step 6: Generate project invoice if hourlyRate and customer are provided
+    hourly_rate = entities.get("hourlyRate", 0)
+    if hourly_rate and customer_id and hours:
+        invoice_amount = round(hours * hourly_rate, 2)
+
+        # Ensure bank account is set up for invoicing
+        if not context.get("_bank_account_checked"):
+            _ensure_company_bank_account(client, context)
+
+        # Create product for the invoice line
+        prod_body: dict[str, Any] = {
+            "name": f"{activity_name or 'Consulting'} - {project_name or 'Project'}",
+            "priceExcludingVatCurrency": hourly_rate,
+            "vatType": {"id": 3},  # 25% output VAT
+        }
+        prod = client.post("/product", prod_body)
+        _check_response(prod, "POST /product (timesheet invoice)")
+        product_id = prod["value"]["id"]
+
+        # Create order with invoice line
+        order_body: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "orderDate": entry_date,
+            "deliveryDate": entry_date,
+            "orderLines": [{
+                "product": {"id": product_id},
+                "count": hours,
+                "unitPriceExcludingVatCurrency": hourly_rate,
+                "vatType": {"id": 3},
+            }],
+        }
+        order = client.post("/order", order_body)
+        _check_response(order, "POST /order (timesheet invoice)")
+        order_id = order["value"]["id"]
+
+        # Create invoice
+        inv_body: dict[str, Any] = {
+            "invoiceDate": entry_date,
+            "invoiceDueDate": entry_date,
+            "orders": [{"id": order_id}],
+        }
+        inv = client.post("/invoice", inv_body, {"sendToCustomer": False})
+        _check_response(inv, "POST /invoice (timesheet invoice)")
+        inv_id = inv.get("value", {}).get("id", "?")
+        results.append(f"Created project invoice {inv_id} for {hours}h × {hourly_rate} = {invoice_amount} NOK")
+
+    return "; ".join(results)
 
 
 def _handle_create_dimension_voucher(task: dict, client: TripletexClient, context: dict) -> str:
     """Create a custom accounting dimension with values, then post a voucher linked to a value."""
     e = task["entities"]
+    # Guard: parser sometimes returns entities as a list of dicts — merge into one
+    if isinstance(e, list):
+        merged: dict[str, Any] = {}
+        for item in e:
+            if isinstance(item, dict):
+                merged.update(item)
+        e = merged
+        task["entities"] = e
     today = e.get("today", _today())
 
     # Step 1: Create the accounting dimension
@@ -2075,22 +2110,25 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
     dim_field = f"freeAccountingDimension{dim_index}"
 
     # Choose a VAT type that's legal for the account
-    posting_vat_id = 0  # Default: no VAT treatment
-    if acct_vat_id in acct_legal_vats:
+    # Priority: account default → first legal VAT → id=0 as fallback
+    posting_vat_id = 0
+    if acct_vat_id and acct_vat_id in acct_legal_vats:
         posting_vat_id = acct_vat_id
-    elif 0 in acct_legal_vats:
-        posting_vat_id = 0
+    elif acct_legal_vats:
+        posting_vat_id = acct_legal_vats[0]
 
-    # Find bank account (1920) for the counter-posting
-    bank_id = _get_or_create_account(client, "1920", "Bank")
+    # Find bank account (1920) for the counter-posting (shared cache across handlers)
+    acct_cache = context.setdefault("_account_cache", {})
+    bank_id = _get_or_create_account(client, "1920", "Bank", cache=acct_cache)
 
+    voucher_date = e.get("voucherDate", today)
     postings = [
         {
             "row": 1,
             "account": {"id": account_id},
             "amountGross": amount,
             "amountGrossCurrency": amount,
-            "date": e.get("voucherDate", today),
+            "date": voucher_date,
             "vatType": {"id": posting_vat_id},
             dim_field: {"id": linked_value_id},
         },
@@ -2099,18 +2137,23 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
             "account": {"id": bank_id},
             "amountGross": -amount,
             "amountGrossCurrency": -amount,
-            "date": e.get("voucherDate", today),
+            "date": voucher_date,
             "vatType": {"id": 0},
         },
     ]
 
     voucher_body: dict[str, Any] = {
-        "date": e.get("voucherDate", today),
+        "date": voucher_date,
         "description": e.get("voucherDescription", f"Posting with dimension {dim_name}"),
         "postings": postings,
     }
 
     result = client.post("/ledger/voucher", voucher_body)
+    # If voucher fails with 422 (validation error), retry with vatType=0 on both postings
+    if isinstance(result, dict) and result.get("status") == 422:
+        logger.warning("Voucher 422 — retrying with vatType=0: %s", result.get("message", ""))
+        postings[0]["vatType"] = {"id": 0}
+        result = client.post("/ledger/voucher", voucher_body)
     _check_response(result, "POST /ledger/voucher")
     voucher_id = result["value"]["id"]
 

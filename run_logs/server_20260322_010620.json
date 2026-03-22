@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:06:20.274325",
+  "prompt": "You received an offer letter (see attached PDF) for a new employee. Complete the onboarding: create the employee, assign the correct department, set up employment details with percentage and annual salary, and configure standard working hours.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Edward Clark (id=18715161)",
+  "error": null,
+  "elapsed_seconds": 8.61
+}

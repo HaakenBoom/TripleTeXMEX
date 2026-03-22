@@ -1,0 +1,550 @@
+{
+  "timestamp": "2026-03-21T23:42:03.761789",
+  "prompt_fingerprint": "12a3bbcd4e28",
+  "prompt": "Recebemos a fatura INV-2026-6556 do fornecedor Solmar Lda (org. nº 974178680) no valor de 50750 NOK com IVA incluído. O montante refere-se a serviços de escritório (conta 6500). Registe a fatura do fornecedor com o IVA dedutível correto (25 %).",
+  "prompt_language": "pt",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_voucher",
+    "entities": {
+      "date": "2026-03-21",
+      "description": "Fatura INV-2026-6556 - Solmar Lda - Serviços de escritório",
+      "supplierName": "Solmar Lda",
+      "supplierOrganizationNumber": "974178680",
+      "postings": [
+        {
+          "accountNumber": 6500,
+          "amount": 40600,
+          "description": "Serviços de escritório"
+        },
+        {
+          "accountNumber": 2700,
+          "amount": 10150,
+          "description": "IVA dedutível 25%"
+        },
+        {
+          "accountNumber": 2400,
+          "amount": -50750,
+          "description": "Conta a pagar - Solmar Lda"
+        }
+      ]
+    },
+    "raw_prompt": "Recebemos a fatura INV-2026-6556 do fornecedor Solmar Lda (org. nº 974178680) no valor de 50750 NOK com IVA incluído. O montante refere-se a serviços de escritório (conta 6500). Registe a fatura do fornecedor com o IVA dedutível correto (25 %).",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created voucher (id=609219749)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.25,
+  "phase_times": {
+    "parse": 1.71,
+    "prefetch": 0.0,
+    "handler": 1.54
+  },
+  "total_api_calls": 4,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 4
+  },
+  "call_phases": {
+    "prefetch": 3,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609219749
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T23:42:02.590013",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 6500,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 478982246,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/478982246",
+            "number": 6500,
+            "numberPretty": "6500",
+            "name": "Motordrevet verktøy",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "65",
+            "groupingCode": "6500",
+            "displayName": "6500 Motordrevet verktøy",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:42:02.875273",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 2400,
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 478982039,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/478982039",
+            "number": 2400,
+            "numberPretty": "2400",
+            "name": "Leverandørgjeld",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "VENDOR",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": true,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "24",
+            "groupingCode": "2400",
+            "displayName": "2400 Leverandørgjeld",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:42:03.197697",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/supplier",
+      "status": 200,
+      "request_params": {
+        "count": 1,
+        "organizationNumber": "974178680"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108464185,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108464185",
+            "name": "Solmar Lda",
+            "organizationNumber": "974178680",
+            "supplierNumber": 20001,
+            "customerNumber": 0,
+            "isSupplier": true,
+            "isCustomer": false,
+            "isInactive": false,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "isPrivateIndividual": false,
+            "showProducts": false,
+            "accountManager": null,
+            "postalAddress": {
+              "id": 405775548,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405775548"
+            },
+            "physicalAddress": {
+              "id": 405775547,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405775547"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "bankAccountPresentation": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "ledgerAccount": {
+              "id": 478982039,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/478982039"
+            },
+            "language": "NO",
+            "isWholesaler": false,
+            "displayName": "Solmar Lda (20001)",
+            "locale": "no_NO",
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:42:03.761167",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2026-03-21",
+        "description": "Fatura INV-2026-6556 - Solmar Lda - Serviços de escritório",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 478982246
+            },
+            "date": "2026-03-21",
+            "amountGross": 50750,
+            "amountGrossCurrency": 50750,
+            "vatType": {
+              "id": 1
+            },
+            "description": "Serviços de escritório"
+          },
+          {
+            "row": 2,
+            "account": {
+              "id": 478982039
+            },
+            "date": "2026-03-21",
+            "amountGross": -50750,
+            "amountGrossCurrency": -50750,
+            "description": "Conta a pagar - Solmar Lda",
+            "supplier": {
+              "id": 108464185
+            }
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609219749,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609219749",
+          "date": "2026-03-21",
+          "number": 1,
+          "tempNumber": 0,
+          "year": 2026,
+          "description": "Fatura INV-2026-6556 - Solmar Lda - Serviços de escritório",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3845986684,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845986684",
+              "voucher": {
+                "id": 609219749,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609219749"
+              },
+              "date": "2026-03-21",
+              "description": "Conta a pagar - Solmar Lda",
+              "account": {
+                "id": 478982039,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/478982039"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": {
+                "id": 108464185,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108464185"
+              },
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -50750.0,
+              "amountCurrency": -50750.0,
+              "amountGross": -50750.0,
+              "amountGrossCurrency": -50750.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 2,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845986683,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845986683",
+              "voucher": {
+                "id": 609219749,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609219749"
+              },
+              "date": "2026-03-21",
+              "description": "Serviços de escritório",
+              "account": {
+                "id": 478982246,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/478982246"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              "amount": 40600.0,
+              "amountCurrency": 40600.0,
+              "amountGross": 50750,
+              "amountGrossCurrency": 50750,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3845986687,
+              "version": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3845986687",
+              "voucher": {
+                "id": 609219749,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609219749"
+              },
+              "date": "2026-03-21",
+              "description": "Serviços de escritório",
+              "account": {
+                "id": 478982061,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/478982061"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 10150.0,
+              "amountCurrency": 10150.0,
+              "amountGross": 10150.0,
+              "amountGrossCurrency": 10150.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 0,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": true,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "1-2026"
+        }
+      }
+    }
+  ]
+}

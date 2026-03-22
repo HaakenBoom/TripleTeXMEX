@@ -1,0 +1,107 @@
+{
+  "timestamp": "2026-03-22T00:40:04.231728",
+  "prompt_fingerprint": "eb593bd79d9a",
+  "prompt": "Opprett produktet \"Konsulenttimer\" med produktnummer 7857. Prisen er 40100 kr eksklusiv MVA, og standard MVA-sats på 25 % skal brukes.",
+  "prompt_language": "nb",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_product",
+    "entities": {
+      "name": "Konsulenttimer",
+      "number": 7857,
+      "priceExcludingVat": 40100,
+      "vatType": "25%",
+      "isStockItem": false
+    },
+    "raw_prompt": "Opprett produktet \"Konsulenttimer\" med produktnummer 7857. Prisen er 40100 kr eksklusiv MVA, og standard MVA-sats på 25 % skal brukes.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created product Konsulenttimer (id=84426552)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 1.21,
+  "phase_times": {
+    "parse": 0.81,
+    "prefetch": 0.0,
+    "handler": 0.4
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 1,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/product",
+      "status": 201,
+      "entity_id": 84426552
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T00:40:04.231070",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/product",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Konsulenttimer",
+        "priceExcludingVatCurrency": 40100,
+        "number": 7857,
+        "isStockItem": false,
+        "vatType": {
+          "id": 3
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 84426552,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/product/84426552",
+          "name": "Konsulenttimer",
+          "number": "7857",
+          "displayNumber": "7857",
+          "description": "",
+          "orderLineDescription": "",
+          "costExcludingVatCurrency": 0,
+          "costPrice": 0,
+          "priceExcludingVatCurrency": 40100,
+          "priceIncludingVatCurrency": 50125.0,
+          "isInactive": false,
+          "productUnit": null,
+          "incomingStock": 0,
+          "outgoingStock": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "department": null,
+          "account": null,
+          "supplier": null,
+          "resaleProduct": null,
+          "isDeletable": false,
+          "hasSupplierProductConnected": false,
+          "image": null,
+          "displayName": "7857 Konsulenttimer",
+          "mainSupplierProduct": null,
+          "isRoundPriceIncVat": false,
+          "priceInTargetCurrency": 0,
+          "purchasePriceCurrency": 0
+        }
+      }
+    }
+  ]
+}

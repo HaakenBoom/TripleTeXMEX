@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:08:05.944319",
+  "prompt": "Perform month-end closing for March 2026. Post accrual reversal (12400 NOK per month from account 1710 to expense). Record monthly depreciation for a fixed asset with acquisition cost 164250 NOK and useful life 6 years (straight-line depreciation to account 6010). Verify that the trial balance is zero. Also post a salary accrual (debit salary expense account 5000, credit accrued salary account 2900).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 2 vouchers created. Depreciation Fixed Asset: 27375.0 NOK; Prepaid reversal: 12400 NOK",
+  "error": null,
+  "elapsed_seconds": 5.09
+}

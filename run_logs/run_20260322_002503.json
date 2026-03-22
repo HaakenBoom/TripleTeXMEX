@@ -1,0 +1,974 @@
+{
+  "timestamp": "2026-03-22T00:25:03.321080",
+  "prompt_fingerprint": "206bfbad9b52",
+  "prompt": "Reconcilie o extrato bancario (CSV anexo) com as faturas em aberto no Tripletex. Relacione os pagamentos recebidos com as faturas de clientes e os pagamentos efetuados com as faturas de fornecedores. Trate os pagamentos parciais corretamente.",
+  "prompt_language": "pt",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "bank_reconciliation",
+    "entities": {},
+    "raw_prompt": "Reconcilie o extrato bancario (CSV anexo) com as faturas em aberto no Tripletex. Relacione os pagamentos recebidos com as faturas de clientes e os pagamentos efetuados com as faturas de fornecedores. Trate os pagamentos parciais corretamente.",
+    "_file_contents": [
+      "[File: files/bankutskrift_pt_04.csv]\nDato;Forklaring;Inn;Ut;Saldo\r\n2026-01-17;Innbetaling fra Silva Lda / Faktura 1001;6550.00;;106550.00\r\n2026-01-20;Innbetaling fra Pereira Lda / Faktura 1002;8375.00;;114925.00\r\n2026-01-21;Innbetaling fra Costa Lda / Faktura 1003;6875.00;;121800.00\r\n2026-01-22;Innbetaling fra Sousa Lda / Faktura 1004;18437.50;;140237.50\r\n2026-01-24;Innbetaling fra Santos Lda / Faktura 1005;12062.50;;152300.00\r\n2026-01-25;Betaling Fornecedor Martins Lda;;-11550.00;140750.00\r\n2026-01-28;Betaling Fornecedor Costa Lda;;-15250.00;125500.00\r\n2026-01-30;Betaling Fornecedor Martins Lda;;-14300.00;111200.00\r\n2026-02-01;Skattetrekk;637.07;;111837.07\r\n2026-02-03;Renteinntekter;1159.41;;112996.48\r\n2026-02-05;Skattetrekk;68.11;;113064.59\r\n"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/bankutskrift_pt_04.csv",
+        "content_base64": "RGF0bztGb3JrbGFyaW5nO0lubjtVdDtTYWxkbw0KMjAyNi0wMS0xNztJbm5iZXRhbGluZyBmcmEgU2lsdmEgTGRhIC8gRmFrdHVyYSAxMDAxOzY1NTAuMDA7OzEwNjU1MC4wMA0KMjAyNi0wMS0yMDtJbm5iZXRhbGluZyBmcmEgUGVyZWlyYSBMZGEgLyBGYWt0dXJhIDEwMDI7ODM3NS4wMDs7MTE0OTI1LjAwDQoyMDI2LTAxLTIxO0lubmJldGFsaW5nIGZyYSBDb3N0YSBMZGEgLyBGYWt0dXJhIDEwMDM7Njg3NS4wMDs7MTIxODAwLjAwDQoyMDI2LTAxLTIyO0lubmJldGFsaW5nIGZyYSBTb3VzYSBMZGEgLyBGYWt0dXJhIDEwMDQ7MTg0MzcuNTA7OzE0MDIzNy41MA0KMjAyNi0wMS0yNDtJbm5iZXRhbGluZyBmcmEgU2FudG9zIExkYSAvIEZha3R1cmEgMTAwNTsxMjA2Mi41MDs7MTUyMzAwLjAwDQoyMDI2LTAxLTI1O0JldGFsaW5nIEZvcm5lY2Vkb3IgTWFydGlucyBMZGE7Oy0xMTU1MC4wMDsxNDA3NTAuMDANCjIwMjYtMDEtMjg7QmV0YWxpbmcgRm9ybmVjZWRvciBDb3N0YSBMZGE7Oy0xNTI1MC4wMDsxMjU1MDAuMDANCjIwMjYtMDEtMzA7QmV0YWxpbmcgRm9ybmVjZWRvciBNYXJ0aW5zIExkYTs7LTE0MzAwLjAwOzExMTIwMC4wMA0KMjAyNi0wMi0wMTtTa2F0dGV0cmVrazs2MzcuMDc7OzExMTgzNy4wNw0KMjAyNi0wMi0wMztSZW50ZWlubnRla3RlcjsxMTU5LjQxOzsxMTI5OTYuNDgNCjIwMjYtMDItMDU7U2thdHRldHJla2s7NjguMTE7OzExMzA2NC41OQ0K",
+        "mime_type": "text/csv"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Bank reconciliation completed: 4 payments matched and registered, 7 transactions unmatched out of 11 total.",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 3.35,
+  "phase_times": {
+    "parse": 0.0,
+    "prefetch": 0.0,
+    "handler": 3.35
+  },
+  "total_api_calls": 8,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 8
+  },
+  "call_phases": {
+    "prefetch": 4,
+    "action": 4,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147658025/:payment",
+      "status": 200,
+      "entity_id": 2147658025
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147658039/:payment",
+      "status": 200,
+      "entity_id": 2147658039
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147658051/:payment",
+      "status": 200,
+      "entity_id": 2147658051
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/invoice/2147658054/:payment",
+      "status": 200,
+      "entity_id": 2147658054
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T00:25:00.328213",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": "2030-12-31",
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 5,
+        "from": 0,
+        "count": 5,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 2147658019,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658019",
+            "invoiceNumber": 1,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108478448,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478448"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402050959,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050959"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607587727,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587727"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965806049,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806049"
+              }
+            ],
+            "voucher": {
+              "id": 609239810,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239810"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 16375.0,
+            "amountCurrency": 16375.0,
+            "amountExcludingVat": 13100.0,
+            "amountExcludingVatCurrency": 13100.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 16375.0,
+            "amountCurrencyOutstanding": 16375.0,
+            "amountOutstandingTotal": 16375.0,
+            "amountCurrencyOutstandingTotal": 16375.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3846039124,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039124"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024317874
+          },
+          {
+            "id": 2147658025,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658025",
+            "invoiceNumber": 2,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108478456,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478456"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402050962,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050962"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607587730,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587730"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965806052,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806052"
+              }
+            ],
+            "voucher": {
+              "id": 609239818,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239818"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 8375.0,
+            "amountCurrency": 8375.0,
+            "amountExcludingVat": 6700.0,
+            "amountExcludingVatCurrency": 6700.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 8375.0,
+            "amountCurrencyOutstanding": 8375.0,
+            "amountOutstandingTotal": 8375.0,
+            "amountCurrencyOutstandingTotal": 8375.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3846039144,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039144"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024317883
+          },
+          {
+            "id": 2147658039,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658039",
+            "invoiceNumber": 3,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108478464,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478464"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402050970,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050970"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607587737,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587737"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965806059,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806059"
+              }
+            ],
+            "voucher": {
+              "id": 609239829,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239829"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 6875.0,
+            "amountCurrency": 6875.0,
+            "amountExcludingVat": 5500.0,
+            "amountExcludingVatCurrency": 5500.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 6875.0,
+            "amountCurrencyOutstanding": 6875.0,
+            "amountOutstandingTotal": 6875.0,
+            "amountCurrencyOutstandingTotal": 6875.0,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3846039177,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039177"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024317905
+          },
+          {
+            "id": 2147658051,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658051",
+            "invoiceNumber": 4,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108478471,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478471"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402050975,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050975"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607587744,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587744"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965806065,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806065"
+              }
+            ],
+            "voucher": {
+              "id": 609239844,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239844"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 18437.5,
+            "amountCurrency": 18437.5,
+            "amountExcludingVat": 14750.0,
+            "amountExcludingVatCurrency": 14750.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 18437.5,
+            "amountCurrencyOutstanding": 18437.5,
+            "amountOutstandingTotal": 18437.5,
+            "amountCurrencyOutstandingTotal": 18437.5,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3846039215,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039215"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024317924
+          },
+          {
+            "id": 2147658054,
+            "version": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658054",
+            "invoiceNumber": 5,
+            "invoiceDate": "2026-01-15",
+            "customer": {
+              "id": 108478477,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478477"
+            },
+            "creditedInvoice": 0,
+            "isCredited": false,
+            "invoiceDueDate": "2026-02-15",
+            "kid": "",
+            "invoiceComment": "",
+            "comment": "",
+            "orders": [
+              {
+                "id": 402050981,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050981"
+              }
+            ],
+            "orderLines": [
+              {
+                "id": 1607587746,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587746"
+              }
+            ],
+            "travelReports": [],
+            "projectInvoiceDetails": [
+              {
+                "id": 1965806067,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806067"
+              }
+            ],
+            "voucher": {
+              "id": 609239851,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239851"
+            },
+            "deliveryDate": "2026-01-15",
+            "amount": 12062.5,
+            "amountCurrency": 12062.5,
+            "amountExcludingVat": 9650.0,
+            "amountExcludingVatCurrency": 9650.0,
+            "amountRoundoff": 0.0,
+            "amountRoundoffCurrency": 0.0,
+            "amountOutstanding": 12062.5,
+            "amountCurrencyOutstanding": 12062.5,
+            "amountOutstandingTotal": 12062.5,
+            "amountCurrencyOutstandingTotal": 12062.5,
+            "sumRemits": 0,
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "isCreditNote": false,
+            "isCharged": true,
+            "isApproved": false,
+            "postings": [
+              {
+                "id": 3846039232,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039232"
+              }
+            ],
+            "reminders": [],
+            "invoiceRemarks": "",
+            "invoiceRemark": null,
+            "isPeriodizationPossible": true,
+            "documentId": 1024317928
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:00.643694",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/paymentType",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 2,
+        "from": 0,
+        "count": 2,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 38116679,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/paymentType/38116679",
+            "description": "Kontant",
+            "displayName": "Kontant",
+            "debitAccount": {
+              "id": 481451559,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/481451559"
+            },
+            "creditAccount": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "sequence": 1,
+            "customer": null,
+            "supplier": null,
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          },
+          {
+            "id": 38116680,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/paymentType/38116680",
+            "description": "Betalt til bank",
+            "displayName": "Betalt til bank",
+            "debitAccount": {
+              "id": 481451562,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/481451562"
+            },
+            "creditAccount": null,
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "sequence": 2,
+            "customer": null,
+            "supplier": null,
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:00.974349",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/paymentTypeOut",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 4,
+        "from": 0,
+        "count": 4,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 38116683,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/paymentTypeOut/38116683",
+            "description": "1920 Manuelt betalt nettbank",
+            "creditAccount": {
+              "id": 481451562,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/481451562"
+            },
+            "showIncomingInvoice": true,
+            "showWagePayment": true,
+            "showVatReturns": true,
+            "showWagePeriodTransaction": true,
+            "requiresSeparateVoucher": false,
+            "sequence": 1,
+            "isInactive": false,
+            "displayName": "1920 Manuelt betalt nettbank",
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          },
+          {
+            "id": 38116684,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/paymentTypeOut/38116684",
+            "description": "Betalingsbilag (på papir)",
+            "creditAccount": {
+              "id": 481451562,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/481451562"
+            },
+            "showIncomingInvoice": false,
+            "showWagePayment": false,
+            "showVatReturns": false,
+            "showWagePeriodTransaction": false,
+            "requiresSeparateVoucher": true,
+            "sequence": 2,
+            "isInactive": true,
+            "displayName": "Betalingsbilag (på papir)",
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          },
+          {
+            "id": 38116685,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/paymentTypeOut/38116685",
+            "description": "Bankkort (debetkort/Bank Accept)",
+            "creditAccount": {
+              "id": 481451562,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/481451562"
+            },
+            "showIncomingInvoice": true,
+            "showWagePayment": false,
+            "showVatReturns": false,
+            "showWagePeriodTransaction": false,
+            "requiresSeparateVoucher": false,
+            "sequence": 3,
+            "isInactive": false,
+            "displayName": "Bankkort (debetkort/Bank Accept)",
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          },
+          {
+            "id": 38116686,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/paymentTypeOut/38116686",
+            "description": "Kontant",
+            "creditAccount": {
+              "id": 481451559,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/481451559"
+            },
+            "showIncomingInvoice": true,
+            "showWagePayment": false,
+            "showVatReturns": false,
+            "showWagePeriodTransaction": false,
+            "requiresSeparateVoucher": false,
+            "sequence": 4,
+            "isInactive": false,
+            "displayName": "Kontant",
+            "currencyId": 1,
+            "currencyCode": "NOK"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:01.327284",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/supplierInvoice",
+      "status": 200,
+      "request_params": {
+        "invoiceDateFrom": "2020-01-01",
+        "invoiceDateTo": "2030-12-31",
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:01.836648",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147658025/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-20",
+        "paymentTypeId": 38116679,
+        "paidAmount": 8375.0,
+        "paidAmountCurrency": 8375.0
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147658025,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658025",
+          "invoiceNumber": 2,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108478456,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478456"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402050962,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050962"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607587730,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587730"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965806052,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806052"
+            }
+          ],
+          "voucher": {
+            "id": 609239818,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239818"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 8375.0,
+          "amountCurrency": 8375.0,
+          "amountExcludingVat": 6700.0,
+          "amountExcludingVatCurrency": 6700.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3846039144,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039144"
+            },
+            {
+              "id": 3846039267,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039267"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024317883
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:02.299461",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147658039/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-21",
+        "paymentTypeId": 38116679,
+        "paidAmount": 6875.0,
+        "paidAmountCurrency": 6875.0
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147658039,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658039",
+          "invoiceNumber": 3,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108478464,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478464"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402050970,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050970"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607587737,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587737"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965806059,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806059"
+            }
+          ],
+          "voucher": {
+            "id": 609239829,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239829"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 6875.0,
+          "amountCurrency": 6875.0,
+          "amountExcludingVat": 5500.0,
+          "amountExcludingVatCurrency": 5500.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3846039177,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039177"
+            },
+            {
+              "id": 3846039275,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039275"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024317905
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:02.811540",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147658051/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-22",
+        "paymentTypeId": 38116679,
+        "paidAmount": 18437.5,
+        "paidAmountCurrency": 18437.5
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147658051,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658051",
+          "invoiceNumber": 4,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108478471,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478471"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402050975,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050975"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607587744,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587744"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965806065,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806065"
+            }
+          ],
+          "voucher": {
+            "id": 609239844,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239844"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 18437.5,
+          "amountCurrency": 18437.5,
+          "amountExcludingVat": 14750.0,
+          "amountExcludingVatCurrency": 14750.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3846039215,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039215"
+            },
+            {
+              "id": 3846039283,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039283"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024317924
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:25:03.319992",
+      "method": "PUT",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/invoice/2147658054/:payment",
+      "status": 200,
+      "request_params": {
+        "paymentDate": "2026-01-24",
+        "paymentTypeId": 38116679,
+        "paidAmount": 12062.5,
+        "paidAmountCurrency": 12062.5
+      },
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "id": 2147658054,
+          "version": 3,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147658054",
+          "invoiceNumber": 5,
+          "invoiceDate": "2026-01-15",
+          "customer": {
+            "id": 108478477,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108478477"
+          },
+          "creditedInvoice": 0,
+          "isCredited": false,
+          "invoiceDueDate": "2026-02-15",
+          "kid": "",
+          "invoiceComment": "",
+          "comment": "",
+          "orders": [
+            {
+              "id": 402050981,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/402050981"
+            }
+          ],
+          "orderLines": [
+            {
+              "id": 1607587746,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607587746"
+            }
+          ],
+          "travelReports": [],
+          "projectInvoiceDetails": [
+            {
+              "id": 1965806067,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/details/1965806067"
+            }
+          ],
+          "voucher": {
+            "id": 609239851,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609239851"
+          },
+          "deliveryDate": "2026-01-15",
+          "amount": 12062.5,
+          "amountCurrency": 12062.5,
+          "amountExcludingVat": 9650.0,
+          "amountExcludingVatCurrency": 9650.0,
+          "amountRoundoff": 0.0,
+          "amountRoundoffCurrency": 0.0,
+          "amountOutstanding": 0.0,
+          "amountCurrencyOutstanding": 0.0,
+          "amountOutstandingTotal": 0.0,
+          "amountCurrencyOutstandingTotal": 0.0,
+          "sumRemits": 0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "isCreditNote": false,
+          "isCharged": true,
+          "isApproved": false,
+          "postings": [
+            {
+              "id": 3846039232,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039232"
+            },
+            {
+              "id": 3846039293,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846039293"
+            }
+          ],
+          "reminders": [],
+          "invoiceRemarks": "",
+          "invoiceRemark": null,
+          "isPeriodizationPossible": true,
+          "documentId": 1024317928
+        }
+      }
+    }
+  ]
+}

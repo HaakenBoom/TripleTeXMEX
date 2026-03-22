@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:03:03.786304",
+  "prompt": "Gjer forenkla årsoppgjer for 2025: 1) Rekn ut og bokfør årlege avskrivingar for tre eigedelar: Kontormaskiner (193500 kr, 8 år lineært, konto 1200), Programvare (61650 kr, 4 år, konto 1250), IT-utstyr (87000 kr, 6 år, konto 1210). Bruk konto 6010 for avskrivingskostnad og 1209 for akkumulerte avskrivingar. 2) Reverser forskotsbetalt kostnad (totalt 55250 kr på konto 1700). 3) Rekn ut og bokfør skattekostnad (22 % av skattbart resultat) på konto 8700/2920. Bokfør kvar avskriving som eit eige bila",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 5 vouchers created. Depreciation Kontormaskiner: 24187.5 NOK; Depreciation Programvare: 15412.5 NOK; Depreciation IT-utstyr: 14500.0 NOK; Prepaid reversal: 55250 NOK; Tax provision (22%): 24057.0 NOK",
+  "error": null,
+  "elapsed_seconds": 15.53
+}

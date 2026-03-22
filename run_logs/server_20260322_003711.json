@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:37:11.254710",
+  "prompt": "Has recibido una factura de proveedor (ver PDF adjunto). Registra la factura en Tripletex. Crea el proveedor si no existe. Usa la cuenta de gastos correcta y el IVA de entrada.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created voucher (id=609243570)",
+  "error": null,
+  "elapsed_seconds": 4.21
+}

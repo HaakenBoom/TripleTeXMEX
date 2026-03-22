@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:07:41.090852",
+  "prompt": "Wir haben einen neuen Mitarbeiter namens Elias Meyer, geboren am 17. June 1989. Bitte legen Sie ihn als Mitarbeiter mit der E-Mail elias.meyer@example.org und dem Startdatum 29. June 2026 an.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Elias Meyer (id=18704219)",
+  "error": null,
+  "elapsed_seconds": 2.45
+}

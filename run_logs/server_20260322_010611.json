@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:06:11.660998",
+  "prompt": "Nous avons envoyé une facture de 6224 EUR à Rivière SARL (nº org. 886727127) lorsque le taux de change était de 10.90 NOK/EUR. Le client a maintenant payé, mais le taux est de 10.33 NOK/EUR. Enregistrez le paiement et comptabilisez l'écart de change (disagio) sur le bon compte.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "FX correction posted: Agiogevinst 3547.68 kr (6224 EUR × (10.33-10.9) NOK/EUR). Voucher 609254255.",
+  "error": null,
+  "elapsed_seconds": 5.36
+}

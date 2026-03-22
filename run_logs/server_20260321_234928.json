@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:49:28.802289",
+  "prompt": "Registre 11 horas para Ana Romero (ana.romero@example.org) en la actividad \"Design\" del proyecto \"Integración de plataforma\" para Costa Brava SL (org. nº 886098499). Tarifa por hora: 1850 NOK/h. Genere una factura de proyecto al cliente basada en las horas registradas.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Max iterations reached",
+  "error": null,
+  "elapsed_seconds": 52.59
+}

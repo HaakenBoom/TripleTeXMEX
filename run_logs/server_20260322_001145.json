@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:11:45.809930",
+  "prompt": "Führen Sie den vereinfachten Jahresabschluss für 2025 durch: 1) Berechnen und buchen Sie die jährliche Abschreibung für drei Anlagen: Kontormaskiner (176000 NOK, 8 Jahre linear, Konto 1200), IT-utstyr (471400 NOK, 7 Jahre, Konto 1210), Inventar (332850 NOK, 7 Jahre, Konto 1240). Verwenden Sie Konto 6010 für Abschreibungsaufwand und 1209 für kumulierte Abschreibungen. 2) Lösen Sie vorausbezahlte Aufwendungen auf (insgesamt 73050 NOK auf Konto 1700). 3) Berechnen und buchen Sie die Steuerrückstell",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Annual closure completed: 5 vouchers created. Depreciation Kontormaskiner: 22000.0 NOK; Depreciation IT-utstyr: 67342.86 NOK; Depreciation Inventar: 47550.0 NOK; Prepaid reversal: 73050 NOK; Tax provision (22%): 46187.43 NOK",
+  "error": null,
+  "elapsed_seconds": 10.82
+}

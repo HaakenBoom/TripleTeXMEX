@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:47:01.369183",
+  "prompt": "Du har motteke eit tilbodsbrev (sjaa vedlagt PDF) for ein ny tilsett. Utfor komplett onboarding: opprett den tilsette, tilknytt rett avdeling, set opp tilsetjingsforhold med stillingsprosent og arslonn, og konfigurer standard arbeidstid.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Knut Vik (id=18711797)",
+  "error": null,
+  "elapsed_seconds": 3.48
+}

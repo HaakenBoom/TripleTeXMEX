@@ -1,0 +1,311 @@
+{
+  "timestamp": "2026-03-22T01:06:20.273195",
+  "prompt_fingerprint": "9a5281712258",
+  "prompt": "You received an offer letter (see attached PDF) for a new employee. Complete the onboarding: create the employee, assign the correct department, set up employment details with percentage and annual salary, and configure standard working hours.",
+  "prompt_language": "en",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Edward",
+      "lastName": "Clark",
+      "dateOfBirth": "1996-02-04",
+      "isAdministrator": false,
+      "employment": {
+        "startDate": "2026-10-14",
+        "annualSalary": 810000,
+        "employmentPercentage": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "department": "Salg",
+      "jobTitle": "Seniorutvikler",
+      "workingHoursPerDay": 6.0,
+      "comments": "Provetid 6 maneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden 3 maneders oppsigelsesfrist.",
+      "startDate": "2026-10-14",
+      "annualSalary": 810000,
+      "employmentPercentage": 80.0,
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "You received an offer letter (see attached PDF) for a new employee. Complete the onboarding: create the employee, assign the correct department, set up employment details with percentage and annual salary, and configure standard working hours.",
+    "_file_contents": [
+      "[File: files/tilbudsbrev_en_06.pdf]\nTILBUD OM STILLING\nKjaere Edward Clark,\nVi har gleden av a tilby deg stillingen som Seniorutvikler i avdeling Salg.\nDetaljer\nFodselsdato: 04.02.1996\nTiltredelse: 14.10.2026\nAnsettelsesform: Fast stilling\nStillingsprosent: 80.0%\nArslonn: 810000 kr\nArbeidstid: 6.0 timer per dag\nVilkar: Ansettelsesforholdet reguleres av arbeidsmiljoloven og bedriftens personalhandbok. Det gjelder en provetid pa 6\nmaneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden er oppsigelsesfristen 3 maneder. Ferie og\nferiepenger folger ferieloven.\nMed vennlig hilsen,\n___________________________\nHR-avdelingen"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/tilbudsbrev_en_06.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDU5OQo+PgpzdHJlYW0KeJyNVF1v0zAUfd+vuC9IIIFn5zt7Y2yFwQaCFl6RK9+mbh272Fmr/XtukrZZt4ESqXLqnHvPuZ8RfD7jLM1hd3Y5g/OJAFEwzmG2gOtZexXxhIkE8lK0x0zB69nN7eXPK/h2B1N6vb35+vENzFZ7+PkkAiFOPMRkWUAe56zMOgdfVhI9wrXaSa/gg5F+/faRiz2eZywvOvwvDUvpoTKo0ILcgoRGm/kDKKwg0KvRtqIvwdUwRaudv2+2em3Qgya4wvY7TKWp2IlSijV+QWmWpYz3zFfYSLNC/9TspQCzOGEp78wmTgU0QcnGXfw/NyKPWCke21K6ecREWWajSOm2iPqyaNN4ypAJOJJ0sBVUY84iHo0iTYvy0AvvbcCmaTnDwvl6HPEj+4kMzbGEo7izjCV9G033ZmHjXUDbjCQfHBSc8VejSJOY5WUfsA/GWTuSa7ArBKcH1qNaKY3oEHu+OWpFGVIjKQfTjHGak5qmYEM/JaunDvjg4A8cyZO8YEUnmrMkIsCunUCzlv4CTsu9dEZhAx6re5o1DN1o9nprbVbOuC1NpatgjsrrRYM2tFKCs9IspVVzt2ZAIwbVCsmTB0JTLbdI0cJGwqEZ4fuJvozathvPmKVF0umrpcXWQY0KqLMoVqJp3dqgla7AbTZBV71ur0PD4JrC8Ec2IqZ/T1F0G8PeNYMJeo0UzSBqkJQkrMi7pC9a1AZpH3lYONMd7VWXC/Zsy8W0Vnk/g3eknTDWkN6lJhH2+VKMU8HiuIP//vfz3IyOpO/DTz/eHTYi2gPwL6PQnbEKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago2IDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlIC9UeXBlMQovVHlwZSAvRm9udAo+PgplbmRvYmoKNyAwIG9iago8PAovRm9udCA8PC9GMSA1IDAgUgovRjIgNiAwIFI+PgovUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KPj4KZW5kb2JqCjggMCBvYmoKPDwKL0NyZWF0aW9uRGF0ZSAoRDoyMDI2MDMwNDE5MTgwNVopCj4+CmVuZG9iagp4cmVmCjAgOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDEwMiAwMDAwMCBuIAowMDAwMDAwMjA1IDAwMDAwIG4gCjAwMDAwMDAyODUgMDAwMDAgbiAKMDAwMDAwMDk1NiAwMDAwMCBuIAowMDAwMDAxMDU4IDAwMDAwIG4gCjAwMDAwMDExNTUgMDAwMDAgbiAKMDAwMDAwMTI1MiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDkKL1Jvb3QgMiAwIFIKL0luZm8gOCAwIFIKL0lEIFs8QTNFNDg0OTFCOEZFQzQxMzg0RTNCRTU5MDc0Qjk0NDk+PEEzRTQ4NDkxQjhGRUM0MTM4NEUzQkU1OTA3NEI5NDQ5Pl0KPj4Kc3RhcnR4cmVmCjEzMDcKJSVFT0YK",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Edward Clark (id=18715161)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 8.61,
+  "phase_times": {
+    "parse": 1.6,
+    "prefetch": 0.73,
+    "handler": 6.27
+  },
+  "total_api_calls": 6,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 6
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 4,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/department",
+      "status": 201,
+      "entity_id": 983521
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18715161
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2859294
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3757203
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T01:06:14.004822",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 983500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/983500",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:06:14.867824",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "name": "Salg",
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:06:16.297229",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Salg"
+      },
+      "response_body": {
+        "value": {
+          "id": 983521,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/department/983521",
+          "name": "Salg",
+          "departmentNumber": "",
+          "departmentManager": null,
+          "displayName": "Salg",
+          "isInactive": false,
+          "businessActivityTypeId": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:06:18.095360",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Edward",
+        "lastName": "Clark",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 983521
+        },
+        "allowInformationRegistration": true,
+        "dateOfBirth": "1996-02-04",
+        "comments": "Provetid 6 maneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden 3 maneders oppsigelsesfrist."
+      },
+      "response_body": {
+        "value": {
+          "id": 18715161,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18715161",
+          "firstName": "Edward",
+          "lastName": "Clark",
+          "displayName": "Edward Clark",
+          "employeeNumber": "",
+          "dateOfBirth": "1996-02-04",
+          "email": "",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "Provetid 6 maneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden 3 maneders oppsigelsesfrist.",
+          "address": null,
+          "department": {
+            "id": 983521,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/983521"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108488460,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:06:19.013946",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18715161
+        },
+        "startDate": "2026-10-14",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2859294,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2859294",
+          "employee": {
+            "id": 18715161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18715161"
+          },
+          "employmentId": "",
+          "startDate": "2026-10-14",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:06:20.272559",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2859294
+        },
+        "date": "2026-10-14",
+        "annualSalary": 810000,
+        "percentageOfFullTimeEquivalent": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "response_body": {
+        "value": {
+          "id": 3757203,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3757203",
+          "employment": {
+            "id": 2859294,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2859294"
+          },
+          "date": "2026-10-14",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 80.0,
+          "annualSalary": 810000,
+          "hourlyWage": 415,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 67500.0
+        }
+      }
+    }
+  ]
+}

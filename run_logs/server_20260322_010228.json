@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:02:28.083798",
+  "prompt": "Du har motteke eit tilbodsbrev (sjaa vedlagt PDF) for ein ny tilsett. Utfor komplett onboarding: opprett den tilsette, tilknytt rett avdeling, set opp tilsetjingsforhold med stillingsprosent og arslonn, og konfigurer standard arbeidstid.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Jorunn Kvamme (id=18714659)",
+  "error": null,
+  "elapsed_seconds": 6.47
+}

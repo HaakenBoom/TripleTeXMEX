@@ -39,6 +39,14 @@ def solve_task(prompt: str, files: list, base_url: str, session_token: str) -> s
     task = parse_task(prompt, file_contents if file_contents else None)
     phase_times["parse"] = round(time.time() - t0, 2)
     task_type = task.get("task_type", "unknown")
+    # Guard: parser sometimes returns entities as a list of dicts — merge into one
+    ents = task.get("entities")
+    if isinstance(ents, list):
+        merged = {}
+        for item in ents:
+            if isinstance(item, dict):
+                merged.update(item)
+        task["entities"] = merged
     # Always include raw prompt so handlers can detect intent (e.g., reversal vs payment)
     task["raw_prompt"] = prompt
     # Include file contents for handlers that need them (e.g., bank reconciliation)

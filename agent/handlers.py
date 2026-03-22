@@ -1512,6 +1512,14 @@ def _handle_delete_travel_expense(task: dict, client: TripletexClient, context: 
 
 def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
+    # Guard: parser sometimes returns entities as a list of dicts — merge into one
+    if isinstance(entities, list):
+        merged: dict[str, Any] = {}
+        for item in entities:
+            if isinstance(item, dict):
+                merged.update(item)
+        entities = merged
+        task["entities"] = entities
     today = entities.get("today", _today())
     voucher_date = entities.get("date", today)
     invoice_number = entities.get("invoiceNumber") or ""
@@ -1535,6 +1543,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
 
     # Phase 1: Resolve all account numbers to IDs and collect account metadata
     # Skip resolving VAT accounts (27xx) upfront — they'll be collapsed and removed
+    acct_cache = context.setdefault("_account_cache", {})
     resolved = []
     for posting in entities.get("postings", []):
         account_number = posting.get("accountNumber")
@@ -1559,20 +1568,25 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             continue
 
         if account_number and not account_id:
-            acc_resp = client.get(
-                "/ledger/account",
-                {"number": account_number, "count": 1},
-            )
-            acc_values = acc_resp.get("values", [])
-            if acc_values:
-                account_id = acc_values[0]["id"]
-                account_data = acc_values[0]
+            acct_str = str(account_number)
+            if acct_str in acct_cache:
+                account_id = acct_cache[acct_str]
             else:
-                # Auto-create missing account
-                account_id = _get_or_create_account(
-                    client, str(account_number),
-                    name=posting.get("description") or f"Account {account_number}",
+                acc_resp = client.get(
+                    "/ledger/account",
+                    {"number": account_number, "count": 1},
                 )
+                acc_values = acc_resp.get("values", [])
+                if acc_values:
+                    account_id = acc_values[0]["id"]
+                    account_data = acc_values[0]
+                else:
+                    # Auto-create missing account
+                    account_id = _get_or_create_account(
+                        client, acct_str,
+                        name=posting.get("description") or f"Account {account_number}",
+                    )
+                acct_cache[acct_str] = account_id
 
         amount = posting.get("amount") or posting.get("amountGross") or 0
         resolved.append({
@@ -1724,15 +1738,31 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 p["termOfPayment"] = due_date
         postings.append(p)
 
-    # Only add bank counter-posting if postings genuinely don't balance
-    # (e.g. receipt/expense vouchers without an AP posting).
-    # Supplier invoices with AP posting should already balance.
-    posting_sum = sum(r["amount"] for r in non_vat_entries)
-    if abs(posting_sum) > 0.01 and postings and not has_ap_posting:
-        bank_acc_resp = client.get("/ledger/account", {"number": "1920", "count": 1})
-        bank_values = bank_acc_resp.get("values", [])
-        if bank_values:
-            bank_id = bank_values[0]["id"]
+    # Ensure postings always balance (sum to 0).
+    # After VAT collapse, the counter-posting (bank or AP) may no longer balance.
+    # Fix by adjusting the counter-posting or adding a bank counter-posting.
+    posting_sum = sum(p.get("amountGross", 0) for p in postings)
+    if abs(posting_sum) > 0.01:
+        # Find existing counter-posting (AP or bank) to adjust
+        adjusted = False
+        for p in postings:
+            p_acct_num = 0
+            for r in non_vat_entries:
+                if r["account_id"] == p["account"]["id"]:
+                    p_acct_num = r["account_number"]
+                    break
+            # Adjust AP or bank posting to force balance
+            if (2400 <= p_acct_num <= 2499) or p_acct_num == 1920:
+                old_amt = p["amountGross"]
+                p["amountGross"] = old_amt - posting_sum
+                p["amountGrossCurrency"] = p["amountGross"]
+                logger.info("Adjusted counter-posting (acct %d) from %.2f to %.2f to balance",
+                            p_acct_num, old_amt, p["amountGross"])
+                adjusted = True
+                break
+        if not adjusted:
+            # No counter-posting found — add a bank 1920 counter-posting
+            bank_id = _get_or_create_account(client, "1920", "Bank", cache=acct_cache)
             postings.append({
                 "row": row_num + 1,
                 "account": {"id": bank_id},
@@ -1752,6 +1782,14 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
     }
 
     result = client.post("/ledger/voucher", body)
+    # If voucher fails with 422, retry with stripped vatType (common fix)
+    if isinstance(result, dict) and result.get("status") == 422:
+        error_msg = str(result.get("validationMessages", result.get("message", "")))
+        logger.warning("Voucher 422 — retrying with vatType adjustments: %s", error_msg[:200])
+        # Strip all vatType references and retry (let Tripletex handle VAT)
+        for p in postings:
+            p.pop("vatType", None)
+        result = client.post("/ledger/voucher", body)
     _check_response(result, "POST /ledger/voucher")
     value = result.get("value", {})
     return f"Created voucher (id={value.get('id', '?')})"

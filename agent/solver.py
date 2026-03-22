@@ -375,9 +375,15 @@ _ACCOUNT_MAP = {
 }
 
 # Accounts locked to VAT code 0 (no VAT treatment) in standard Norwegian chart
+# These accounts REJECT any vatType other than 0 — causes 422 if you send vatType=1
 _NO_VAT_ACCOUNTS = {
-    6010, 6011, 6020,  # Depreciation accounts
+    6010, 6011, 6020,  # Depreciation accounts (avskrivning)
     7100,              # Bilgodtgjørelse oppgavepliktig
+    7101, 7130,        # Other car expense accounts locked to 0
+    1610,              # Inngående merverdiavgift (VAT receivable — locked to mva-kode 0)
+    1920,              # Bank (balance account — no VAT treatment)
+    2400, 2401, 2410,  # Leverandørgjeld (AP — balance accounts, no VAT)
+    2700, 2710, 2720, 2730, 2740,  # VAT payable accounts (locked to 0)
 }
 
 
@@ -397,12 +403,23 @@ def _validate_entities(task: dict) -> None:
     from datetime import date as _date
     today = _date.today().isoformat()
 
-    # Fix null dates for invoice-related tasks
-    if task_type in ("create_invoice", "create_invoice_with_payment"):
-        for date_field in ("invoiceDate", "invoiceDueDate"):
-            if entities.get(date_field) is None:
-                entities[date_field] = today
-                logger.info("Validation fix: %s was null, set to %s", date_field, today)
+    # Fix null dates for ALL task types — parser often returns explicit None for dates
+    _DATE_FIELDS = (
+        "invoiceDate", "invoiceDueDate", "deliveryDate", "orderDate",
+        "startDate", "endDate", "date", "voucherDate", "paymentDate",
+        "departureDate", "returnDate",
+    )
+    for date_field in _DATE_FIELDS:
+        if date_field in entities and entities[date_field] is None:
+            entities[date_field] = today
+            logger.info("Validation fix: %s was null, set to %s", date_field, today)
+    # Also fix dates in nested customer objects
+    for nested_key in ("customer", "supplier"):
+        nested = entities.get(nested_key)
+        if isinstance(nested, dict):
+            for date_field in _DATE_FIELDS:
+                if date_field in nested and nested[date_field] is None:
+                    nested[date_field] = today
 
     # Fix voucher account numbers using description-based mapping
     if task_type in ("create_voucher", "create_dimension_voucher"):
@@ -410,6 +427,10 @@ def _validate_entities(task: dict) -> None:
             if not isinstance(posting, dict):
                 continue
             acct = posting.get("accountNumber")
+            # Fix "None" or null accountNumber
+            if acct is None or str(acct) in ("None", "null", ""):
+                posting.pop("accountNumber", None)
+                acct = None
             desc = (posting.get("description") or "").lower()
             if acct and desc and 4000 <= (acct if isinstance(acct, int) else 0) <= 7999:
                 # Check if description matches a known category with a different account
@@ -419,6 +440,14 @@ def _validate_entities(task: dict) -> None:
                                     acct, correct_acct, desc[:50])
                         posting["accountNumber"] = correct_acct
                         break
+
+    # Fix nested objects with None values that could crash handlers
+    supplier_inv = entities.get("supplierInvoice")
+    if isinstance(supplier_inv, dict):
+        acct = supplier_inv.get("accountNumber")
+        if acct is None or str(acct) in ("None", "null", ""):
+            supplier_inv["accountNumber"] = 4300  # Default expense account
+            logger.info("Validation fix: supplierInvoice.accountNumber was %r, set to 4300", acct)
 
     # Fix entities where parser returns organizationNumber as int
     for key in ("organizationNumber", "customerOrganizationNumber", "supplierOrganizationNumber"):
@@ -699,7 +728,7 @@ def _run_agent_loop(prompt: str, files: list, tripletex: TripletexClient, contex
     # Track entities created during agent loop to prevent duplicates
     created_entities: dict[str, list[dict]] = {}
 
-    max_iterations = 15
+    max_iterations = 25
     for i in range(max_iterations):
         metrics["total_iterations"] = i + 1
         logger.info("Agent loop iteration %d", i + 1)

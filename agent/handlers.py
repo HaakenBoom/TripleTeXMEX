@@ -414,14 +414,20 @@ def _handle_create_employee(task: dict, client: TripletexClient, context: dict) 
             dept_name = dept_match.group(1).strip()
 
     if dept_name:
-        # Look for existing department or create it
-        dept_resp = client.get("/department", {"name": dept_name, "count": 5})
-        dept_values = dept_resp.get("values", [])
+        # Check prefetched departments cache first (saves 1 GET call)
         dept_id = None
-        for dv in dept_values:
+        for dv in context.get("departments", []):
             if dv.get("name", "").strip().lower() == dept_name.strip().lower():
                 dept_id = dv["id"]
+                logger.info("Found department '%s' in cache: id=%d", dept_name, dept_id)
                 break
+        if not dept_id:
+            # Not in cache — try API search
+            dept_resp = client.get("/department", {"name": dept_name, "count": 5})
+            for dv in dept_resp.get("values", []):
+                if dv.get("name", "").strip().lower() == dept_name.strip().lower():
+                    dept_id = dv["id"]
+                    break
         if not dept_id:
             dept_result = client.post("/department", {"name": dept_name})
             if isinstance(dept_result, dict) and dept_result.get("value", {}).get("id"):

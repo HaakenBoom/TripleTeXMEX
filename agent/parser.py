@@ -185,7 +185,7 @@ def classify_task(prompt: str) -> str:
         "total costs", "cost accounts", "analyze the general ledger",
         "costos totales", "cuentas de gastos", "analice el libro mayor",
         "custos totais", "contas de custos", "analise o razão",
-        "gesamtkosten", "aufwandskonten", "analysieren sie das hauptbuch",
+        "gesamtkosten", "aufwandskonten", "analysieren sie das hauptbuch", "gestiegen",
         "coûts totaux", "comptes de charges", "analysez le grand livre",
     ]):
         return "cost_analysis"
@@ -241,6 +241,15 @@ def classify_task(prompt: str) -> str:
     if "EUR" in prompt and any(kw in p for kw in [
         "nok/eur", "eur/nok", "kursen var", "the rate was", "le taux était",
         "la tasa era", "a taxa era", "der kurs war", "kurs var",
+    ]):
+        return "fx_correction"
+    # Scenario: "sent an invoice for X EUR" pattern (any language)
+    if "EUR" in prompt and any(kw in p for kw in [
+        "sendte en faktura", "sendte ei faktura", "sendt en faktura",
+        "vi sendte", "we sent an invoice", "sent an invoice",
+        "nous avons envoyé une facture", "avons envoyé",
+        "hemos enviado una factura", "enviamos uma fatura", "enviámos uma fatura",
+        "wir haben eine rechnung", "haben eine rechnung gesendet",
     ]):
         return "fx_correction"
 

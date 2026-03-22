@@ -581,7 +581,8 @@ Use 7350 for "middag representasjon", "representasjon", "restaurant", "business 
 Extract: employeeName, employeeEmail, hours (number), activityName (e.g. "Design", "Utvikling", "Testing"), projectName, customerName, customerOrganizationNumber, date (YYYY-MM-DD), hourlyRate (number), comment.""",
 
         "create_dimension_voucher": base + """
-Extract: dimensionName, dimensionValues (array of strings), accountNumber (integer), amount (NOK), linkedDimensionValue (which value to link), voucherDate, voucherDescription.""",
+Extract as a SINGLE flat JSON object (NOT an array): dimensionName, dimensionValues (array of strings), accountNumber (integer), amount (NOK), linkedDimensionValue (which value to link), voucherDate, voucherDescription.
+Example output: {"entities": {"dimensionName": "X", "dimensionValues": ["A", "B"], "accountNumber": 6300, "amount": 10000, "linkedDimensionValue": "A", "voucherDate": "2026-01-15"}}""",
 
         "reverse_invoice_payment": base + """
 Extract: customerName, customerOrganizationNumber, invoiceDescription (what the invoice was for), amount (excl VAT), date.""",
@@ -657,7 +658,7 @@ def _extract_entities_llm(task_type: str, prompt: str, file_contents: list[str] 
     for retry in range(4):
         try:
             response = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+                model="claude-sonnet-4-20250514",
                 max_tokens=2048,
                 system=system,
                 messages=[{"role": "user", "content": user_message}],

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-21T23:48:08.297445",
+  "prompt": "We sent an invoice for 13833 EUR to Brightstone Ltd (org no. 883627393) when the exchange rate was 11.86 NOK/EUR. The customer has now paid, but the rate is 12.74 NOK/EUR. Register the payment and post the exchange rate difference (agio) to the correct account.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "FX correction posted: Agiotap 12173.04 kr (13833 EUR × (12.74-11.86) NOK/EUR). Voucher 609222411.",
+  "error": null,
+  "elapsed_seconds": 2.77
+}

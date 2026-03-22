@@ -1,0 +1,244 @@
+{
+  "timestamp": "2026-03-21T23:47:43.816011",
+  "prompt_fingerprint": "d5735c33d0cf",
+  "prompt": "Temos um novo funcionário chamado Rita Almeida, nascido em 29. December 1995. Crie-o como funcionário com o e-mail rita.almeida@example.org e data de início 7. June 2026.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Rita",
+      "lastName": "Almeida",
+      "email": "rita.almeida@example.org",
+      "dateOfBirth": "1995-12-29",
+      "isAdministrator": false,
+      "employment": {
+        "startDate": "2026-06-07",
+        "employmentType": "ORDINARY"
+      },
+      "startDate": "2026-06-07",
+      "employmentType": "ORDINARY"
+    },
+    "raw_prompt": "Temos um novo funcionário chamado Rita Almeida, nascido em 29. December 1995. Crie-o como funcionário com o e-mail rita.almeida@example.org e data de início 7. June 2026.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Rita Almeida (id=18698528)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 2.37,
+  "phase_times": {
+    "parse": 0.89,
+    "prefetch": 0.36,
+    "handler": 1.11
+  },
+  "total_api_calls": 4,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 4
+  },
+  "call_phases": {
+    "prefetch": 1,
+    "action": 3,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18698528
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2851469
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3749543
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-21T23:47:42.702104",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 974764,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/974764",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:47:43.058288",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Rita",
+        "lastName": "Almeida",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 974764
+        },
+        "allowInformationRegistration": true,
+        "email": "rita.almeida@example.org",
+        "dateOfBirth": "1995-12-29"
+      },
+      "response_body": {
+        "value": {
+          "id": 18698528,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18698528",
+          "firstName": "Rita",
+          "lastName": "Almeida",
+          "displayName": "Rita Almeida",
+          "employeeNumber": "",
+          "dateOfBirth": "1995-12-29",
+          "email": "rita.almeida@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "",
+          "address": null,
+          "department": {
+            "id": 974764,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/974764"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108466218,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:47:43.441191",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18698528
+        },
+        "startDate": "2026-06-07",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2851469,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2851469",
+          "employee": {
+            "id": 18698528,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18698528"
+          },
+          "employmentId": "",
+          "startDate": "2026-06-07",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-21T23:47:43.815309",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2851469
+        },
+        "date": "2026-06-07",
+        "employmentType": "ORDINARY"
+      },
+      "response_body": {
+        "value": {
+          "id": 3749543,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3749543",
+          "employment": {
+            "id": 2851469,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2851469"
+          },
+          "date": "2026-06-07",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "NOT_CHOSEN",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 0,
+          "annualSalary": 0,
+          "hourlyWage": 0,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 0.0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-03-22T00:47:58.434339",
+  "prompt_fingerprint": "258155421867",
+  "prompt": "Os custos totais aumentaram significativamente de janeiro a fevereiro de 2026. Analise o livro razão e identifique as três contas de despesa com o maior aumento em valor. Crie um projeto interno para cada uma das três contas com o nome da conta. Também crie uma atividade para cada projeto.",
+  "prompt_language": "unknown",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "cost_analysis",
+    "entities": {
+      "analysisMonths": [
+        {
+          "year": 2026,
+          "month": 1
+        },
+        {
+          "year": 2026,
+          "month": 2
+        }
+      ],
+      "numberOfAccounts": 3
+    },
+    "raw_prompt": "Os custos totais aumentaram significativamente de janeiro a fevereiro de 2026. Analise o livro razão e identifique as três contas de despesa com o maior aumento em valor. Crie um projeto interno para cada uma das três contas com o nome da conta. Também crie uma atividade para cada projeto.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "deterministic",
+  "result": "No cost account increases found between the analyzed periods.",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 0.87,
+  "phase_times": {
+    "parse": 0.81,
+    "prefetch": 0.0,
+    "handler": 0.07
+  },
+  "total_api_calls": 1,
+  "errors_4xx": 1,
+  "status_counts": {
+    "4xx": 1
+  },
+  "call_phases": {
+    "prefetch": 0,
+    "action": 0,
+    "wasted": 1,
+    "lookup": 0
+  },
+  "mutations": [],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T00:47:58.433679",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/posting",
+      "status": 403,
+      "request_params": {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-01-28",
+        "count": 10000
+      },
+      "request_body": null,
+      "response_body": {
+        "error": "Invalid or expired proxy token. Each submission receives a unique token - do not reuse tokens from previous submissions.",
+        "source": "nmiai-proxy"
+      }
+    }
+  ]
+}

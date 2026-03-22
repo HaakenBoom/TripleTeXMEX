@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:09:04.578764",
+  "prompt": "Create an order for the customer Ridgepoint Ltd (org no. 997470311) with the products Maintenance (6293) at 21700 NOK and Software License (5849) at 2250 NOK. Convert the order to an invoice and register full payment.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147661565 with payment for customer Ridgepoint Ltd (paymentTypeId=38272647, paidAmount=29937.5)",
+  "error": null,
+  "elapsed_seconds": 12.27
+}

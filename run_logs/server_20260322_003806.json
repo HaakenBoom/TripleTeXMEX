@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:38:06.070429",
+  "prompt": "Nous avons besoin de la depense Overnatting de ce recu enregistree au departement HR. Utilisez le bon compte de charges et assurez le traitement correct de la TVA.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Max iterations reached",
+  "error": null,
+  "elapsed_seconds": 54.67
+}

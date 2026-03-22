@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:00:15.937822",
+  "prompt": "Opprett en ordre for kunden Fjordkraft AS (org.nr 906859645) med produktene Analyserapport (7898) til 28950 kr og Konsulenttimer (1781) til 19200 kr. Konverter ordren til faktura og registrer full betaling.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created invoice 2147661009 with payment for customer Fjordkraft AS (paymentTypeId=38251577, paidAmount=60187.5)",
+  "error": null,
+  "elapsed_seconds": 13.85
+}

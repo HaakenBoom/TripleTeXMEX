@@ -1,0 +1,321 @@
+{
+  "timestamp": "2026-03-22T01:02:28.082851",
+  "prompt_fingerprint": "3bf68c41add9",
+  "prompt": "Du har motteke eit tilbodsbrev (sjaa vedlagt PDF) for ein ny tilsett. Utfor komplett onboarding: opprett den tilsette, tilknytt rett avdeling, set opp tilsetjingsforhold med stillingsprosent og arslonn, og konfigurer standard arbeidstid.",
+  "prompt_language": "nb",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Jorunn",
+      "lastName": "Kvamme",
+      "email": null,
+      "dateOfBirth": "1995-01-10",
+      "phoneNumberMobile": null,
+      "isAdministrator": false,
+      "address": null,
+      "employeeNumber": null,
+      "nationalIdentityNumber": null,
+      "bankAccountNumber": null,
+      "comments": "Provetid 6 måneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetid 3 måneder oppsigelsesfrist.",
+      "employment": {
+        "startDate": "2026-07-09",
+        "annualSalary": 830000,
+        "employmentPercentage": 80.0,
+        "occupationCode": null,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "workingHours": {
+        "hoursPerDay": 6.0
+      },
+      "department": "Kvalitetskontroll",
+      "jobTitle": "Salgssjef",
+      "startDate": "2026-07-09",
+      "annualSalary": 830000,
+      "employmentPercentage": 80.0,
+      "occupationCode": null,
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Du har motteke eit tilbodsbrev (sjaa vedlagt PDF) for ein ny tilsett. Utfor komplett onboarding: opprett den tilsette, tilknytt rett avdeling, set opp tilsetjingsforhold med stillingsprosent og arslonn, og konfigurer standard arbeidstid.",
+    "_file_contents": [
+      "[File: files/tilbudsbrev_nn_03.pdf]\nTILBUD OM STILLING\nKjaere Jorunn Kvamme,\nVi har gleden av a tilby deg stillingen som Salgssjef i avdeling Kvalitetskontroll.\nDetaljer\nFodselsdato: 10.01.1995\nTiltredelse: 09.07.2026\nAnsettelsesform: Fast stilling\nStillingsprosent: 80.0%\nArslonn: 830000 kr\nArbeidstid: 6.0 timer per dag\nVilkar: Ansettelsesforholdet reguleres av arbeidsmiljoloven og bedriftens personalhandbok. Det gjelder en provetid pa 6\nmaneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetiden er oppsigelsesfristen 3 maneder. Ferie og\nferiepenger folger ferieloven.\nMed vennlig hilsen,\n___________________________\nHR-avdelingen"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/tilbudsbrev_nn_03.pdf",
+        "content_base64": "JVBERi0xLjMKJenr8b8KMSAwIG9iago8PAovQ291bnQgMQovS2lkcyBbMyAwIFJdCi9NZWRpYUJveCBbMCAwIDU5NS4yOCA4NDEuODldCi9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMiAwIG9iago8PAovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgovUGFnZXMgMSAwIFIKL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0NvbnRlbnRzIDQgMCBSCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA3IDAgUgovVHlwZSAvUGFnZQo+PgplbmRvYmoKNCAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDYwNAo+PgpzdHJlYW0KeJyNVOtv0zAQ/76/4r4ggQSe8072jWkr7AWCFb4iV76mbh272F4n/nsuSbv0MVAiVU6d+z3ufOcYbs84ywp4PrucwvkkgqhknMN0DtfTdivmKYtSKKqoXaYS3k5v7i9/XMHXB3ik1/ubL5/ewXS5DT+fxBBFBwwJIUsokoJVeUdwtxToEG6tezIG7jaiafD9HscWwHNWlB3gp4KFcFBrlGhAbEBAUHr2ByTW4OlVK1PTF28beBS69n6Jc1AUKbH91GpoFTD4lTXBWa3ZgWVKOnnFcp5njPcOrjAIvUR3DHst0zxJWcY72MRKj9pLEezF/4sUFTGron1sxBknvqrKRonSbhn356N0cFQp7XGk6IDlFeMFi3mcjxHNymrXFB+NxxBaTT+3rhknvIefCB9ejnKUdp6ztO+nxy3Mr531aMJI8YGgpFK/GSWaJqyo+oSd19aYkVoDrkw4PbAa1UpZTEu01ZuhklQhOVJygOaM07w06GBNPynqYwI+EPyGF/G0KFnZmeYsjSnguZ1EvRLuAg6Pe2G1xAAO6ydNk+27Ee39NkovrbYbmk5bwwylU/OAxrdWvDVCL4SRM7tiQCMG9RKJyQFF01lukLKFtYBdM8K3A385tW03ngnLyrTz1wiDLUGDEqizKFeSaWmNV1LVYNdrr+ret1M+MLimNNyLGgnTv+Mo2k1gS81ggk4hZTOYGiylKSuLrujzNmqNdC85mFvdLe1WVwt2ctsldL/yfgYfyDvFGE1+F4pMmNPLMckiliRd+K9/P6cwWtK+Dz9//7C7HtHsAv8CcLahsgplbmRzdHJlYW0KZW5kb2JqCjUgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EtQm9sZAovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZSAvVHlwZTEKL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjYgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUgL1R5cGUxCi9UeXBlIC9Gb250Cj4+CmVuZG9iago3IDAgb2JqCjw8Ci9Gb250IDw8L0YxIDUgMCBSCi9GMiA2IDAgUj4+Ci9Qcm9jU2V0IFsvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJXQo+PgplbmRvYmoKOCAwIG9iago8PAovQ3JlYXRpb25EYXRlIChEOjIwMjYwMzA0MTkxODA2WikKPj4KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMTAyIDAwMDAwIG4gCjAwMDAwMDAyMDUgMDAwMDAgbiAKMDAwMDAwMDI4NSAwMDAwMCBuIAowMDAwMDAwOTYxIDAwMDAwIG4gCjAwMDAwMDEwNjMgMDAwMDAgbiAKMDAwMDAwMTE2MCAwMDAwMCBuIAowMDAwMDAxMjU3IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgOQovUm9vdCAyIDAgUgovSW5mbyA4IDAgUgovSUQgWzxBMzJFOTlBNDQyQkI0MDQ0ODY0NjZCMTcwNzg3RTU0Rj48QTMyRTk5QTQ0MkJCNDA0NDg2NDY2QjE3MDc4N0U1NEY+XQo+PgpzdGFydHhyZWYKMTMxMgolJUVPRgo=",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Jorunn Kvamme (id=18714659)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 6.47,
+  "phase_times": {
+    "parse": 2.05,
+    "prefetch": 0.82,
+    "handler": 3.6
+  },
+  "total_api_calls": 6,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 6
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 4,
+    "wasted": 0,
+    "lookup": 0
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/department",
+      "status": 201,
+      "entity_id": 983278
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18714659
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2859065
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3756976
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T01:02:24.483556",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 983272,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/983272",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:02:25.346750",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "name": "Kvalitetskontroll",
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:02:26.044777",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Kvalitetskontroll"
+      },
+      "response_body": {
+        "value": {
+          "id": 983278,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/department/983278",
+          "name": "Kvalitetskontroll",
+          "departmentNumber": "",
+          "departmentManager": null,
+          "displayName": "Kvalitetskontroll",
+          "isInactive": false,
+          "businessActivityTypeId": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:02:26.867670",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Jorunn",
+        "lastName": "Kvamme",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 983278
+        },
+        "allowInformationRegistration": true,
+        "dateOfBirth": "1995-01-10",
+        "comments": "Provetid 6 måneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetid 3 måneder oppsigelsesfrist."
+      },
+      "response_body": {
+        "value": {
+          "id": 18714659,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18714659",
+          "firstName": "Jorunn",
+          "lastName": "Kvamme",
+          "displayName": "Jorunn Kvamme",
+          "employeeNumber": "",
+          "dateOfBirth": "1995-01-10",
+          "email": "",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "Provetid 6 måneder med 14 dagers gjensidig oppsigelsesfrist. Etter provetid 3 måneder oppsigelsesfrist.",
+          "address": null,
+          "department": {
+            "id": 983278,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/983278"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108487662,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:02:27.489663",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18714659
+        },
+        "startDate": "2026-07-09",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2859065,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2859065",
+          "employee": {
+            "id": 18714659,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18714659"
+          },
+          "employmentId": "",
+          "startDate": "2026-07-09",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T01:02:28.082084",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2859065
+        },
+        "date": "2026-07-09",
+        "annualSalary": 830000,
+        "percentageOfFullTimeEquivalent": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "response_body": {
+        "value": {
+          "id": 3756976,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3756976",
+          "employment": {
+            "id": 2859065,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2859065"
+          },
+          "date": "2026-07-09",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 80.0,
+          "annualSalary": 830000,
+          "hourlyWage": 426,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 69166.67
+        }
+      }
+    }
+  ]
+}

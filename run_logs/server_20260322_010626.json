@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T01:06:26.125969",
+  "prompt": "Wir haben eine Rechnung über 19107 EUR an Brückentor GmbH (Org.-Nr. 815889126) gesendet, als der Wechselkurs 11.71 NOK/EUR betrug. Der Kunde hat nun bezahlt, aber der Kurs liegt bei 10.94 NOK/EUR. Erfassen Sie die Zahlung und buchen Sie die Wechselkursdifferenz (disagio) auf das korrekte Konto.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "FX correction posted: Agiogevinst 14712.39 kr (19107 EUR × (10.94-11.71) NOK/EUR). Voucher 609254307.",
+  "error": null,
+  "elapsed_seconds": 5.85
+}

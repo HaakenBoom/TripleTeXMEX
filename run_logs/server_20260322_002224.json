@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:22:24.192246",
+  "prompt": "El pago de Dorada SL (org. nº 849807021) por la factura \"Mantenimiento\" (8900 NOK sin IVA) fue devuelto por el banco. Revierta el pago para que la factura vuelva a mostrar el importe pendiente.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Reversed payment of 11125.0 on invoice 2147576110. Outstanding amount restored to 11125.0.",
+  "error": null,
+  "elapsed_seconds": 8.58
+}

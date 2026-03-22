@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:38:35.903827",
+  "prompt": "Voce recebeu uma carta de oferta (ver PDF anexo) para um novo funcionario. Complete a integracao: crie o funcionario, atribua o departamento correto, configure os detalhes de emprego com percentagem e salario anual, e configure as horas de trabalho padrao.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created employee Mariana Santos (id=18710297)",
+  "error": null,
+  "elapsed_seconds": 3.99
+}

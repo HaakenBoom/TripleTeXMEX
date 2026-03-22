@@ -1,0 +1,2918 @@
+{
+  "timestamp": "2026-03-22T00:09:34.814057",
+  "prompt_fingerprint": "c7c448f08843",
+  "prompt": "Exécutez le cycle de vie complet du projet 'Migration Cloud Montagne' (Montagne SARL, nº org. 815119924) : 1) Le projet a un budget de 489850 NOK. 2) Enregistrez le temps : Louis Moreau (chef de projet, louis.moreau@example.org) 33 heures et Louis Dubois (consultant, louis.dubois@example.org) 108 heures. 3) Enregistrez un coût fournisseur de 48850 NOK de Soleil SARL (nº org. 981965965). 4) Créez une facture client pour le projet.",
+  "prompt_language": "fr",
+  "files_count": 0,
+  "parsed_task": {
+    "task_type": "project_lifecycle",
+    "entities": {
+      "projectName": "Migration Cloud Montagne",
+      "customerName": "Montagne SARL",
+      "customerOrganizationNumber": "815119924",
+      "budget": 489850,
+      "projectManagerName": "Louis Moreau",
+      "projectManagerEmail": "louis.moreau@example.org",
+      "timesheetEntries": [
+        {
+          "employeeName": "Louis Moreau",
+          "employeeEmail": "louis.moreau@example.org",
+          "hours": 33,
+          "activityName": "Gestion de projet",
+          "hourlyRate": null
+        },
+        {
+          "employeeName": "Louis Dubois",
+          "employeeEmail": "louis.dubois@example.org",
+          "hours": 108,
+          "activityName": "Consultant",
+          "hourlyRate": null
+        }
+      ],
+      "supplierInvoice": {
+        "supplierName": "Soleil SARL",
+        "supplierOrganizationNumber": "981965965",
+        "amount": 48850,
+        "description": "Coût fournisseur",
+        "accountNumber": null
+      },
+      "customerInvoicePercentage": 100
+    },
+    "raw_prompt": "Exécutez le cycle de vie complet du projet 'Migration Cloud Montagne' (Montagne SARL, nº org. 815119924) : 1) Le projet a un budget de 489850 NOK. 2) Enregistrez le temps : Louis Moreau (chef de projet, louis.moreau@example.org) 33 heures et Louis Dubois (consultant, louis.dubois@example.org) 108 heures. 3) Enregistrez un coût fournisseur de 48850 NOK de Soleil SARL (nº org. 981965965). 4) Créez une facture client pour le projet.",
+    "_file_contents": [],
+    "_files_raw": []
+  },
+  "path_taken": "agent_loop",
+  "result": "Max iterations reached",
+  "deterministic_error": "invalid literal for int() with base 10: 'None'",
+  "handler_returned_none": false,
+  "elapsed_seconds": 62.72,
+  "phase_times": {
+    "parse": 1.79,
+    "prefetch": 0.0,
+    "handler": 3.8,
+    "repair": 0.0,
+    "agent_loop": 56.41
+  },
+  "total_api_calls": 27,
+  "errors_4xx": 3,
+  "status_counts": {
+    "2xx": 24,
+    "4xx": 3
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 9,
+    "wasted": 3,
+    "lookup": 13
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402049787
+    },
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175913852
+    },
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175913853
+    },
+    {
+      "method": "POST",
+      "endpoint": "/project",
+      "status": 201,
+      "entity_id": 402049807
+    },
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175913859
+    },
+    {
+      "method": "POST",
+      "endpoint": "/timesheet/entry",
+      "status": 201,
+      "entity_id": 175913860
+    },
+    {
+      "method": "POST",
+      "endpoint": "/ledger/voucher",
+      "status": 201,
+      "entity_id": 609234399
+    },
+    {
+      "method": "POST",
+      "endpoint": "/order",
+      "status": 201,
+      "entity_id": 402049855
+    },
+    {
+      "method": "POST",
+      "endpoint": "/order/orderline",
+      "status": 201,
+      "entity_id": 1607586742
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T00:08:34.333634",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "815119924",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108473854,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108473854",
+            "name": "Montagne SARL",
+            "organizationNumber": "815119924",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Montagne SARL (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405794729,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794729"
+            },
+            "physicalAddress": {
+              "id": 405794728,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794728"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 480674865,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480674865"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:34.695765",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "louis.moreau@example.org",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18704397,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397",
+            "firstName": "Louis",
+            "lastName": "Moreau",
+            "displayName": "Louis Moreau",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.moreau@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 977835,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/977835"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108473829,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:35.125676",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Migration Cloud Montagne",
+        "projectManager": {
+          "id": 18704397
+        },
+        "isInternal": false,
+        "startDate": "2024-01-01",
+        "customer": {
+          "id": 108473854
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 402049787,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049787",
+          "name": "Migration Cloud Montagne",
+          "number": "2",
+          "displayName": "2 Migration Cloud Montagne",
+          "description": "",
+          "projectManager": {
+            "id": 18704397,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2024-01-01",
+          "endDate": null,
+          "customer": {
+            "id": 108473854,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108473854"
+          },
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": false,
+          "isOffer": false,
+          "isFixedPrice": false,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 0,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11093376,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11093376"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15648419,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15648419"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "2 Migration Cloud Montagne",
+          "invoiceDueDate": 14,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "Montagne SARL",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Louis Moreau",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 0,
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:35.495842",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity/>forTimeSheet",
+      "status": 200,
+      "request_params": {
+        "projectId": 402049787,
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 3,
+        "from": 0,
+        "count": 3,
+        "versionDigest": null,
+        "values": [
+          {
+            "id": 6025500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025500",
+            "name": "Design",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Design",
+            "deletable": true
+          },
+          {
+            "id": 6025451,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025451",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 6025450,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025450",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:35.845757",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "louis.moreau@example.org",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18704397,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397",
+            "firstName": "Louis",
+            "lastName": "Moreau",
+            "displayName": "Louis Moreau",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.moreau@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 977835,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/977835"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108473829,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:36.272346",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18704397
+        },
+        "project": {
+          "id": 402049787
+        },
+        "activity": {
+          "id": 6025500
+        },
+        "date": "2026-03-22",
+        "hours": 33
+      },
+      "response_body": {
+        "value": {
+          "id": 175913852,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175913852",
+          "project": {
+            "id": 402049787,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049787"
+          },
+          "activity": {
+            "id": 6025500,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025500"
+          },
+          "date": "2026-03-22",
+          "hours": 33.0,
+          "chargeableHours": 33.0,
+          "employee": {
+            "id": 18704397,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397"
+          },
+          "timeClocks": [],
+          "comment": "",
+          "locked": false,
+          "chargeable": false,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 33.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:36.597047",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "louis.dubois@example.org",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18704408,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704408",
+            "firstName": "Louis",
+            "lastName": "Dubois",
+            "displayName": "Louis Dubois",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.dubois@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 977835,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/977835"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108473829,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:37.001774",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18704408
+        },
+        "project": {
+          "id": 402049787
+        },
+        "activity": {
+          "id": 6025500
+        },
+        "date": "2026-03-22",
+        "hours": 108
+      },
+      "response_body": {
+        "value": {
+          "id": 175913853,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175913853",
+          "project": {
+            "id": 402049787,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049787"
+          },
+          "activity": {
+            "id": 6025500,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025500"
+          },
+          "date": "2026-03-22",
+          "hours": 108.0,
+          "chargeableHours": 108.0,
+          "employee": {
+            "id": 18704408,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704408"
+          },
+          "timeClocks": [],
+          "comment": "",
+          "locked": false,
+          "chargeable": false,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 108.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:37.364668",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/supplier",
+      "status": 200,
+      "request_params": {
+        "count": 1,
+        "organizationNumber": "981965965"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108473865,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108473865",
+            "name": "Soleil SARL",
+            "organizationNumber": "981965965",
+            "supplierNumber": 20001,
+            "customerNumber": 0,
+            "isSupplier": true,
+            "isCustomer": false,
+            "isInactive": false,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "isPrivateIndividual": false,
+            "showProducts": false,
+            "accountManager": null,
+            "postalAddress": {
+              "id": 405794751,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794751"
+            },
+            "physicalAddress": {
+              "id": 405794750,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794750"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "bankAccountPresentation": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "ledgerAccount": {
+              "id": 480674980,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480674980"
+            },
+            "language": "NO",
+            "isWholesaler": false,
+            "displayName": "Soleil SARL (20001)",
+            "locale": "no_NO",
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:37.680832",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 422,
+      "request_params": {
+        "number": "None",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "status": 422,
+        "code": 12000,
+        "message": "'None': Listen med ID-er må være en kommaseparert liste med positive heltall.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": null,
+        "validationMessages": null,
+        "requestId": "a163e597-412f-42ad-aed6-e5e6d97d52f7"
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:38.057780",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/vatType",
+      "status": 200,
+      "request_params": {
+        "count": 1000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 56,
+        "from": 0,
+        "count": 56,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 1,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1",
+            "name": "Fradrag inngående avgift, høy sats",
+            "number": "1",
+            "displayName": "1: (25%) Fradrag inngående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 2,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/2",
+            "name": "Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-2",
+            "displayName": "UT-2: (100%) Direktepostert fradrag inngående avgift, høy sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 3,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3",
+            "name": "Utgående avgift, høy sats",
+            "number": "3",
+            "displayName": "3: (25%) Utgående avgift, høy sats",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 4,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/4",
+            "name": "Direktepostert utgående avgift, høy sats",
+            "number": "4",
+            "displayName": "4: (100%) Direktepostert utgående avgift, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 5,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5",
+            "name": "Ingen utgående avgift (innenfor mva-loven)",
+            "number": "5",
+            "displayName": "5: (0%) Ingen utgående avgift (innenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 6,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/6",
+            "name": "Ingen utgående avgift (utenfor mva-loven)",
+            "number": "6",
+            "displayName": "6: (0%) Ingen utgående avgift (utenfor mva-loven)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 7,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/7",
+            "name": "Ingen avgiftsbehandling (inntekter)",
+            "number": "7",
+            "displayName": "7: (0%) Ingen avgiftsbehandling (inntekter)",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 11,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11",
+            "name": "Fradrag inngående avgift, middels sats",
+            "number": "11",
+            "displayName": "11: (15%) Fradrag inngående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 12,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12",
+            "name": "Fradrag inngående avgift, lav sats",
+            "number": "13",
+            "displayName": "13: (12%) Fradrag inngående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 13,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13",
+            "name": "Grunnlag inngående avgift ved innførsel, høy sats",
+            "number": "21",
+            "displayName": "21: (0%) Grunnlag inngående avgift ved innførsel, høy sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 14,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14",
+            "name": "Grunnlag inngående avgift ved innførsel, middels sats",
+            "number": "22",
+            "displayName": "22: (0%) Grunnlag inngående avgift ved innførsel, middels sats",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 21,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/21",
+            "name": "Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-21",
+            "displayName": "UT-21: (100%) Direktepostert fradrag inngående avgift, middels sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 22,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/22",
+            "name": "Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "number": "UT-22",
+            "displayName": "UT-22: (100%) Direktepostert fradrag inngående avgift, lav sats (mva-kode utgikk 01.01.2017)",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 23,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/23",
+            "name": "Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "number": "14",
+            "displayName": "14: (100%) Fradrag inngående avgift betalt ved innførsel, høy sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 24,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/24",
+            "name": "Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "number": "15",
+            "displayName": "15: (100%) Fradrag inngående avgift betalt ved innførsel, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 31,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31",
+            "name": "Utgående avgift, middels sats",
+            "number": "31",
+            "displayName": "31: (15%) Utgående avgift, middels sats",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 32,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32",
+            "name": "Utgående avgift, lav sats",
+            "number": "33",
+            "displayName": "33: (12%) Utgående avgift, lav sats",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 34,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "number": "86",
+            "displayName": "86: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 35,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "number": "87",
+            "displayName": "87: (25%) Kjøp av tjenester fra utlandet uten fradrag, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 41,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/41",
+            "name": "Direktepostert utgående avgift, middels sats",
+            "number": "41",
+            "displayName": "41: (100%) Direktepostert utgående avgift, middels sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 42,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/42",
+            "name": "Direktepostert utgående avgift, lav sats",
+            "number": "42",
+            "displayName": "42: (100%) Direktepostert utgående avgift, lav sats",
+            "percentage": 100.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 51,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/51",
+            "name": "Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "number": "51",
+            "displayName": "51: (0%) Avgiftsfri innlands omsetning med omvendt avgiftsplikt",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 52,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/52",
+            "name": "Avgiftsfri utførsel av varer og tjenester",
+            "number": "52",
+            "displayName": "52: (0%) Avgiftsfri utførsel av varer og tjenester",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 81,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats",
+            "number": "81",
+            "displayName": "81: (25%) Fradrag inngående avgift ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 82,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/82",
+            "name": "Inngående avgift uten fradrag ved innførsel, høy sats",
+            "number": "82",
+            "displayName": "82: (25%) Inngående avgift uten fradrag ved innførsel, høy sats",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 83,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/83",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats",
+            "number": "83",
+            "displayName": "83: (15%) Fradrag inngående avgift ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 84,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/84",
+            "name": "Inngående avgift uten fradrag ved innførsel, middels sats",
+            "number": "84",
+            "displayName": "84: (15%) Inngående avgift uten fradrag ved innførsel, middels sats",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 85,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/85",
+            "name": "Grunnlag, avgiftsfri innførsel",
+            "number": "85",
+            "displayName": "85: (0%) Grunnlag, avgiftsfri innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 88,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/88",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "number": "88",
+            "displayName": "88: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 89,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/89",
+            "name": "Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "number": "89",
+            "displayName": "89: (12%) Kjøp av tjenester fra utlandet uten fradrag, lav sats",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 91,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/91",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "number": "91",
+            "displayName": "91: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 92,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/92",
+            "name": "Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "number": "92",
+            "displayName": "92: (25%) Kjøp av klimakvoter/gull uten avgiftskompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 111,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111",
+            "name": "Fradrag inngående avgift, råfisk",
+            "number": "12",
+            "displayName": "12: (11,11%) Fradrag inngående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 230,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230",
+            "name": "Grunnlag, ingen inngående avgift ved innførsel",
+            "number": "20",
+            "displayName": "20: (0%) Grunnlag, ingen inngående avgift ved innførsel",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 311,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311",
+            "name": "Utgående avgift, råfisk",
+            "number": "32",
+            "displayName": "32: (11,11%) Utgående avgift, råfisk",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/500",
+            "name": "Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "number": "URED-13",
+            "displayName": "URED-13: (12%) Uredusert lav sats for bruk i perioden med midlertidig lav sats i 2020",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 501,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/501",
+            "name": "Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "number": "RED-13",
+            "displayName": "RED-13: (6%) Redusert lav sats (6 %) for bruk etter 01.10.2021",
+            "percentage": 6,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 550,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550",
+            "name": "Tap på krav - kode 1",
+            "number": "TAP-1",
+            "displayName": "TAP-1: (25%) Tap på krav - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 551,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551",
+            "name": "Tap på krav - kode 11",
+            "number": "TAP-11",
+            "displayName": "TAP-11: (15%) Tap på krav - kode 11",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 11,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+            }
+          },
+          {
+            "id": 552,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/552",
+            "name": "Tap på krav - kode 12",
+            "number": "TAP-12",
+            "displayName": "TAP-12: (11,11%) Tap på krav - kode 12",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 111,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/111"
+            }
+          },
+          {
+            "id": 553,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553",
+            "name": "Tap på krav - kode 13",
+            "number": "TAP-13",
+            "displayName": "TAP-13: (12%) Tap på krav - kode 13",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 12,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+            }
+          },
+          {
+            "id": 554,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/554",
+            "name": "Uttak - kode 3",
+            "number": "UTTAK-3",
+            "displayName": "UTTAK-3: (25%) Uttak - kode 3",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 3,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+            }
+          },
+          {
+            "id": 555,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/555",
+            "name": "Uttak - kode 5",
+            "number": "UTTAK-5",
+            "displayName": "UTTAK-5: (0%) Uttak - kode 5",
+            "percentage": 0.0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 5,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/5"
+            }
+          },
+          {
+            "id": 556,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/556",
+            "name": "Uttak - kode 31",
+            "number": "UTTAK-31",
+            "displayName": "UTTAK-31: (15%) Uttak - kode 31",
+            "percentage": 15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 31,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/31"
+            }
+          },
+          {
+            "id": 557,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/557",
+            "name": "Uttak - kode 32",
+            "number": "UTTAK-32",
+            "displayName": "UTTAK-32: (11,11%) Uttak - kode 32",
+            "percentage": 11.11,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 311,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/311"
+            }
+          },
+          {
+            "id": 558,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/558",
+            "name": "Uttak - kode 33",
+            "number": "UTTAK-33",
+            "displayName": "UTTAK-33: (12%) Uttak - kode 33",
+            "percentage": 12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 32,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/32"
+            }
+          },
+          {
+            "id": 559,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559",
+            "name": "Mva-justering for kapitalvarer - kode 1",
+            "number": "JUST-1",
+            "displayName": "JUST-1: (25%) Mva-justering for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 560,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 1",
+            "number": "TILB-1",
+            "displayName": "TILB-1: (25%) Tilbakeføring av mva for kapitalvarer - kode 1",
+            "percentage": 25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            }
+          },
+          {
+            "id": 561,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/561",
+            "name": "Tilbakeføring av mva for kapitalvarer - kode 81",
+            "number": "TILB-81",
+            "displayName": "TILB-81: (25%) Tilbakeføring av mva for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 562,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/562",
+            "name": "Mva-justering for kapitalvarer - kode 81",
+            "number": "JUST-81",
+            "displayName": "JUST-81: (25%) Mva-justering for kapitalvarer - kode 81",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 81,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/81"
+            }
+          },
+          {
+            "id": 600,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/600",
+            "name": "Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "number": "81-K",
+            "displayName": "81-K: (25%) Fradrag inngående avgift ved innførsel, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 601,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/601",
+            "name": "Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "number": "83-K",
+            "displayName": "83-K: (15%) Fradrag inngående avgift ved innførsel, middels sats med kompensasjon",
+            "percentage": -15,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 602,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/602",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "number": "86-K",
+            "displayName": "86-K: (25%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, høy sats med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 603,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/603",
+            "name": "Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "number": "88-K",
+            "displayName": "88-K: (12%) Fradrag inngående avgift ved kjøp av tjenester fra utlandet, lav sats med kompensasjon",
+            "percentage": -12,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 604,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/604",
+            "name": "Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "number": "91-K",
+            "displayName": "91-K: (25%) Fradrag inngående avgift ved kjøp av klimakvoter/gull med kompensasjon",
+            "percentage": -25,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          },
+          {
+            "id": 0,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0",
+            "name": "Ingen avgiftsbehandling",
+            "number": "0",
+            "displayName": "0: (0%) Ingen avgiftsbehandling",
+            "percentage": 0,
+            "deductionPercentage": 100.0,
+            "parentType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:38.406267",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/token/session/>whoAmI",
+      "status": 200,
+      "request_params": null,
+      "request_body": null,
+      "response_body": {
+        "value": {
+          "employeeId": 18704391,
+          "actualEmployeeId": 18704393,
+          "employee": {
+            "id": 18704391,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704391"
+          },
+          "companyId": 108473829,
+          "company": {
+            "id": 108473829,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/company/108473829"
+          },
+          "language": "no",
+          "loggedInWithConnect": false,
+          "employeeIsProxy": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:41.452654",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/customer",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "815119924"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108473854,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108473854",
+            "name": "Montagne SARL",
+            "organizationNumber": "815119924",
+            "globalLocationNumber": 0,
+            "supplierNumber": 0,
+            "customerNumber": 10001,
+            "isSupplier": false,
+            "isCustomer": true,
+            "isInactive": false,
+            "accountManager": null,
+            "department": null,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "language": "NO",
+            "displayName": "Montagne SARL (10001)",
+            "isPrivateIndividual": false,
+            "singleCustomerInvoice": false,
+            "invoiceSendMethod": "EMAIL",
+            "emailAttachmentType": "ATTACHMENT",
+            "postalAddress": {
+              "id": 405794729,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794729"
+            },
+            "physicalAddress": {
+              "id": 405794728,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794728"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "invoicesDueIn": 14,
+            "invoicesDueInType": "DAYS",
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "bankAccountPresentation": [],
+            "ledgerAccount": {
+              "id": 480674865,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480674865"
+            },
+            "isFactoring": false,
+            "invoiceSendSMSNotification": false,
+            "invoiceSMSNotificationNumber": "",
+            "isAutomaticSoftReminderEnabled": false,
+            "isAutomaticReminderEnabled": false,
+            "isAutomaticNoticeOfDebtCollectionEnabled": false,
+            "discountPercentage": 0.0,
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:44.252226",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "louis.moreau@example.org"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18704397,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397",
+            "firstName": "Louis",
+            "lastName": "Moreau",
+            "displayName": "Louis Moreau",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.moreau@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 977835,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/977835"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108473829,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:46.857014",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 200,
+      "request_params": {
+        "email": "louis.dubois@example.org"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "Checksum not yet supported for this endpoint",
+        "values": [
+          {
+            "id": 18704408,
+            "version": 2,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704408",
+            "firstName": "Louis",
+            "lastName": "Dubois",
+            "displayName": "Louis Dubois",
+            "employeeNumber": "",
+            "dateOfBirth": null,
+            "email": "louis.dubois@example.org",
+            "phoneNumberMobileCountry": {
+              "id": 161,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+            },
+            "phoneNumberMobile": "",
+            "phoneNumberHome": "",
+            "phoneNumberWork": "",
+            "nationalIdentityNumber": "",
+            "dnumber": "",
+            "internationalId": {
+              "intAmeldingType": null,
+              "country": null,
+              "number": ""
+            },
+            "bankAccountNumber": "",
+            "iban": "",
+            "bic": "",
+            "creditorBankCountryId": 0,
+            "usesAbroadPayment": false,
+            "userType": null,
+            "allowInformationRegistration": true,
+            "isContact": false,
+            "isProxy": false,
+            "comments": "",
+            "address": null,
+            "department": {
+              "id": 977835,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/department/977835"
+            },
+            "employments": [],
+            "holidayAllowanceEarned": {
+              "year": 0,
+              "amount": 0.0,
+              "basis": 0.0,
+              "amountExtraHolidayWeek": 0.0
+            },
+            "employeeCategory": null,
+            "isAuthProjectOverviewURL": true,
+            "pictureId": 0,
+            "companyId": 108473829,
+            "vismaConnect2FAactive": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:50.456567",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/project",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Migration Cloud Montagne",
+        "customer": {
+          "id": 108473854
+        },
+        "projectManager": {
+          "id": 18704397
+        },
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "fixedprice": 489850,
+        "isFixedPrice": true,
+        "vatType": {
+          "id": 3
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 402049807,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049807",
+          "name": "Migration Cloud Montagne",
+          "number": "3",
+          "displayName": "3 Migration Cloud Montagne",
+          "description": "",
+          "projectManager": {
+            "id": 18704397,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397"
+          },
+          "department": null,
+          "mainProject": null,
+          "startDate": "2024-01-01",
+          "endDate": "2024-12-31",
+          "customer": {
+            "id": 108473854,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108473854"
+          },
+          "isClosed": false,
+          "isReadyForInvoicing": false,
+          "isInternal": false,
+          "isOffer": false,
+          "isFixedPrice": true,
+          "projectCategory": null,
+          "deliveryAddress": null,
+          "boligmappaAddress": null,
+          "displayNameFormat": "NAME_STANDARD",
+          "reference": "",
+          "externalAccountsNumber": "",
+          "discountPercentage": 0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "fixedprice": 489850,
+          "contributionMarginPercent": 0,
+          "numberOfSubProjects": 0,
+          "numberOfProjectParticipants": 1,
+          "orderLines": [],
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markUpOrderLines": 0,
+          "markUpFeesEarned": 0,
+          "isPriceCeiling": false,
+          "priceCeilingAmount": 0,
+          "projectHourlyRates": [
+            {
+              "id": 11093388,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/hourlyRates/11093388"
+            }
+          ],
+          "forParticipantsOnly": false,
+          "participants": [
+            {
+              "id": 15648431,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/project/participant/15648431"
+            }
+          ],
+          "contact": null,
+          "attention": null,
+          "invoiceComment": "",
+          "invoicingPlan": [],
+          "preliminaryInvoice": null,
+          "generalProjectActivitiesPerProjectOnly": false,
+          "projectActivities": [],
+          "hierarchyNameAndNumber": "3 Migration Cloud Montagne",
+          "invoiceDueDate": 14,
+          "invoiceDueDateType": "DAYS",
+          "invoiceReceiverEmail": "",
+          "overdueNoticeEmail": "",
+          "accessType": "WRITE",
+          "useProductNetPrice": false,
+          "ignoreCompanyProductDiscountAgreement": false,
+          "customerName": "Montagne SARL",
+          "hierarchyLevel": 0,
+          "projectManagerNameAndNumber": "Louis Moreau",
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceOnAccountVatHigh": false,
+          "invoiceReserveTotalAmountCurrency": 489850,
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:54.103374",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/activity",
+      "status": 200,
+      "request_params": {
+        "forTimeSheet": true,
+        "projectId": 402049807
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 5,
+        "from": 0,
+        "count": 5,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 6025448,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025448",
+            "name": "Administrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "GENERAL_ACTIVITY",
+            "isProjectActivity": false,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Administrasjon",
+            "deletable": true
+          },
+          {
+            "id": 6025449,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025449",
+            "name": "Ferie",
+            "number": "",
+            "description": "",
+            "activityType": "GENERAL_ACTIVITY",
+            "isProjectActivity": false,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Ferie",
+            "deletable": false
+          },
+          {
+            "id": 6025450,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025450",
+            "name": "Prosjektadministrasjon",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Prosjektadministrasjon",
+            "deletable": true
+          },
+          {
+            "id": 6025451,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025451",
+            "name": "Fakturerbart arbeid",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": true,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Fakturerbart arbeid",
+            "deletable": true
+          },
+          {
+            "id": 6025500,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025500",
+            "name": "Design",
+            "number": "",
+            "description": "",
+            "activityType": "PROJECT_GENERAL_ACTIVITY",
+            "isProjectActivity": true,
+            "isGeneral": true,
+            "isTask": false,
+            "isDisabled": false,
+            "isChargeable": false,
+            "rate": 0.0,
+            "costPercentage": 0.0,
+            "displayName": "Design",
+            "deletable": false
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:08:57.968784",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402049807
+        },
+        "activity": {
+          "id": 6025451
+        },
+        "employee": {
+          "id": 18704397
+        },
+        "date": "2024-01-15",
+        "hours": 33,
+        "comment": "Project management - Migration Cloud Montagne"
+      },
+      "response_body": {
+        "value": {
+          "id": 175913859,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175913859",
+          "project": {
+            "id": 402049807,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049807"
+          },
+          "activity": {
+            "id": 6025451,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025451"
+          },
+          "date": "2024-01-15",
+          "hours": 33.0,
+          "chargeableHours": 33.0,
+          "employee": {
+            "id": 18704397,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704397"
+          },
+          "timeClocks": [],
+          "comment": "Project management - Migration Cloud Montagne",
+          "locked": false,
+          "chargeable": true,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 33.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:00.877089",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/timesheet/entry",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "project": {
+          "id": 402049807
+        },
+        "activity": {
+          "id": 6025451
+        },
+        "employee": {
+          "id": 18704408
+        },
+        "date": "2024-01-20",
+        "hours": 108,
+        "comment": "Consulting work - Migration Cloud Montagne"
+      },
+      "response_body": {
+        "value": {
+          "id": 175913860,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/timesheet/entry/175913860",
+          "project": {
+            "id": 402049807,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049807"
+          },
+          "activity": {
+            "id": 6025451,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/activity/6025451"
+          },
+          "date": "2024-01-20",
+          "hours": 108.0,
+          "chargeableHours": 108.0,
+          "employee": {
+            "id": 18704408,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18704408"
+          },
+          "timeClocks": [],
+          "comment": "Consulting work - Migration Cloud Montagne",
+          "locked": false,
+          "chargeable": true,
+          "invoice": null,
+          "hourlyRate": 0.0,
+          "hourlyCost": 0.0,
+          "hourlyCostPercentage": 0,
+          "projectChargeableHours": 108.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:03.986754",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/supplier",
+      "status": 200,
+      "request_params": {
+        "organizationNumber": "981965965"
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 108473865,
+            "version": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108473865",
+            "name": "Soleil SARL",
+            "organizationNumber": "981965965",
+            "supplierNumber": 20001,
+            "customerNumber": 0,
+            "isSupplier": true,
+            "isCustomer": false,
+            "isInactive": false,
+            "email": "",
+            "invoiceEmail": "",
+            "overdueNoticeEmail": "",
+            "phoneNumber": "",
+            "phoneNumberMobile": "",
+            "description": "",
+            "isPrivateIndividual": false,
+            "showProducts": false,
+            "accountManager": null,
+            "postalAddress": {
+              "id": 405794751,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794751"
+            },
+            "physicalAddress": {
+              "id": 405794750,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/address/405794750"
+            },
+            "deliveryAddress": null,
+            "category1": null,
+            "category2": null,
+            "category3": null,
+            "bankAccountPresentation": [],
+            "currency": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+            },
+            "ledgerAccount": {
+              "id": 480674980,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480674980"
+            },
+            "language": "NO",
+            "isWholesaler": false,
+            "displayName": "Soleil SARL (20001)",
+            "locale": "no_NO",
+            "website": ""
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:08.082828",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 2400
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 480674980,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480674980",
+            "number": 2400,
+            "numberPretty": "2400",
+            "name": "Leverandørgjeld",
+            "description": "",
+            "type": "LIABILITIES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              }
+            ],
+            "ledgerType": "VENDOR",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+            },
+            "vatLocked": true,
+            "currency": null,
+            "isCloseable": true,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "24",
+            "groupingCode": "2400",
+            "displayName": "2400 Leverandørgjeld",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:10.923283",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/account",
+      "status": 200,
+      "request_params": {
+        "number": 4000
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 480675082,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480675082",
+            "number": 4000,
+            "numberPretty": "4000",
+            "name": "Innkjøp av råvarer og halvfabrikater",
+            "description": "",
+            "type": "OPERATING_EXPENSES",
+            "legalVatTypes": [
+              {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              {
+                "id": 11,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/11"
+              },
+              {
+                "id": 12,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/12"
+              },
+              {
+                "id": 230,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/230"
+              },
+              {
+                "id": 13,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/13"
+              },
+              {
+                "id": 14,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/14"
+              },
+              {
+                "id": 34,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/34"
+              },
+              {
+                "id": 35,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/35"
+              },
+              {
+                "id": 559,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/559"
+              },
+              {
+                "id": 550,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/550"
+              },
+              {
+                "id": 551,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/551"
+              },
+              {
+                "id": 553,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/553"
+              },
+              {
+                "id": 560,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/560"
+              }
+            ],
+            "ledgerType": "GENERAL",
+            "balanceGroup": "Ikke i en saldogruppe.",
+            "vatType": {
+              "id": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+            },
+            "vatLocked": false,
+            "currency": null,
+            "isCloseable": false,
+            "isApplicableForSupplierInvoice": true,
+            "requireReconciliation": false,
+            "isInactive": false,
+            "isBankAccount": false,
+            "isInvoiceAccount": false,
+            "bankAccountNumber": "",
+            "bankAccountCountry": null,
+            "bankName": "",
+            "bankAccountIBAN": "",
+            "bankAccountSWIFT": "",
+            "saftCode": "40",
+            "groupingCode": "4005",
+            "displayName": "4000 Innkjøp av råvarer og halvfabrikater",
+            "requiresDepartment": false,
+            "requiresProject": false,
+            "invoicingDepartment": null,
+            "isPostingsExist": false,
+            "quantityType1": null,
+            "quantityType2": null,
+            "department": null
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:16.166769",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "date": "2024-01-25",
+        "description": "Supplier cost - Migration Cloud Montagne project",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 480675082
+            },
+            "amountGross": 48850,
+            "amountGrossCurrency": 48850,
+            "date": "2024-01-25",
+            "vatType": {
+              "id": 1
+            },
+            "project": {
+              "id": 402049807
+            },
+            "description": "Project supplier cost"
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 480674980
+            },
+            "amountGross": -48850,
+            "amountGrossCurrency": -48850,
+            "date": "2024-01-25",
+            "vatType": {
+              "id": 0
+            },
+            "supplier": {
+              "id": 108473865
+            },
+            "description": "Payable to Soleil SARL"
+          }
+        ]
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": "postings.description",
+            "message": "Beskrivelsene på rad 1 må være like.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "4e74c0bb-3ca6-42c9-9d7e-e487c4f9a18b"
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:20.739501",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 422,
+      "request_params": null,
+      "request_body": {
+        "date": "2024-01-25",
+        "description": "Supplier cost - Migration Cloud Montagne project",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 480675082
+            },
+            "amountGross": 48850,
+            "amountGrossCurrency": 48850,
+            "date": "2024-01-25",
+            "vatType": {
+              "id": 1
+            },
+            "project": {
+              "id": 402049807
+            },
+            "description": "Supplier cost - Soleil SARL"
+          },
+          {
+            "row": 1,
+            "account": {
+              "id": 480674980
+            },
+            "amountGross": -48850,
+            "amountGrossCurrency": -48850,
+            "date": "2024-01-25",
+            "vatType": {
+              "id": 0
+            },
+            "supplier": {
+              "id": 108473865
+            },
+            "description": "Supplier cost - Soleil SARL"
+          }
+        ]
+      },
+      "response_body": {
+        "status": 422,
+        "code": 18000,
+        "message": "Validering feilet.",
+        "link": "https://tripletex.no/v2-docs/",
+        "developerMessage": "VALIDATION_ERROR",
+        "validationMessages": [
+          {
+            "field": "postings.supplier.id",
+            "message": "Debet- og kreditposteringer på samme rad kan ikke ha ulike dimensjoner.",
+            "path": null,
+            "rootId": null
+          },
+          {
+            "field": "postings.project.id",
+            "message": "Debet- og kreditposteringer på samme rad kan ikke ha ulike dimensjoner.",
+            "path": null,
+            "rootId": null
+          }
+        ],
+        "requestId": "80112b04-a563-4a81-8827-9d4c5d40ee1b"
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:25.101419",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/ledger/voucher",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "date": "2024-01-25",
+        "description": "Supplier cost - Migration Cloud Montagne project",
+        "postings": [
+          {
+            "row": 1,
+            "account": {
+              "id": 480675082
+            },
+            "amountGross": 48850,
+            "amountGrossCurrency": 48850,
+            "date": "2024-01-25",
+            "vatType": {
+              "id": 1
+            },
+            "project": {
+              "id": 402049807
+            },
+            "description": "Project supplier cost"
+          },
+          {
+            "row": 2,
+            "account": {
+              "id": 480674980
+            },
+            "amountGross": -48850,
+            "amountGrossCurrency": -48850,
+            "date": "2024-01-25",
+            "vatType": {
+              "id": 0
+            },
+            "supplier": {
+              "id": 108473865
+            },
+            "description": "Payable to Soleil SARL"
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 609234399,
+          "version": 5,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609234399",
+          "date": "2024-01-25",
+          "number": 1,
+          "tempNumber": 0,
+          "year": 2024,
+          "description": "Supplier cost - Migration Cloud Montagne project",
+          "voucherType": null,
+          "reverseVoucher": null,
+          "postings": [
+            {
+              "id": 3846024894,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846024894",
+              "voucher": {
+                "id": 609234399,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609234399"
+              },
+              "date": "2024-01-25",
+              "description": "Payable to Soleil SARL",
+              "account": {
+                "id": 480674980,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480674980"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": {
+                "id": 108473865,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/supplier/108473865"
+              },
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": -48850.0,
+              "amountCurrency": -48850.0,
+              "amountGross": -48850.0,
+              "amountGrossCurrency": -48850.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 2,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3846024893,
+              "version": 1,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846024893",
+              "voucher": {
+                "id": 609234399,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609234399"
+              },
+              "date": "2024-01-25",
+              "description": "Project supplier cost",
+              "account": {
+                "id": 480675082,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480675082"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": {
+                "id": 402049807,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049807"
+              },
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/1"
+              },
+              "amount": 39080.0,
+              "amountCurrency": 39080.0,
+              "amountGross": 48850,
+              "amountGrossCurrency": 48850,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 1,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": false,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": false,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            },
+            {
+              "id": 3846024902,
+              "version": 0,
+              "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/posting/3846024902",
+              "voucher": {
+                "id": 609234399,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/voucher/609234399"
+              },
+              "date": "2024-01-25",
+              "description": "Project supplier cost",
+              "account": {
+                "id": 480675002,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/account/480675002"
+              },
+              "amortizationAccount": null,
+              "amortizationStartDate": null,
+              "amortizationEndDate": null,
+              "customer": null,
+              "supplier": null,
+              "employee": null,
+              "project": null,
+              "product": null,
+              "department": null,
+              "vatType": {
+                "id": 0,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/0"
+              },
+              "amount": 9770.0,
+              "amountCurrency": 9770.0,
+              "amountGross": 9770.0,
+              "amountGrossCurrency": 9770.0,
+              "currency": {
+                "id": 1,
+                "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+              },
+              "closeGroup": null,
+              "invoiceNumber": "",
+              "termOfPayment": null,
+              "row": 0,
+              "type": null,
+              "externalRef": "",
+              "systemGenerated": true,
+              "taxTransactionType": "(Ikke valgt)",
+              "taxTransactionTypeId": 0,
+              "matched": false,
+              "quantityAmount1": 0,
+              "quantityType1": null,
+              "quantityAmount2": 0,
+              "quantityType2": null,
+              "isVatReadonly": true,
+              "isAmountVatClosed": false,
+              "postingRuleId": 0,
+              "freeAccountingDimension1": null,
+              "freeAccountingDimension2": null,
+              "freeAccountingDimension3": null,
+              "asset": null
+            }
+          ],
+          "document": null,
+          "attachment": null,
+          "externalVoucherNumber": "",
+          "ediDocument": null,
+          "supplierVoucherType": null,
+          "wasAutoMatched": false,
+          "vendorInvoiceNumber": null,
+          "numberAsString": "1-2024"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:29.934031",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/order",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "customer": {
+          "id": 108473854
+        },
+        "project": {
+          "id": 402049807
+        },
+        "orderDate": "2024-01-30",
+        "deliveryDate": "2024-12-31",
+        "orderLines": [
+          {
+            "count": 1,
+            "unitPriceExcludingVatCurrency": 489850,
+            "vatType": {
+              "id": 3
+            },
+            "description": "Migration Cloud Montagne - Fixed price project"
+          }
+        ]
+      },
+      "response_body": {
+        "value": {
+          "id": 402049855,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/order/402049855",
+          "customer": {
+            "id": 108473854,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/customer/108473854"
+          },
+          "contact": null,
+          "attn": null,
+          "displayName": "4 Ordre",
+          "receiverEmail": "",
+          "overdueNoticeEmail": "",
+          "number": "4",
+          "reference": "",
+          "department": null,
+          "orderDate": "2024-01-30",
+          "project": {
+            "id": 402049807,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/project/402049807"
+          },
+          "invoiceComment": "",
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "invoicesDueIn": 14,
+          "invoicesDueInType": "DAYS",
+          "isShowOpenPostsOnInvoices": false,
+          "isClosed": false,
+          "deliveryDate": "2024-12-31",
+          "deliveryAddress": null,
+          "deliveryComment": "",
+          "isPrioritizeAmountsIncludingVat": false,
+          "orderLineSorting": "PRODUCT",
+          "orderGroups": [],
+          "orderLines": [],
+          "isSubscription": false,
+          "subscriptionDuration": 0,
+          "subscriptionDurationType": "MONTHS",
+          "subscriptionPeriodsOnInvoice": 0,
+          "subscriptionPeriodsOnInvoiceType": "MONTHS",
+          "subscriptionInvoicingTimeInAdvanceOrArrears": "ADVANCE",
+          "subscriptionInvoicingTime": 0,
+          "subscriptionInvoicingTimeType": "MONTHS",
+          "isSubscriptionAutoInvoicing": false,
+          "preliminaryInvoice": {
+            "id": 2147656415,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/invoice/2147656415"
+          },
+          "attachment": [],
+          "sendMethodDescription": "Faktura må sendes manuelt.",
+          "invoiceOnAccountVatHigh": false,
+          "totalInvoicedOnAccountAmountAbsoluteCurrency": 0.0,
+          "invoiceSendSMSNotification": false,
+          "invoiceSMSNotificationNumber": "",
+          "markUpOrderLines": 0,
+          "discountPercentage": 0.0,
+          "customerName": "Montagne SARL",
+          "projectManagerNameAndNumber": "",
+          "travelReports": [],
+          "accountingDimensionValues": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:09:34.812891",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/order/orderline",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "order": {
+          "id": 402049855
+        },
+        "count": 1,
+        "unitPriceExcludingVatCurrency": 489850,
+        "vatType": {
+          "id": 3
+        },
+        "description": "Migration Cloud Montagne - Fixed price project"
+      },
+      "response_body": {
+        "value": {
+          "id": 1607586742,
+          "version": 1,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/order/orderline/1607586742",
+          "product": null,
+          "inventory": null,
+          "description": "Migration Cloud Montagne - Fixed price project",
+          "displayName": "Migration Cloud Montagne - Fixed price project",
+          "count": 1.0,
+          "unitCostCurrency": 0.0,
+          "unitPriceExcludingVatCurrency": 489850.0,
+          "currency": {
+            "id": 1,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/currency/1"
+          },
+          "markup": 0.0,
+          "discount": 0.0,
+          "vatType": {
+            "id": 3,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/ledger/vatType/3"
+          },
+          "amountExcludingVatCurrency": 489850.0,
+          "amountIncludingVatCurrency": 612312.5,
+          "vendor": null,
+          "order": {
+            "id": 402049855,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/order/402049855"
+          },
+          "unitPriceIncludingVatCurrency": 612312.5,
+          "isSubscription": false,
+          "subscriptionPeriodStart": null,
+          "subscriptionPeriodEnd": null,
+          "orderGroup": null,
+          "sortIndex": 0,
+          "isPicked": false,
+          "pickedDate": null,
+          "orderedQuantity": 0,
+          "isCharged": false
+        }
+      }
+    }
+  ]
+}

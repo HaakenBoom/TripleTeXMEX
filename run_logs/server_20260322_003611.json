@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:36:11.371765",
+  "prompt": "Wir haben die Rechnung INV-2026-2399 vom Lieferanten Waldstein GmbH (Org.-Nr. 859252303) über 5550 NOK einschließlich MwSt. erhalten. Der Betrag betrifft Bürodienstleistungen (Konto 7100). Erfassen Sie die Lieferantenrechnung mit der korrekten Vorsteuer (25 %).",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Perfect! I've successfully created the supplier invoice voucher for Waldstein GmbH. Here's what was created:\n\n**Supplier Invoice Voucher Created:**\n- **Voucher ID:** 609243002\n- **Date:** 2025-01-21\n- **Description:** Waldstein GmbH - INV-2026-2399 - Bürodienstleistungen\n- **Invoice Number:** INV-2026-2399\n\n**Postings:**\n1. **Debit:** Account 6800 (Kontorrekvisita) - 5550 NOK gross with 25% incoming VAT (vatType ID 1)\n   - Net amount: 4440 NOK \n   - VAT amount: 1110 NOK (automatically calculated",
+  "error": null,
+  "elapsed_seconds": 63.84
+}

@@ -1,0 +1,352 @@
+{
+  "timestamp": "2026-03-22T00:36:44.311573",
+  "prompt_fingerprint": "1d455b200113",
+  "prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+  "prompt_language": "es",
+  "files_count": 1,
+  "parsed_task": {
+    "task_type": "create_employee",
+    "entities": {
+      "firstName": "Catarina",
+      "lastName": "Almeida",
+      "email": "catarina.almeida@example.org",
+      "dateOfBirth": "1985-10-21",
+      "nationalIdentityNumber": "21108586327",
+      "bankAccountNumber": "43955939434",
+      "address": {
+        "addressLine1": null,
+        "postalCode": null,
+        "city": null,
+        "country": {
+          "id": 161
+        }
+      },
+      "employeeNumber": null,
+      "phoneNumberMobile": null,
+      "isAdministrator": false,
+      "comments": "Departamento: Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año",
+      "employment": {
+        "startDate": "2026-07-06",
+        "annualSalary": 500000,
+        "employmentPercentage": 80.0,
+        "occupationCode": "3323",
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "startDate": "2026-07-06",
+      "annualSalary": 500000,
+      "employmentPercentage": 80.0,
+      "occupationCode": "3323",
+      "employmentType": "ORDINARY",
+      "remunerationType": "MONTHLY_WAGE"
+    },
+    "raw_prompt": "Voce recebeu um contrato de trabalho (ver PDF anexo). Crie o funcionario no Tripletex com todos os detalhes do contrato: numero de identidade nacional, data de nascimento, departamento, codigo de ocupacao, salario, percentagem de emprego e data de inicio.",
+    "_file_contents": [
+      "[File: files/arbeidskontrakt_pt_06.pdf]\nARBEIDSKONTRAKT\nArbeidsgiver: Solmar Lda\nArbeidstaker: Catarina Almeida\nFodselsdato: 21.10.1985\nPersonnummer: 21108586327\nE-post: catarina.almeida@example.org\nBankkonto: 43955939434\nAnsettelsesdetaljer\nAvdeling: Regnskap\nStillingskode (STYRK): 3323\nAnsettelsesform: Fast stilling\nLonnstype: Fastlonn (manedlig)\nStillingsprosent: 80.0%\nArslonn: 500000 kr\nTiltredelse: 06.07.2026\nArbeidsforholdet reguleres av gjeldende lover og regler, herunder arbeidsmiljoloven. Arbeidstaker er underlagt\nbedriftens personalhandbok og interne retningslinjer. Arbeidsstedet er ved bedriftens kontorer med mindre annet er\navtalt skriftlig.\nDet gjelder en gjensidig provetid pa 6 maneder. I provetiden er den gjensidige oppsigelsesfristen 14 dager. Etter\nprovetiden er oppsigelsesfristen 3 maneder regnet fra forste dag i maneden etter at oppsigelsen fant sted.\nFerie og feriepenger folger ferieloven. Arbeidstaker har rett til 25 virkedagers ferie per kalender ar. Feriepenger\nutbetales i henhold til gjeldende regelverk.\n___________________________ ___________________________\nArbeidsgiver Arbeidstaker"
+    ],
+    "_files_raw": [
+      {
+        "filename": "files/arbeidskontrakt_pt_06.pdf",
+        "content_base64": "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",
+        "mime_type": "application/pdf"
+      }
+    ]
+  },
+  "path_taken": "deterministic",
+  "result": "Created employee Catarina Almeida (id=18709917)",
+  "deterministic_error": null,
+  "handler_returned_none": false,
+  "elapsed_seconds": 5.14,
+  "phase_times": {
+    "parse": 1.7,
+    "prefetch": 0.62,
+    "handler": 2.81
+  },
+  "total_api_calls": 7,
+  "errors_4xx": 0,
+  "status_counts": {
+    "2xx": 7
+  },
+  "call_phases": {
+    "prefetch": 2,
+    "action": 4,
+    "wasted": 0,
+    "lookup": 1
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "endpoint": "/department",
+      "status": 201,
+      "entity_id": 980722
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee",
+      "status": 201,
+      "entity_id": 18709917
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment",
+      "status": 201,
+      "entity_id": 2856853
+    },
+    {
+      "method": "POST",
+      "endpoint": "/employee/employment/details",
+      "status": 201,
+      "entity_id": 3754799
+    }
+  ],
+  "api_calls": [
+    {
+      "timestamp": "2026-03-22T00:36:41.497921",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "count": 100
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 1,
+        "from": 0,
+        "count": 1,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": [
+          {
+            "id": 980558,
+            "version": 0,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/980558",
+            "name": "Avdeling",
+            "departmentNumber": "",
+            "departmentManager": null,
+            "displayName": "Avdeling",
+            "isInactive": false,
+            "businessActivityTypeId": 0
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:36:41.963548",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 200,
+      "request_params": {
+        "name": "Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año",
+        "count": 5
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:36:42.483948",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/department",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "name": "Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año"
+      },
+      "response_body": {
+        "value": {
+          "id": 980722,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/department/980722",
+          "name": "Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año",
+          "departmentNumber": "",
+          "departmentManager": null,
+          "displayName": "Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año",
+          "isInactive": false,
+          "businessActivityTypeId": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:36:42.996857",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "firstName": "Catarina",
+        "lastName": "Almeida",
+        "userType": "NO_ACCESS",
+        "department": {
+          "id": 980722
+        },
+        "allowInformationRegistration": true,
+        "email": "catarina.almeida@example.org",
+        "dateOfBirth": "1985-10-21",
+        "nationalIdentityNumber": "21108586327",
+        "bankAccountNumber": "43955939434",
+        "comments": "Departamento: Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año",
+        "address": {
+          "country": {
+            "id": 161
+          }
+        }
+      },
+      "response_body": {
+        "value": {
+          "id": 18709917,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18709917",
+          "firstName": "Catarina",
+          "lastName": "Almeida",
+          "displayName": "Catarina Almeida",
+          "employeeNumber": "",
+          "dateOfBirth": "1985-10-21",
+          "email": "catarina.almeida@example.org",
+          "phoneNumberMobileCountry": {
+            "id": 161,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/country/161"
+          },
+          "phoneNumberMobile": "",
+          "phoneNumberHome": "",
+          "phoneNumberWork": "",
+          "nationalIdentityNumber": "21108586327",
+          "dnumber": "",
+          "internationalId": {
+            "intAmeldingType": null,
+            "country": null,
+            "number": ""
+          },
+          "bankAccountNumber": "43955939434",
+          "iban": "",
+          "bic": "",
+          "creditorBankCountryId": 0,
+          "usesAbroadPayment": false,
+          "userType": null,
+          "allowInformationRegistration": true,
+          "isContact": false,
+          "isProxy": false,
+          "comments": "Departamento: Regnskap | Período de prueba: 6 meses | Vacaciones: 25 días hábiles por año",
+          "address": {
+            "id": 405809280,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/address/405809280"
+          },
+          "department": {
+            "id": 980722,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/department/980722"
+          },
+          "employments": [],
+          "holidayAllowanceEarned": {
+            "year": 0,
+            "amount": 0,
+            "basis": 0,
+            "amountExtraHolidayWeek": 0
+          },
+          "employeeCategory": null,
+          "isAuthProjectOverviewURL": true,
+          "pictureId": 0,
+          "companyId": 108480788,
+          "vismaConnect2FAactive": false
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:36:43.445031",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employee": {
+          "id": 18709917
+        },
+        "startDate": "2026-07-06",
+        "isMainEmployer": true
+      },
+      "response_body": {
+        "value": {
+          "id": 2856853,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2856853",
+          "employee": {
+            "id": 18709917,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/18709917"
+          },
+          "employmentId": "",
+          "startDate": "2026-07-06",
+          "endDate": null,
+          "employmentEndReason": null,
+          "division": null,
+          "lastSalaryChangeDate": null,
+          "noEmploymentRelationship": false,
+          "isMainEmployer": true,
+          "taxDeductionCode": "loennFraHovedarbeidsgiver",
+          "employmentDetails": [],
+          "isRemoveAccessAtEmploymentEnded": false,
+          "latestSalary": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:36:43.810997",
+      "method": "GET",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/occupationCode",
+      "status": 200,
+      "request_params": {
+        "code": "3323",
+        "count": 1
+      },
+      "request_body": null,
+      "response_body": {
+        "fullResultSize": 0,
+        "from": 0,
+        "count": 0,
+        "versionDigest": "'If-None-Match' header not specified",
+        "values": []
+      }
+    },
+    {
+      "timestamp": "2026-03-22T00:36:44.310854",
+      "method": "POST",
+      "url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2/employee/employment/details",
+      "status": 201,
+      "request_params": null,
+      "request_body": {
+        "employment": {
+          "id": 2856853
+        },
+        "date": "2026-07-06",
+        "annualSalary": 500000,
+        "percentageOfFullTimeEquivalent": 80.0,
+        "employmentType": "ORDINARY",
+        "remunerationType": "MONTHLY_WAGE"
+      },
+      "response_body": {
+        "value": {
+          "id": 3754799,
+          "version": 0,
+          "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/details/3754799",
+          "employment": {
+            "id": 2856853,
+            "url": "kkpqfuj-amager.tripletex.dev/v2/employee/employment/2856853"
+          },
+          "date": "2026-07-06",
+          "employmentType": "ORDINARY",
+          "employmentForm": "NOT_CHOSEN",
+          "remunerationType": "MONTHLY_WAGE",
+          "workingHoursScheme": "NOT_CHOSEN",
+          "shiftDurationHours": 0,
+          "occupationCode": null,
+          "percentageOfFullTimeEquivalent": 80.0,
+          "annualSalary": 500000,
+          "hourlyWage": 256,
+          "payrollTaxMunicipalityId": null,
+          "monthlySalary": 41666.67
+        }
+      }
+    }
+  ]
+}

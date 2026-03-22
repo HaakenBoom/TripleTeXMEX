@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:53:14.233297",
+  "prompt": "Führen Sie die Gehaltsabrechnung für Marie Becker (marie.becker@example.org) für diesen Monat durch. Das Grundgehalt beträgt 44150 NOK. Fügen Sie einen einmaligen Bonus von 16200 NOK zum Grundgehalt hinzu.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Ran payroll for employee Marie Becker (2026-03). salary transaction id=6958802. monthly salary=44150.0. bonus=16200",
+  "error": null,
+  "elapsed_seconds": 4.74
+}

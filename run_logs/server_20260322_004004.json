@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-22T00:40:04.232330",
+  "prompt": "Opprett produktet \"Konsulenttimer\" med produktnummer 7857. Prisen er 40100 kr eksklusiv MVA, og standard MVA-sats på 25 % skal brukes.",
+  "base_url": "https://tx-proxy-jwanbnu3pq-lz.a.run.app/v2",
+  "result": "Created product Konsulenttimer (id=84426552)",
+  "error": null,
+  "elapsed_seconds": 1.21
+}

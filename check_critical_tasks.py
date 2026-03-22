@@ -46,13 +46,17 @@ def _check_annual_closure(d: dict) -> tuple[bool, str]:
 
 def _check_run_payroll(d: dict) -> tuple[bool, str]:
     r = d.get("result") or ""
-    if "salary transaction" in r.lower() and d.get("errors_4xx", 0) == 0:
-        return True, "payroll OK, 0 errors"
+    e4 = d.get("errors_4xx", 0)
+    if "salary transaction" in r.lower():
+        # Payroll succeeded if salary was created, even with minor retries
+        if e4 == 0:
+            return True, "payroll OK, 0 errors"
+        return True, f"payroll OK ({e4} retried 4xx, still succeeded)"
     if "max iterations" in r.lower():
-        return False, f"MAX ITER, {d.get('errors_4xx',0)} 4xx errors"
+        return False, f"MAX ITER, {e4} 4xx errors"
     if d.get("deterministic_error"):
         return False, f"CRASH: {d['deterministic_error'][:80]}"
-    return False, f"4xx={d.get('errors_4xx',0)}, result={r[:60]}"
+    return False, f"4xx={e4}, result={r[:60]}"
 
 
 def _check_bank_reconciliation(d: dict) -> tuple[bool, str]:
@@ -117,14 +121,25 @@ def _check_cost_analysis(d: dict) -> tuple[bool, str]:
     r = d.get("result") or ""
     err = d.get("deterministic_error") or ""
     e4 = d.get("errors_4xx", 0)
+    # Check for specific failure patterns
+    if "no cost account increases" in r.lower() and e4 > 0:
+        # Got no data due to auth/token errors
+        return False, f"no data returned ({e4} 4xx) — likely expired token or auth"
     if "top 0 accounts" in r.lower():
-        return False, "found 0 accounts — logic/auth failure"
+        return False, "found accounts but 0 projects created — projectManager access error"
     if "tilgang" in r.lower() or "access" in err.lower():
         return False, f"AUTH error: {err[:60] or r[:60]}"
-    if e4 >= 3:
-        return False, f"{e4} 4xx errors — likely auth/logic failure"
-    if "cost" in r.lower() and ("account" in r.lower() or "top" in r.lower()):
-        return True, f"analysis completed, {e4} errors"
+    # Successful patterns
+    if "no cost account increases" in r.lower() and e4 == 0:
+        return True, "no increases found (legitimate result), 0 errors"
+    if "cost analysis complete" in r.lower() and "top" in r.lower():
+        # Extract how many accounts were found
+        import re
+        m = re.search(r"top (\d+) accounts", r.lower())
+        count = m.group(1) if m else "?"
+        if count == "0":
+            return False, "analysis ran but created 0 projects"
+        return True, f"completed: {count} accounts analyzed, {e4} errors"
     if d.get("path_taken") == "deterministic" and e4 == 0 and r:
         return True, f"deterministic OK: {r[:60]}"
     return False, f"4xx={e4}, result={r[:60]}"

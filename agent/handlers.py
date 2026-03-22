@@ -804,7 +804,7 @@ def _find_or_create_customer(customer_data: dict, client: TripletexClient, conte
 
 def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -> str:
     e = task["entities"]
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     # Proactively ensure bank account is set up (GET is free, avoids wasted POST on failure)
     _ensure_company_bank_account(client, context)
@@ -885,7 +885,7 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
 
 def _handle_create_invoice_with_payment(task: dict, client: TripletexClient, context: dict) -> str:
     e = task["entities"]
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     # Proactively ensure bank account is set up (GET is free, avoids wasted POST on failure)
     _ensure_company_bank_account(client, context)
@@ -1092,7 +1092,7 @@ def _match_invoice(invoices: list[dict], entities: dict, inv_id_obj: dict) -> in
 
 def _handle_create_credit_note(task: dict, client: TripletexClient, context: dict) -> str:
     e = task["entities"]
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     # Parser may wrap invoice info in "invoiceIdentifier" object
     inv_id_obj = e.get("invoiceIdentifier", {})
@@ -1520,7 +1520,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
                 merged.update(item)
         entities = merged
         task["entities"] = entities
-    today = entities.get("today", _today())
+    today = entities.get("today") or _today()
     voucher_date = entities.get("date", today)
     invoice_number = entities.get("invoiceNumber") or ""
     due_date = entities.get("dueDate") or ""
@@ -2067,7 +2067,7 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
                 merged.update(item)
         e = merged
         task["entities"] = e
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     # Step 1: Create the accounting dimension
     dim_name = e.get("dimensionName", "Dimension")
@@ -3380,7 +3380,7 @@ def _handle_error_correction(task: dict, client: TripletexClient, context: dict)
     """
     e = task.get("entities", {})
     errors = e.get("errors", [])
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     if not errors:
         raise RuntimeError("No errors specified in error_correction task")
@@ -3712,7 +3712,7 @@ def _handle_error_correction(task: dict, client: TripletexClient, context: dict)
 def _handle_overdue_invoice(task: dict, client: TripletexClient, context: dict) -> str:
     """Handle overdue_invoice: find overdue invoice, post late fee, create fee invoice, register partial payment."""
     e = task.get("entities", {})
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
     fee_amount = e.get("feeAmount", 70)
     debit_acct = str(e.get("debitAccount", "1500"))
     credit_acct = str(e.get("creditAccount", "3400"))
@@ -3878,7 +3878,7 @@ def _handle_overdue_invoice(task: dict, client: TripletexClient, context: dict) 
 def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict) -> str:
     """Handle full project lifecycle: create project, log hours, register supplier invoice, bill customer."""
     e = task.get("entities", {})
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
     results: list[str] = []
 
     # Step 1: Find or create customer
@@ -4099,7 +4099,7 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
 def _handle_cost_analysis(task: dict, client: TripletexClient, context: dict) -> str:
     """Analyze ledger to find top cost accounts with largest increase, then create projects for them."""
     e = task.get("entities", {})
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     months = e.get("analysisMonths", [])
     num_accounts = e.get("numberOfAccounts", 3)
@@ -4208,7 +4208,7 @@ def _handle_cost_analysis(task: dict, client: TripletexClient, context: dict) ->
 def _handle_fx_correction(task: dict, client: TripletexClient, context: dict) -> str:
     """Handle FX correction: find invoice in foreign currency, calculate and post exchange rate difference."""
     e = task.get("entities", {})
-    today = e.get("today", _today())
+    today = e.get("today") or _today()
 
     cust_name = e.get("customerName", "")
     cust_org = e.get("customerOrganizationNumber", "")

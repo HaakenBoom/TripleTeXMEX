@@ -662,7 +662,24 @@ def _extract_entities_llm(task_type: str, prompt: str, file_contents: list[str] 
         parsed = json.loads(raw_text)
         # Handle both {"entities": {...}} and direct {...} formats
         if isinstance(parsed, dict):
-            return parsed.get("entities", parsed)
+            entities = parsed.get("entities", parsed)
+            # Guard: LLM sometimes returns entities as array — merge into one dict
+            if isinstance(entities, list):
+                merged: dict = {}
+                for item in entities:
+                    if isinstance(item, dict):
+                        merged.update(item)
+                return merged
+            if isinstance(entities, dict):
+                return entities
+            return parsed
+        # If LLM returned a list at top level, merge into one dict
+        if isinstance(parsed, list):
+            merged = {}
+            for item in parsed:
+                if isinstance(item, dict):
+                    merged.update(item)
+            return merged
         return {}
     except json.JSONDecodeError:
         logger.error("Failed to parse entity extraction response: %s", raw_text[:200])

@@ -1285,11 +1285,12 @@ def _find_or_create_employee_by_name(name: str, client: TripletexClient, context
         return values[0]["id"]
 
     # Not found — create the employee
+    # Use EXTENDED access so they can be project managers (NO_ACCESS causes 422)
     dept_id = _ensure_department(client, context)
     result = client.post("/employee", {
         "firstName": first_name,
         "lastName": last_name or "Bruker",
-        "userType": "NO_ACCESS",
+        "userType": "EXTENDED",
         "department": {"id": dept_id},
         "allowInformationRegistration": True,
     })

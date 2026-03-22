@@ -547,16 +547,42 @@ Extract: employeeName, employeeEmail, title (trip description), project, departm
 For per diem: description should include days and rate.""",
 
         "create_voucher": base + """
-Extract: date (YYYY-MM-DD), description, postings (array of {accountNumber (integer), amount (positive=debit, negative=credit), description}).
+Extract: date (YYYY-MM-DD), description, departmentName (if prompt mentions a department like "Innkjøp", "Salg", etc.), postings (array of {accountNumber (integer), amount (positive=debit, negative=credit), description}), amountsIncludeVat (boolean, true if amounts already include VAT).
 For supplier invoices: include expense posting (4xxx-7xxx), input VAT posting (27xx), and AP posting (2400, negative).
 Supplier info: supplierName, supplierOrganizationNumber (extract from prompt if mentioned).
-Also extract if available: invoiceNumber (e.g. "INV-2026-1234"), dueDate (YYYY-MM-DD forfallsdato), supplierBankAccount (bank account number string from invoice).""",
+Also extract if available: invoiceNumber (e.g. "INV-2026-1234"), dueDate (YYYY-MM-DD forfallsdato), supplierBankAccount (bank account number string from invoice).
+IMPORTANT: If the prompt asks for ONLY a specific item from a receipt, extract ONLY that item's posting. Do NOT include other items from the receipt that are not mentioned in the prompt.
+CRITICAL — Amount extraction rules:
+- Use amounts EXACTLY as they appear on the receipt/invoice. Do NOT divide by 1.25 or adjust for VAT.
+- If receipt shows "herav MVA 25%: X" and line_total * 0.25 = X, the prices are EXCLUDING VAT — use them as-is.
+- If receipt shows "inkl. MVA" or prices / 1.25 * 0.25 = VAT amount, the prices INCLUDE VAT — use them as-is.
+- Set amountsIncludeVat to true if amounts include VAT, false if they exclude VAT.
+- For the AP posting (2400): use the TOTAL PAYABLE amount (including VAT) as a NEGATIVE number.
+- For the VAT posting (27xx): use the total VAT amount as shown on the receipt.
+CRITICAL account numbers for Norwegian accounting (Norsk Standard Kontoplan):
+- 6100: Frakt, transport = Freight
+- 6300: Leie lokale = Office rent
+- 6340: Lys, varme = Light, heating
+- 6360: Renhold = Cleaning
+- 6540: Inventar = Furniture/inventory
+- 6700: Revisjon, regnskap = Audit, accounting
+- 6800: Kontorrekvisita = Office supplies
+- 6810: Datakostnad = IT/data costs
+- 6900: Telefon = Telephone
+- 7100: Bilkostnad = Car expenses
+- 7140: Reisekostnad = Travel costs
+- 7350: Representasjon = Representation/entertainment/dining
+- 7400: Kontingenter = Memberships
+- 7500: Forsikring = Insurance
+- 7770: Bank og kortgebyr = Bank/card fees
+Use 7350 for "middag representasjon", "representasjon", "restaurant", "business dinner".""",
 
         "log_timesheet_hours": base + """
 Extract: employeeName, employeeEmail, hours (number), activityName (e.g. "Design", "Utvikling", "Testing"), projectName, customerName, customerOrganizationNumber, date (YYYY-MM-DD), hourlyRate (number), comment.""",
 
         "create_dimension_voucher": base + """
-Extract: dimensionName, dimensionValues (array of strings), accountNumber (integer), amount (NOK), linkedDimensionValue (which value to link), voucherDate, voucherDescription.""",
+Extract as a SINGLE flat JSON object (NOT an array): dimensionName, dimensionValues (array of strings), accountNumber (integer), amount (NOK), linkedDimensionValue (which value to link), voucherDate, voucherDescription.
+Example output: {"entities": {"dimensionName": "X", "dimensionValues": ["A", "B"], "accountNumber": 6300, "amount": 10000, "linkedDimensionValue": "A", "voucherDate": "2026-01-15"}}""",
 
         "reverse_invoice_payment": base + """
 Extract: customerName, customerOrganizationNumber, invoiceDescription (what the invoice was for), amount (excl VAT), date.""",
@@ -632,7 +658,7 @@ def _extract_entities_llm(task_type: str, prompt: str, file_contents: list[str] 
     for retry in range(4):
         try:
             response = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+                model="claude-sonnet-4-20250514",
                 max_tokens=2048,
                 system=system,
                 messages=[{"role": "user", "content": user_message}],

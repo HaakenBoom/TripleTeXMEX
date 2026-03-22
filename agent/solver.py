@@ -52,6 +52,8 @@ def solve_task(prompt: str, files: list, base_url: str, session_token: str) -> s
     # Include file contents for handlers that need them (e.g., bank reconciliation)
     task["_file_contents"] = file_contents
     task["_files_raw"] = files
+    # Validate and fix entities before handler execution
+    _validate_entities(task)
     logger.info("Parsed task_type: %s (%.1fs)", task_type, phase_times["parse"])
     logger.info("Parsed entities: %s", json.dumps(task.get("entities", {}), ensure_ascii=False)[:500])
 
@@ -206,6 +208,25 @@ def _try_targeted_repair(error: str, task: dict, client: TripletexClient, contex
             logger.warning("Targeted repair (account) retry failed: %s", e2)
         return None
 
+    # Invoice/order date validation errors → likely null dates, retry (handler defaults to today)
+    if "kan ikke være null" in error_lower or "cannot be null" in error_lower:
+        # The handler already defaults invoiceDueDate/deliveryDate/invoiceDate to today.
+        # A retry should succeed now that the handler code applies defaults properly.
+        logger.info("Targeted repair: null field validation — retrying with handler defaults")
+        # Also ensure bank account is set up in case it's a compound error
+        context["_bank_account_checked"] = False
+        from agent.handlers import _ensure_company_bank_account, execute_task
+        if not context.get("company_id"):
+            _lazy_fetch_company_id(client, context)
+        _ensure_company_bank_account(client, context)
+        try:
+            result = execute_task(task, client, context)
+            if result is not None:
+                return result
+        except Exception as e2:
+            logger.warning("Targeted repair (null field) retry failed: %s", e2)
+        return None
+
     logger.info("No targeted repair available for error: %s", error[:200])
     return None
 
@@ -319,6 +340,126 @@ def _save_run_data(prompt: str, task: dict, path: str, result: str, elapsed: flo
     except Exception as e:
         logger.error("Failed to save run data to file: %s", e)
         logger.error("RUN DATA DUMP: %s", json.dumps(run_data, ensure_ascii=False, default=str)[:5000])
+
+
+# ---------------------------------------------------------------------------
+# Entity validation — catch parser mistakes before they cause 422s
+# ---------------------------------------------------------------------------
+
+# Norwegian Kontoplan: common expense description → correct account number
+_ACCOUNT_MAP = {
+    "representasjon": 7350, "middag representasjon": 7350, "restaurant": 7350,
+    "business dinner": 7350, "forretningslunsj": 7350, "forretningmiddag": 7350,
+    "renhold": 6360, "cleaning": 6360,
+    "kontorrekvisita": 6800, "office supplies": 6800, "büromaterial": 6800,
+    "datakostnad": 6810, "it costs": 6810, "datenkosten": 6810,
+    "reisekostnad": 7140, "travel costs": 7140, "reisekosten": 7140,
+    "telefon": 6900, "telephone": 6900,
+    "forsikring": 7500, "insurance": 7500,
+    "revisjon": 6700, "audit": 6700, "regnskap": 6700,
+    "husleie": 6300, "office rent": 6300, "leie lokale": 6300, "büro miete": 6300,
+    "strøm": 6340, "lys": 6340, "varme": 6340, "electricity": 6340,
+    "inventar": 6540, "furniture": 6540, "möbel": 6540,
+    "bilkostnad": 7100, "car expenses": 7100, "bilgodtgjørelse": 7100,
+    "kontingent": 7400, "membership": 7400,
+    "bank og kortgebyr": 7770, "bank fees": 7770,
+    "frakt": 6100, "transport": 6100, "freight": 6100,
+    "konsulenttjeneste": 7300, "consulting": 7300, "rådgivning": 7300,
+    "fremmed tjeneste": 7300, "external services": 7300,
+    "skrivebordlampe": 6540, "kontorstol": 6540,
+    "usb-hub": 6800, "datautstyr": 6810,
+    "togbillett": 7140, "flybillett": 7140,
+    "overnatting": 7100, "hotell": 7100,
+    "kaffe": 6800, "whiteboard": 6800,
+    "bürodienstleistungen": 7300, "services de bureau": 7300,
+}
+
+# Accounts locked to VAT code 0 (no VAT treatment) in standard Norwegian chart
+# These accounts REJECT any vatType other than 0 — causes 422 if you send vatType=1
+_NO_VAT_ACCOUNTS = {
+    6010, 6011, 6020,  # Depreciation accounts (avskrivning)
+    7100,              # Bilgodtgjørelse oppgavepliktig
+    7101, 7130,        # Other car expense accounts locked to 0
+    1610,              # Inngående merverdiavgift (VAT receivable — locked to mva-kode 0)
+    1920,              # Bank (balance account — no VAT treatment)
+    2400, 2401, 2410,  # Leverandørgjeld (AP — balance accounts, no VAT)
+    2700, 2710, 2720, 2730, 2740,  # VAT payable accounts (locked to 0)
+}
+
+
+def _validate_entities(task: dict) -> None:
+    """Validate and fix parsed entities before handler execution.
+
+    Catches common parser mistakes:
+    - Null dates that should default to today
+    - Wrong account numbers for known expense types
+    - Invalid field values
+    """
+    entities = task.get("entities")
+    if not isinstance(entities, dict):
+        return
+
+    task_type = task.get("task_type", "")
+    from datetime import date as _date
+    today = _date.today().isoformat()
+
+    # Fix null dates for ALL task types — parser often returns explicit None for dates
+    _DATE_FIELDS = (
+        "invoiceDate", "invoiceDueDate", "deliveryDate", "orderDate",
+        "startDate", "endDate", "date", "voucherDate", "paymentDate",
+        "departureDate", "returnDate",
+    )
+    for date_field in _DATE_FIELDS:
+        if date_field in entities and entities[date_field] is None:
+            entities[date_field] = today
+            logger.info("Validation fix: %s was null, set to %s", date_field, today)
+    # Also fix dates in nested customer objects
+    for nested_key in ("customer", "supplier"):
+        nested = entities.get(nested_key)
+        if isinstance(nested, dict):
+            for date_field in _DATE_FIELDS:
+                if date_field in nested and nested[date_field] is None:
+                    nested[date_field] = today
+
+    # Fix voucher account numbers using description-based mapping
+    if task_type in ("create_voucher", "create_dimension_voucher"):
+        for posting in entities.get("postings", []):
+            if not isinstance(posting, dict):
+                continue
+            acct = posting.get("accountNumber")
+            # Fix "None" or null accountNumber
+            if acct is None or str(acct) in ("None", "null", ""):
+                posting.pop("accountNumber", None)
+                acct = None
+            desc = (posting.get("description") or "").lower()
+            if acct and desc and 4000 <= (acct if isinstance(acct, int) else 0) <= 7999:
+                # Check if description matches a known category with a different account
+                for keyword, correct_acct in _ACCOUNT_MAP.items():
+                    if keyword in desc and correct_acct != acct:
+                        logger.info("Validation fix: account %d → %d for '%s'",
+                                    acct, correct_acct, desc[:50])
+                        posting["accountNumber"] = correct_acct
+                        break
+
+    # Fix nested objects with None values that could crash handlers
+    supplier_inv = entities.get("supplierInvoice")
+    if isinstance(supplier_inv, dict):
+        acct = supplier_inv.get("accountNumber")
+        if acct is None or str(acct) in ("None", "null", ""):
+            supplier_inv["accountNumber"] = 4300  # Default expense account
+            logger.info("Validation fix: supplierInvoice.accountNumber was %r, set to 4300", acct)
+
+    # Fix entities where parser returns organizationNumber as int
+    for key in ("organizationNumber", "customerOrganizationNumber", "supplierOrganizationNumber"):
+        if key in entities and isinstance(entities[key], int):
+            entities[key] = str(entities[key])
+
+    # Fix nested customer/supplier org numbers
+    for container in ("customer", "supplier"):
+        if isinstance(entities.get(container), dict):
+            obj = entities[container]
+            if "organizationNumber" in obj and isinstance(obj["organizationNumber"], int):
+                obj["organizationNumber"] = str(obj["organizationNumber"])
 
 
 def _classify_api_calls(api_calls: list) -> dict:
@@ -587,7 +728,7 @@ def _run_agent_loop(prompt: str, files: list, tripletex: TripletexClient, contex
     # Track entities created during agent loop to prevent duplicates
     created_entities: dict[str, list[dict]] = {}
 
-    max_iterations = 15
+    max_iterations = 25
     for i in range(max_iterations):
         metrics["total_iterations"] = i + 1
         logger.info("Agent loop iteration %d", i + 1)

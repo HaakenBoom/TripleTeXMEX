@@ -17,6 +17,17 @@ def _today() -> str:
     return date.today().isoformat()
 
 
+# Accounts locked to VAT code 0 — sending any other vatType causes 422
+_NO_VAT_ACCOUNTS = {
+    6010, 6011, 6020,  # Depreciation (avskrivning)
+    7100, 7101, 7130,  # Bilgodtgjørelse
+    1610,              # Inngående MVA (locked to mva-kode 0)
+    1920,              # Bank (balance account)
+    2400, 2401, 2410,  # Leverandørgjeld (AP)
+    2700, 2710, 2720, 2730, 2740,  # VAT payable accounts
+}
+
+
 def _get_or_create_account(client: TripletexClient, number: str, name: str | None = None,
                            cache: dict | None = None) -> int:
     """Resolve an account number to its ID, creating the account if it doesn't exist."""
@@ -30,8 +41,12 @@ def _get_or_create_account(client: TripletexClient, number: str, name: str | Non
         # Auto-create missing account
         acct_name = name or f"Account {number}"
         logger.info("Account %s not found, auto-creating as '%s'", number, acct_name)
+        try:
+            acct_number_int = int(number)
+        except (ValueError, TypeError):
+            raise RuntimeError(f"Invalid account number: {number!r}")
         create_resp = client.post("/ledger/account", {
-            "number": int(number),
+            "number": acct_number_int,
             "name": acct_name,
         })
         if isinstance(create_resp, dict) and create_resp.get("value", {}).get("id"):
@@ -47,6 +62,14 @@ def _check_response(result: dict, operation: str) -> dict:
     """Check API response for errors. Raises RuntimeError on 4xx."""
     if isinstance(result, dict) and result.get("status") and result["status"] >= 400:
         msg = result.get("message", result.get("developerMessage", str(result)))
+        # Include validationMessages details so targeted repair can match specific fields
+        val_msgs = result.get("validationMessages") or []
+        if val_msgs:
+            details = "; ".join(
+                f"[{v.get('field', '?')}] {v.get('message', '')}" for v in val_msgs if isinstance(v, dict)
+            )
+            if details:
+                msg = f"{msg} — {details}"
         raise RuntimeError(f"{operation} failed ({result['status']}): {msg}")
     return result
 
@@ -74,7 +97,11 @@ _NEEDS_EMPLOYEES = {
 _NEEDS_VAT_TYPES: set[str] = set()
 # Bank account setup is now LAZY — only triggered on invoice creation failure.
 # This saves 2-3 GET/PUT calls when bank account is already set up.
-_NEEDS_BANK_ACCOUNT: set[str] = set()
+_NEEDS_BANK_ACCOUNT: set[str] = {
+    "create_invoice", "create_invoice_with_payment",
+    "create_credit_note", "project_lifecycle",
+    "log_timesheet_hours",  # Can create invoices for hourly billing
+}
 
 
 def prefetch_context(client: TripletexClient, task_type: str = "unknown") -> dict:
@@ -180,20 +207,25 @@ def _ensure_employee(client: TripletexClient, context: dict) -> int:
     employees = context.get("employees", [])
     if employees:
         return employees[0].get("id")
-    # No employee — create a minimal one
+    # No employee — create a minimal one with EXTENDED access for project management
     logger.info("No employee found, creating default for references...")
     dept_id = _ensure_department(client, context)
     result = client.post("/employee", {
         "firstName": "System",
         "lastName": "Bruker",
-        "userType": "NO_ACCESS",
+        "userType": "EXTENDED",
         "department": {"id": dept_id},
         "allowInformationRegistration": True,
     })
     _check_response(result, "POST /employee (default)")
     emp = result["value"]
+    emp_id = emp["id"]
     context["employees"] = [emp]
-    return emp["id"]
+
+    # Create a basic employment record — required for timesheet entries
+    _create_employment({"startDate": _today()}, emp_id, client)
+
+    return emp_id
 
 
 def _resolve_vat_type(vat_str: str | None, context: dict) -> dict | None:
@@ -812,7 +844,18 @@ def _handle_create_invoice(task: dict, client: TripletexClient, context: dict) -
     # Step 1: Find or create customer (avoids duplicates)
     customer_data = e.get("customer")
     if not customer_data:
-        raise RuntimeError("create_invoice: no customer data in entities")
+        # Fallback: parser may have extracted supplier data or top-level customer fields
+        if e.get("supplier"):
+            customer_data = e["supplier"]
+            customer_data["isSupplier"] = True
+        elif e.get("customerName") or e.get("name"):
+            customer_data = {
+                "name": e.get("customerName") or e.get("name"),
+                "organizationNumber": e.get("customerOrganizationNumber") or e.get("organizationNumber"),
+                "email": e.get("customerEmail") or e.get("email"),
+            }
+        else:
+            raise RuntimeError("create_invoice: no customer data in entities")
     customer_id = _find_or_create_customer(customer_data, client, context)
     context.setdefault("_created_entities", {})["customer_id"] = customer_id
 
@@ -1242,18 +1285,24 @@ def _find_or_create_employee_by_name(name: str, client: TripletexClient, context
         return values[0]["id"]
 
     # Not found — create the employee
+    # Use EXTENDED access so they can be project managers (NO_ACCESS causes 422)
     dept_id = _ensure_department(client, context)
     result = client.post("/employee", {
         "firstName": first_name,
         "lastName": last_name or "Bruker",
-        "userType": "NO_ACCESS",
+        "userType": "EXTENDED",
         "department": {"id": dept_id},
         "allowInformationRegistration": True,
     })
     _check_response(result, "POST /employee (for reference)")
     emp = result["value"]
+    emp_id = emp["id"]
     context["employees"].append(emp)
-    return emp["id"]
+
+    # Create a basic employment record — required for timesheet entries
+    _create_employment({"startDate": _today()}, emp_id, client)
+
+    return emp_id
 
 
 def _handle_create_project(task: dict, client: TripletexClient, context: dict) -> str:
@@ -1270,7 +1319,7 @@ def _handle_create_project(task: dict, client: TripletexClient, context: dict) -
         "name": entities["name"],
         "projectManager": {"id": pm_id},
         "isInternal": entities.get("isInternal", False),
-        "startDate": entities.get("startDate", _today()),
+        "startDate": entities.get("startDate") or _today(),
     }
 
     # Link to customer if specified
@@ -1346,6 +1395,7 @@ def _handle_create_department(task: dict, client: TripletexClient, context: dict
 
 def _handle_create_travel_expense(task: dict, client: TripletexClient, context: dict) -> str:
     entities = task["entities"]
+    today = _today()
 
     # Determine employee — by ID, by email, by name, or default
     emp_id = entities.get("employeeId")
@@ -1433,15 +1483,25 @@ def _handle_create_travel_expense(task: dict, client: TripletexClient, context: 
                 context["_travel_payment_type_id"] = default_payment_type_id
 
         if not default_payment_type_id:
-            logger.warning("No payment type found — skipping cost creation to avoid 422s")
-            costs = []
+            # Last resort: try to use ID 1 (common default in many Tripletex environments)
+            default_payment_type_id = None
+            try:
+                # Try fetching all payment types from ledger
+                ledger_pt = client.get("/ledger/paymentTypeOut", {"count": 10})
+                for pt in ledger_pt.get("values", []):
+                    default_payment_type_id = pt["id"]
+                    break
+            except Exception:
+                pass
+            if not default_payment_type_id:
+                logger.warning("No payment type found — skipping cost creation to avoid 422s")
+                costs = []
 
         for cost in costs:
             cost_body: dict[str, Any] = {
                 "travelExpense": {"id": te_id},
+                "date": cost.get("date") or today,
             }
-            if cost.get("date"):
-                cost_body["date"] = cost["date"]
             if cost.get("amount") is not None:
                 cost_body["amountCurrencyIncVat"] = cost["amount"]
                 cost_body["amountNOKInclVAT"] = cost.get("amountNOK", cost["amount"])
@@ -1521,7 +1581,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         entities = merged
         task["entities"] = entities
     today = entities.get("today") or _today()
-    voucher_date = entities.get("date", today)
+    voucher_date = entities.get("date") or today
     invoice_number = entities.get("invoiceNumber") or ""
     due_date = entities.get("dueDate") or ""
     supplier_bank_account = entities.get("supplierBankAccount") or ""
@@ -1550,7 +1610,7 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         account_id = posting.get("accountId")
         account_data = None
         try:
-            acct_num_int = int(account_number or 0)
+            acct_num_int = int(account_number) if account_number and str(account_number).strip() not in ('', 'None', 'null') else 0
         except (ValueError, TypeError):
             acct_num_int = 0
 
@@ -1614,22 +1674,51 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         # Default to 25% input VAT (vatType id=1 in Norwegian Tripletex)
         detected_vat_type_id = 1  # 25% is the default for Norwegian supplier invoices
 
+        # Check if amounts already include VAT (parser may signal this)
+        amounts_incl_vat = entities.get("amountsIncludeVat", False)
+
         # Adjust expense postings: set amount to GROSS and set correct vatType
+        # Distribute VAT proportionally across expense postings (not total to each!)
         adjusted = False
-        for r in non_vat_entries:
-            acct_type = (r.get("account_data") or {}).get("type", "")
-            is_expense = (acct_type == "OPERATING_EXPENSES"
-                          or 4000 <= r["account_number"] <= 7999)
-            if is_expense and r["amount"] > 0:
-                # Expense amount should be GROSS (net + VAT)
-                # Parser gave us net amount, add VAT to make it gross
-                r["amount"] = r["amount"] + total_vat_abs
-                # Always use input VAT type (id=1 for 25%), NOT the account default
-                # Account defaults are often 0 (no VAT) which is wrong for supplier invoices
-                r["vat_type_id"] = detected_vat_type_id
-                logger.info("Adjusted expense posting to gross=%s with vatType=%s",
-                            r["amount"], r.get("vat_type_id"))
-                adjusted = True
+        expense_entries = [
+            r for r in non_vat_entries
+            if ((r.get("account_data") or {}).get("type", "") == "OPERATING_EXPENSES"
+                or 4000 <= r["account_number"] <= 7999)
+            and r["amount"] > 0
+        ]
+        total_expense_net = sum(r["amount"] for r in expense_entries)
+
+        # Auto-detect: if expense amounts + VAT ≈ |AP amount|, amounts are excl-VAT
+        # If expense amounts alone ≈ |AP amount|, amounts are incl-VAT
+        ap_entries = [r for r in non_vat_entries if 2400 <= r["account_number"] <= 2499]
+        ap_total = abs(sum(r["amount"] for r in ap_entries)) if ap_entries else 0
+        if ap_total > 0 and total_expense_net > 0:
+            # Check: if excl-VAT amounts + VAT ≈ AP total → amounts are excl-VAT
+            if abs((total_expense_net + total_vat_abs) - ap_total) < 1.0:
+                amounts_incl_vat = False
+                logger.info("Auto-detected: amounts are EXCL VAT (net + VAT = AP total)")
+            # Check: if amounts ≈ AP total → amounts are incl-VAT
+            elif abs(total_expense_net - ap_total) < 1.0:
+                amounts_incl_vat = True
+                logger.info("Auto-detected: amounts are INCL VAT (amounts ≈ AP total)")
+
+        for r in expense_entries:
+            if amounts_incl_vat:
+                # Amounts already include VAT — use as-is for amountGross
+                # (don't add VAT again)
+                pass
+            else:
+                # Amounts are excl-VAT — add VAT proportionally to get gross
+                if total_expense_net > 0:
+                    vat_share = total_vat_abs * (r["amount"] / total_expense_net)
+                else:
+                    vat_share = total_vat_abs
+                r["amount"] = round(r["amount"] + vat_share, 2)
+                logger.info("Adjusted expense posting acct %d to gross=%s (vat_share=%.2f)",
+                            r["account_number"], r["amount"], vat_share)
+            # Always use input VAT type (id=1 for 25%), NOT the account default
+            r["vat_type_id"] = detected_vat_type_id
+            adjusted = True
         if not adjusted:
             logger.warning("Could not identify expense posting for VAT collapse, keeping VAT postings")
             non_vat_entries = list(resolved)  # Restore all entries
@@ -1710,6 +1799,27 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             supplier_id = supp_result["value"]["id"]
             logger.info("Created fallback supplier (id=%d)", supplier_id)
 
+    # Phase 3b: Resolve department if specified
+    dept_id = None
+    dept_name = entities.get("departmentName") or entities.get("department") or ""
+    if dept_name:
+        # Search context first
+        for d in context.get("departments", []):
+            if d.get("name", "").strip().lower() == dept_name.strip().lower():
+                dept_id = d["id"]
+                break
+        # If not in context, search via API
+        if not dept_id:
+            dept_resp = client.get("/department", {"name": dept_name, "count": 5})
+            for d in dept_resp.get("values", []):
+                if d.get("name", "").strip().lower() == dept_name.strip().lower():
+                    dept_id = d["id"]
+                    break
+            if not dept_id and dept_resp.get("values"):
+                dept_id = dept_resp["values"][0]["id"]
+        if dept_id:
+            logger.info("Resolved department '%s' → id=%d", dept_name, dept_id)
+
     # Phase 4: Build final postings (skip entries with unresolved account_id)
     postings = []
     row_num = 0
@@ -1725,10 +1835,16 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
             "amountGross": r["amount"],
             "amountGrossCurrency": r["amount"],
         }
-        if r.get("vat_type_id") is not None:
+        # Set VAT type — but NEVER on accounts locked to mva-kode 0
+        if r["account_number"] in _NO_VAT_ACCOUNTS:
+            p["vatType"] = {"id": 0}
+        elif r.get("vat_type_id") is not None:
             p["vatType"] = {"id": r["vat_type_id"]}
         if r["posting"].get("description"):
             p["description"] = r["posting"]["description"]
+        # Set department on expense postings
+        if dept_id and 4000 <= r["account_number"] <= 7999:
+            p["department"] = {"id": dept_id}
         # Add supplier reference to AP postings
         if supplier_id and 2400 <= r["account_number"] <= 2499:
             p["supplier"] = {"id": supplier_id}
@@ -1776,20 +1892,57 @@ def _handle_create_voucher(task: dict, client: TripletexClient, context: dict) -
         raise RuntimeError("No postings could be resolved for voucher creation")
 
     body: dict[str, Any] = {
-        "date": entities.get("date", today),
-        "description": entities.get("description", "Voucher"),
+        "date": entities.get("date") or today,
+        "description": entities.get("description") or "Voucher",
         "postings": postings,
     }
 
     result = client.post("/ledger/voucher", body)
-    # If voucher fails with 422, retry with stripped vatType (common fix)
+    # If voucher fails with 422, try progressive fixes
     if isinstance(result, dict) and result.get("status") == 422:
         error_msg = str(result.get("validationMessages", result.get("message", "")))
-        logger.warning("Voucher 422 — retrying with vatType adjustments: %s", error_msg[:200])
-        # Strip all vatType references and retry (let Tripletex handle VAT)
-        for p in postings:
-            p.pop("vatType", None)
-        result = client.post("/ledger/voucher", body)
+        logger.warning("Voucher 422 — attempting fixes: %s", error_msg[:200])
+
+        # Fix 1: If an account is "locked to VAT code 0", set ALL postings' vatType to 0
+        # (safer than trying to match specific accounts from error message)
+        if "låst til mva-kode 0" in error_msg or "locked" in error_msg.lower() or "mva-kode" in error_msg.lower():
+            for p in postings:
+                p["vatType"] = {"id": 0}
+            # Re-balance after removing VAT (gross amounts may need adjustment)
+            posting_sum = sum(p.get("amountGross", 0) for p in postings)
+            if abs(posting_sum) > 0.01:
+                for p in postings:
+                    p_acct = 0
+                    for r in non_vat_entries:
+                        if r["account_id"] == p["account"]["id"]:
+                            p_acct = r["account_number"]
+                            break
+                    if (2400 <= p_acct <= 2499) or p_acct == 1920:
+                        p["amountGross"] = p["amountGross"] - posting_sum
+                        p["amountGrossCurrency"] = p["amountGross"]
+                        break
+            result = client.post("/ledger/voucher", body)
+
+        # Fix 2: If still failing, strip all vatType and rebalance
+        if isinstance(result, dict) and result.get("status") == 422:
+            error_msg2 = str(result.get("validationMessages", result.get("message", "")))
+            logger.warning("Voucher still failing after Fix 1: %s", error_msg2[:200])
+            for p in postings:
+                p.pop("vatType", None)
+            # Rebalance after stripping VAT
+            posting_sum = sum(p.get("amountGross", 0) for p in postings)
+            if abs(posting_sum) > 0.01:
+                for p in postings:
+                    p_acct = 0
+                    for r in non_vat_entries:
+                        if r["account_id"] == p["account"]["id"]:
+                            p_acct = r["account_number"]
+                            break
+                    if (2400 <= p_acct <= 2499) or p_acct == 1920:
+                        p["amountGross"] = p["amountGross"] - posting_sum
+                        p["amountGrossCurrency"] = p["amountGross"]
+                        break
+            result = client.post("/ledger/voucher", body)
     _check_response(result, "POST /ledger/voucher")
     value = result.get("value", {})
     return f"Created voucher (id={value.get('id', '?')})"
@@ -1984,7 +2137,7 @@ def _handle_log_timesheet_hours(task: dict, client: TripletexClient, context: di
 
     # Step 5: Create timesheet entry
     hours = entities.get("hours", 0)
-    entry_date = entities.get("date", today)
+    entry_date = entities.get("date") or today
 
     entry_body: dict[str, Any] = {
         "employee": {"id": emp_id},
@@ -2106,8 +2259,9 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
 
     # Step 3: Look up (or auto-create) the account
     account_number = e.get("accountNumber")
-    if not account_number:
-        raise RuntimeError("No account number specified for voucher posting")
+    if not account_number or str(account_number) in ("None", "null"):
+        account_number = 6300  # Default to office rent
+        logger.warning("No valid account number for dimension voucher, defaulting to 6300")
 
     acct_resp = client.get("/ledger/account", {"number": str(account_number), "count": 1})
     acct_values = acct_resp.get("values", [])
@@ -2159,7 +2313,7 @@ def _handle_create_dimension_voucher(task: dict, client: TripletexClient, contex
     acct_cache = context.setdefault("_account_cache", {})
     bank_id = _get_or_create_account(client, "1920", "Bank", cache=acct_cache)
 
-    voucher_date = e.get("voucherDate", today)
+    voucher_date = e.get("voucherDate") or today
     postings = [
         {
             "row": 1,
@@ -3929,6 +4083,21 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
         act_resp = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
         activities = act_resp.get("values", [])
 
+        # If no activities, create one and link to project
+        if not activities:
+            try:
+                act_create = client.post("/activity", {"name": "Generell", "isProjectActivity": True})
+                if isinstance(act_create, dict) and act_create.get("value", {}).get("id"):
+                    global_act_id = act_create["value"]["id"]
+                    client.post("/project/projectActivity", {
+                        "project": {"id": project_id},
+                        "activity": {"id": global_act_id},
+                    })
+                    act_resp = client.get("/activity/>forTimeSheet", {"projectId": project_id, "count": 100})
+                    activities = act_resp.get("values", [])
+            except Exception as exc:
+                logger.warning("Failed to create project activity: %s", exc)
+
         for ts in timesheet_entries:
             # Find employee for this entry
             ts_email = ts.get("employeeEmail", "")
@@ -3963,8 +4132,8 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
                     "date": ts.get("date", today),
                     "hours": ts.get("hours", 0),
                 }
-                if ts.get("hourlyRate"):
-                    entry_body["hourlyCharge"] = ts["hourlyRate"]
+                # NOTE: hourlyCharge/hourlyRate is NOT a field on TimesheetEntry
+                # (causes 422 "field does not exist") — do NOT send it
                 ts_result = client.post("/timesheet/entry", entry_body)
                 if isinstance(ts_result, dict) and ts_result.get("value"):
                     results.append(f"Timesheet {ts.get('hours', 0)}h logged")
@@ -3976,7 +4145,8 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
         supp_org = supplier_inv.get("supplierOrganizationNumber", "")
         supp_amount = supplier_inv.get("amount", 0)
         supp_desc = supplier_inv.get("description", "Supplier invoice")
-        expense_acct = str(supplier_inv.get("accountNumber", "4300"))
+        raw_acct = supplier_inv.get("accountNumber")
+        expense_acct = str(raw_acct) if raw_acct and str(raw_acct) not in ('None', 'null', '') else "4300"
 
         # Find or create supplier
         supplier_id = None
@@ -4018,6 +4188,10 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
         expense_id = _get_or_create_account(client, expense_acct)
         ap_id = _get_or_create_account(client, "2400")
 
+        # Check if expense account is VAT-locked
+        expense_acct_int = int(expense_acct) if expense_acct.isdigit() else 0
+        vat_type_id = 0 if expense_acct_int in _NO_VAT_ACCOUNTS else 1
+
         postings = [
             {
                 "row": 1,
@@ -4025,7 +4199,8 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
                 "amountGross": supp_amount,
                 "amountGrossCurrency": supp_amount,
                 "date": today,
-                "vatType": {"id": 1},  # 25% input VAT
+                "description": supp_desc,
+                "vatType": {"id": vat_type_id},
             },
             {
                 "row": 2,
@@ -4033,9 +4208,13 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
                 "amountGross": -supp_amount,
                 "amountGrossCurrency": -supp_amount,
                 "date": today,
+                "description": supp_desc,
+                "vatType": {"id": 0},
             },
         ]
+        # Add supplier to BOTH postings (Tripletex requires matching dimensions)
         if supplier_id:
+            postings[0]["supplier"] = {"id": supplier_id}
             postings[1]["supplier"] = {"id": supplier_id}
 
         v_body: dict[str, Any] = {
@@ -4044,6 +4223,18 @@ def _handle_project_lifecycle(task: dict, client: TripletexClient, context: dict
             "postings": postings,
         }
         v_result = client.post("/ledger/voucher", v_body)
+        # Retry on 422: strip VAT and rebalance
+        if isinstance(v_result, dict) and v_result.get("status") == 422:
+            err_msg = str(v_result.get("validationMessages", ""))
+            logger.warning("Lifecycle voucher 422: %s — retrying with vatType=0", err_msg[:200])
+            for p in postings:
+                p["vatType"] = {"id": 0}
+            # Rebalance
+            posting_sum = sum(p["amountGross"] for p in postings)
+            if abs(posting_sum) > 0.01:
+                postings[1]["amountGross"] = postings[1]["amountGross"] - posting_sum
+                postings[1]["amountGrossCurrency"] = postings[1]["amountGross"]
+            v_result = client.post("/ledger/voucher", v_body)
         _check_response(v_result, "POST /ledger/voucher (supplier invoice)")
         results.append(f"Supplier invoice voucher created")
 
